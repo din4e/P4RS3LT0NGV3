@@ -1,0 +1,13 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "P4RS3LT0NGV3",
+  "outputfilename": "P4RS3LT0NGV3",
+  "frontend:install": "npm install",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto",
+  "author": {
+    "name": "din4e",
+    "email": "410691529@qq.com"
+  }
+}

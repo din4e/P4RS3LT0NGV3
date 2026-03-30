@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+frontend/out/
+frontend/.next/
+build/bin/
+
+# Wails generated
+frontend/wailsjs/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Go
+*.exe
+
+# Environment
+.env
+.env.local
+
+# Debug
+npm-debug.log*
