@@ -55,7 +55,7 @@ let indexContent = fs.readFileSync(templatePath, 'utf8');
 
 // Find the tool-content-container
 const startMarker = '<div id="tool-content-container">';
-const endMarker = '</div>\n\n        </div>\n\n                    <!-- Copy History Panel -->';
+const endMarker = '            </div>\r\n\r\n        </div>\r\n\r\n                    <!-- Copy History Panel -->';
 
 const startIndex = indexContent.indexOf(startMarker);
 const endIndex = indexContent.indexOf(endMarker);

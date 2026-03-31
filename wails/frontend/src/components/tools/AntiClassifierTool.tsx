@@ -8,13 +8,9 @@ import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/utils'
 import { OPENROUTER_MODELS } from '@/lib/utils/openrouterModels'
 import { ANTICLASSIFIER_SYSTEM_PROMPT } from '@/lib/utils/anticlassifierPrompt'
-import { callOpenRouter } from '@/lib/wails'
+import { callOpenRouter, isWailsMode } from '@/lib/wails'
 
 // ── helpers ──────────────────────────────────────────────────────────
-
-function isWailsMode(): boolean {
-  return typeof window !== 'undefined' && 'go' in window && !!(window as any).go?.main?.App
-}
 
 async function callAPI(
   model: string,
@@ -36,7 +32,7 @@ async function callAPI(
   }
 
   // Direct fetch fallback
-  const apiKey = localStorage.getItem('openrouter-api-key') || ''
+  const apiKey = localStorage.getItem('openrouter_api_key') || ''
   if (!apiKey) throw new Error('No API key found. Set your OpenRouter key in Settings.')
 
   const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
