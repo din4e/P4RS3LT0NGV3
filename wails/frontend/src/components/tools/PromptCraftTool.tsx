@@ -7,7 +7,7 @@ import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/utils'
 import { OPENROUTER_MODELS } from '@/lib/utils/openrouterModels'
-import { callOpenRouter as wailsCallOpenRouter } from '@/lib/wails'
+import { callOpenRouter as wailsCallOpenRouter, isWailsMode } from '@/lib/wails'
 
 // ── strategy data ────────────────────────────────────────────────────
 
@@ -44,10 +44,6 @@ const SYSTEM_PROMPTS: Record<string, string> = {
 
 // ── helpers ──────────────────────────────────────────────────────────
 
-function isWailsMode(): boolean {
-  return typeof window !== 'undefined' && 'go' in window && !!(window as any).go?.main?.App
-}
-
 async function callOpenRouter(
   model: string,
   messages: Array<Record<string, string>>,
@@ -73,7 +69,7 @@ async function callOpenRouter(
   }
 
   // Direct fetch fallback
-  const apiKey = localStorage.getItem('openrouter-api-key') || ''
+  const apiKey = localStorage.getItem('openrouter_api_key') || ''
   if (!apiKey) throw new Error('No API key found. Set your OpenRouter key in Settings.')
 
   const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {

@@ -6,6 +6,7 @@ import { X, Save, Eye, EyeOff, KeyRound, UserRound, SlidersHorizontal, Globe } f
 import { useAppStore } from '@/stores/useAppStore'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/utils'
+import { setAPIKey as persistAPIKey, setAPIBaseURL as persistBaseUrl } from '@/lib/wails'
 
 /**
  * Slide-in sidebar panel for advanced settings.
@@ -35,14 +36,15 @@ export function AdvancedSettingsPanel() {
   const [showApiKey, setShowApiKey] = useState(false)
   const [keyInput, setKeyInput] = useState(apiKey)
 
-  const handleSaveApiKey = () => {
+  const handleSaveApiKey = async () => {
     setApiKey(keyInput)
+    try { await persistAPIKey(keyInput) } catch {}
   }
 
-  const handleSaveBaseUrl = () => {
+  const handleSaveBaseUrl = async () => {
     const url = baseUrlInput.trim()
     setApiBaseUrl(url)
-    localStorage.setItem('api_base_url', url)
+    try { await persistBaseUrl(url) } catch {}
   }
 
   return (
@@ -192,7 +194,7 @@ export function AdvancedSettingsPanel() {
             </button>
             <button
               type="button"
-              onClick={() => { setBaseUrlInput(''); setApiBaseUrl(''); localStorage.removeItem('api_base_url') }}
+              onClick={async () => { setBaseUrlInput(''); setApiBaseUrl(''); try { await persistBaseUrl('') } catch {} }}
               className={cn(
                 'inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md',
                 'text-[var(--muted-foreground)]',

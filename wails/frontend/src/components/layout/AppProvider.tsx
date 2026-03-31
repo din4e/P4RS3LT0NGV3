@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react'
 import { useAppStore } from '@/stores/useAppStore'
+import { useSettingsStore } from '@/stores/useSettingsStore'
+import { getAPIKeyStatus } from '@/lib/wails'
 
 const THEME_STORAGE_KEY = 'theme'
 const THEME_DARK = 'dark'
@@ -25,6 +27,26 @@ const THEME_SYSTEM = 'system'
  */
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const isDarkTheme = useAppStore((s) => s.isDarkTheme)
+
+  // --- Load persisted state on mount ----------------------------------------
+  useEffect(() => {
+    async function init() {
+      try {
+        const configured = await getAPIKeyStatus()
+        if (configured) {
+          useSettingsStore.setState({ apiKeyConfigured: true })
+        }
+      } catch { /* ignore */ }
+
+      try {
+        const baseUrl = localStorage.getItem('api_base_url')
+        if (baseUrl) {
+          useSettingsStore.setState({ apiBaseUrl: baseUrl })
+        }
+      } catch { /* ignore */ }
+    }
+    init()
+  }, [])
 
   // --- Apply the `dark` class to <html> whenever isDarkTheme changes -------
   useEffect(() => {
@@ -60,15 +82,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         if (!useAppStore.getState().isDarkTheme) {
           useAppStore.getState().toggleTheme()
         }
-      } else {
-        // No stored preference -- check system preference
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-        if (prefersDark && !useAppStore.getState().isDarkTheme) {
-          useAppStore.getState().toggleTheme()
-        } else if (!prefersDark && useAppStore.getState().isDarkTheme) {
-          useAppStore.getState().toggleTheme()
-        }
       }
+      // No stored preference → keep default dark theme (no action needed)
     } catch {
       // ignore
     }

@@ -89,5 +89,20 @@ export async function getAPIKey(): Promise<string> {
 }
 
 export function isWailsMode(): boolean {
-  return typeof window !== 'undefined' && !!(window as any).runtime
+  return typeof window !== 'undefined' &&
+    (!!(window as any).runtime || !!(window as any).go?.main?.App)
+}
+
+export async function setAPIBaseURL(url: string): Promise<void> {
+  const app = await getWailsApp()
+  if (app) {
+    app.SetAPIBaseURL(url)
+  }
+  if (typeof window !== 'undefined') {
+    if (url) {
+      localStorage.setItem('api_base_url', url)
+    } else {
+      localStorage.removeItem('api_base_url')
+    }
+  }
 }

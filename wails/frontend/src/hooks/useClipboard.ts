@@ -15,6 +15,16 @@ export function useClipboard(): {
 } {
   const copyToClipboard = useCallback(
     async (text: string): Promise<boolean> => {
+      // --- Wails clipboard (desktop mode) --------------------------------
+      if (typeof window !== 'undefined' && (window as any).runtime?.ClipboardSetText) {
+        try {
+          await (window as any).runtime.ClipboardSetText(text)
+          return true
+        } catch {
+          // Fall through to browser APIs
+        }
+      }
+
       // --- Modern Clipboard API ------------------------------------------
       if (navigator.clipboard?.writeText) {
         try {

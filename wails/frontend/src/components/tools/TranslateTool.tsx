@@ -6,7 +6,7 @@ import { useClipboard } from '@/hooks/useClipboard'
 import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/utils'
-import { callOpenRouter } from '@/lib/wails'
+import { callOpenRouter, isWailsMode } from '@/lib/wails'
 
 // ── data ─────────────────────────────────────────────────────────────
 
@@ -84,10 +84,6 @@ function getFlag(code: string): string {
 
 // ── helpers ──────────────────────────────────────────────────────────
 
-function isWailsMode(): boolean {
-  return typeof window !== 'undefined' && 'go' in window && !!(window as any).go?.main?.App
-}
-
 async function callTranslate(
   model: string,
   messages: Array<Record<string, string>>,
@@ -106,7 +102,7 @@ async function callTranslate(
     throw new Error('No translation returned.')
   }
 
-  const apiKey = localStorage.getItem('openrouter-api-key') || ''
+  const apiKey = localStorage.getItem('openrouter_api_key') || ''
   if (!apiKey) throw new Error('No API key. Set your OpenRouter key in Settings.')
 
   const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
