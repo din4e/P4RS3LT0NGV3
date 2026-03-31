@@ -3,6 +3,7 @@
 
 import { useState, useCallback, useMemo } from 'react'
 import { useClipboard } from '@/hooks/useClipboard'
+import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 import { cn } from '@/lib/utils'
 import { getAllEmojis } from '@/lib/utils/emoji'
 
@@ -146,6 +147,7 @@ function estimateLength(
 
 export default function Tool() {
   const { copyToClipboard } = useClipboard()
+  const addHistoryItem = useCopyHistoryStore((s) => s.addItem)
 
   // Token bomb state
   const [depth, setDepth] = useState(3)
@@ -183,10 +185,11 @@ export default function Tool() {
   const flash = useCallback(
     (key: string, text: string) => {
       copyToClipboard(text)
+      addHistoryItem(text, 'Tokenade')
       setCopied(key)
       setTimeout(() => setCopied(null), 1200)
     },
-    [copyToClipboard],
+    [copyToClipboard, addHistoryItem],
   )
 
   const applyPreset = useCallback((key: string) => {

@@ -3,6 +3,7 @@
 
 import { useState, useCallback } from 'react'
 import { useClipboard } from '@/hooks/useClipboard'
+import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/utils'
 import { OPENROUTER_MODELS } from '@/lib/utils/openrouterModels'
@@ -105,6 +106,7 @@ async function callOpenRouter(
 
 export default function Tool() {
   const { copyToClipboard } = useClipboard()
+  const addHistoryItem = useCopyHistoryStore((s) => s.addItem)
   const apiKeyConfigured = useSettingsStore((s) => s.apiKeyConfigured)
 
   const [input, setInput] = useState('')
@@ -130,10 +132,11 @@ export default function Tool() {
   const flash = useCallback(
     (key: string, text: string) => {
       copyToClipboard(text)
+      addHistoryItem(text, 'PromptCraft')
       setCopied(key)
       setTimeout(() => setCopied(null), 1200)
     },
-    [copyToClipboard],
+    [copyToClipboard, addHistoryItem],
   )
 
   const runMutation = useCallback(async () => {

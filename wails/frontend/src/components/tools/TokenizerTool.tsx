@@ -3,6 +3,7 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { useClipboard } from '@/hooks/useClipboard'
+import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 
 // ── types ────────────────────────────────────────────────────────────
 
@@ -85,6 +86,7 @@ async function tokenizeGpt(
 
 export default function Tool() {
   const { copyToClipboard } = useClipboard()
+  const addHistoryItem = useCopyHistoryStore((s) => s.addItem)
   const [copied, setCopied] = useState(false)
 
   const [input, setInput] = useState('')
@@ -148,9 +150,10 @@ export default function Tool() {
       .map((t, i) => `${i}: ${t.text}${t.id !== undefined ? ` (#${t.id})` : ''}`)
       .join('\n')
     copyToClipboard(text)
+    addHistoryItem(text, 'Tokenizer')
     setCopied(true)
     setTimeout(() => setCopied(false), 1200)
-  }, [tokens, copyToClipboard])
+  }, [tokens, copyToClipboard, addHistoryItem])
 
   // ── styles ─────────────────────────────────────────────────────
 

@@ -59,7 +59,10 @@
     "hideKey": "隐藏密钥",
     "saveKey": "保存密钥",
     "stegOptions": "隐写选项",
-    "bitOrder": "位序"
+    "bitOrder": "位序",
+    "apiBaseUrl": "API 基础地址",
+    "apiBaseUrlHint": "覆盖默认的 OpenRouter 接口地址。留空则使用默认地址。",
+    "resetDefaults": "重置"
   },
   "transform": {
     "inputPlaceholder": "输入要转换的文本...",

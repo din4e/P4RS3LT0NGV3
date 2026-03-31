@@ -28,6 +28,7 @@ import {
 } from '@/lib/transformers'
 import { useAppStore } from '@/stores/useAppStore'
 import { useClipboard } from '@/hooks/useClipboard'
+import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 import { cn } from '@/lib/utils'
 
 /* ------------------------------------------------------------------ */
@@ -117,6 +118,7 @@ export default function TransformsTool() {
   const t = useTranslations('transform')
   const activeTab = useAppStore((s) => s.activeTab)
   const { copyToClipboard } = useClipboard()
+  const addHistoryItem = useCopyHistoryStore((s) => s.addItem)
 
   /* ---- Local state ---- */
   const [input, setInput] = useState('Hello World')
@@ -241,6 +243,7 @@ export default function TransformsTool() {
         // auto-copy to clipboard
         copyToClipboard(result).then(ok => {
           if (ok) {
+            addHistoryItem(result, 'Transforms')
             toast(t('appliedAndCopied', { name: transform.name }))
           }
         })
@@ -252,16 +255,17 @@ export default function TransformsTool() {
       // refocus input
       inputRef.current?.focus()
     },
-    [input, optionPrefs, saveLastUsedEntry, copyToClipboard, t],
+    [input, optionPrefs, saveLastUsedEntry, copyToClipboard, addHistoryItem, t],
   )
 
   const handleCopyOutput = useCallback(async () => {
     const ok = await copyToClipboard(output)
     if (ok) {
+      addHistoryItem(output, 'Transforms')
       setCopied(true)
       setTimeout(() => setCopied(false), 1500)
     }
-  }, [output, copyToClipboard])
+  }, [output, copyToClipboard, addHistoryItem])
 
   const scrollToCategory = useCallback((category: string) => {
     const el = categoryRefs.current[category]

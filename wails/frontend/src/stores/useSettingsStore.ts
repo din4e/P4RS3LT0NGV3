@@ -23,8 +23,14 @@ interface SettingsState {
   /** Steganography bit-order setting (e.g. "LSB" or "MSB"). */
   stegBitOrder: string;
 
+  /** Custom API base URL (empty = use default OpenRouter). */
+  apiBaseUrl: string;
+
   /** Store (or clear) the API key. Passing an empty string marks it as unconfigured. */
   setApiKey: (key: string) => void;
+
+  /** Set the custom API base URL. Pass empty string to reset to default. */
+  setApiBaseUrl: (url: string) => void;
 
   /** Retrieve the model selected for a given tool. Returns an empty string if unset. */
   getModel: (toolId: string) => string;
@@ -39,12 +45,16 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
   selectedModels: {},
   temperatures: {},
   stegBitOrder: "LSB",
+  apiBaseUrl: "",
 
   setApiKey: (key: string) =>
     set({
       apiKey: key,
       apiKeyConfigured: key.length > 0,
     }),
+
+  setApiBaseUrl: (url: string) =>
+    set({ apiBaseUrl: url }),
 
   getModel: (toolId: string): string => {
     return get().selectedModels[toolId] ?? "";

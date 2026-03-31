@@ -59,7 +59,10 @@
     "hideKey": "キーを隠す",
     "saveKey": "キーを保存",
     "stegOptions": "ステガノグラフィオプション",
-    "bitOrder": "ビット順序"
+    "bitOrder": "ビット順序",
+    "apiBaseUrl": "API ベースURL",
+    "apiBaseUrlHint": "デフォルトのOpenRouterエンドポイントを上書きします。空欄でデフォルトを使用。",
+    "resetDefaults": "リセット"
   },
   "transform": {
     "inputPlaceholder": "変換するテキストを入力...",

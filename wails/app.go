@@ -31,7 +31,8 @@ const (
 
 // App struct
 type App struct {
-	ctx context.Context
+	ctx       context.Context
+	apiBaseURL string // custom API base URL (empty = use default OpenRouter)
 }
 
 // NewApp creates a new App application struct
@@ -141,7 +142,12 @@ func (a *App) CallOpenRouter(model string, messages []map[string]interface{}, te
 		return "", fmt.Errorf("marshalling request body: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(a.ctx, http.MethodPost, openRouterBaseURL, bytes.NewReader(bodyBytes))
+	baseURL := a.apiBaseURL
+	if baseURL == "" {
+		baseURL = openRouterBaseURL
+	}
+
+	req, err := http.NewRequestWithContext(a.ctx, http.MethodPost, baseURL, bytes.NewReader(bodyBytes))
 	if err != nil {
 		return "", fmt.Errorf("creating request: %w", err)
 	}
@@ -168,6 +174,18 @@ func (a *App) CallOpenRouter(model string, messages []map[string]interface{}, te
 	}
 
 	return string(respBody), nil
+}
+
+// ---------- API Base URL ----------
+
+// SetAPIBaseURL stores a custom API base URL. Pass empty string to reset to default.
+func (a *App) SetAPIBaseURL(url string) {
+	a.apiBaseURL = url
+}
+
+// GetAPIBaseURL returns the current custom API base URL, or empty if using default.
+func (a *App) GetAPIBaseURL() string {
+	return a.apiBaseURL
 }
 
 // ---------- API Key Management ----------
