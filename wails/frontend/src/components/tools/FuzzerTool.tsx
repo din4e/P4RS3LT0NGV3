@@ -3,6 +3,7 @@
 
 import { useState, useCallback } from 'react'
 import { useClipboard } from '@/hooks/useClipboard'
+import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 import { allTransforms } from '@/lib/transformers'
 import { cn } from '@/lib/utils'
 
@@ -80,6 +81,7 @@ function encodeShuffle(text: string, rnd: () => number): string {
 
 export default function Tool() {
   const { copyToClipboard } = useClipboard()
+  const addHistoryItem = useCopyHistoryStore((s) => s.addItem)
   const [copied, setCopied] = useState<string | null>(null)
 
   const [input, setInput] = useState('')
@@ -99,10 +101,11 @@ export default function Tool() {
   const flash = useCallback(
     (key: string, text: string) => {
       copyToClipboard(text)
+      addHistoryItem(text, 'Fuzzer')
       setCopied(key)
       setTimeout(() => setCopied(null), 1200)
     },
-    [copyToClipboard],
+    [copyToClipboard, addHistoryItem],
   )
 
   const generateCases = useCallback(() => {

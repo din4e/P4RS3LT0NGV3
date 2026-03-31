@@ -3,6 +3,7 @@
 
 import { useState, useCallback } from 'react'
 import { useClipboard } from '@/hooks/useClipboard'
+import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/utils'
 import { callOpenRouter } from '@/lib/wails'
@@ -137,6 +138,7 @@ async function callTranslate(
 
 export default function Tool() {
   const { copyToClipboard } = useClipboard()
+  const addHistoryItem = useCopyHistoryStore((s) => s.addItem)
   const apiKeyConfigured = useSettingsStore((s) => s.apiKeyConfigured)
 
   const [input, setInput] = useState('')
@@ -154,11 +156,12 @@ export default function Tool() {
     async (text: string) => {
       const ok = await copyToClipboard(text)
       if (ok) {
+        addHistoryItem(text, 'Translate')
         setCopied(true)
         setTimeout(() => setCopied(false), 1500)
       }
     },
-    [copyToClipboard],
+    [copyToClipboard, addHistoryItem],
   )
 
   const translateTo = useCallback(async (lang: LangEntry) => {

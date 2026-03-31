@@ -59,7 +59,10 @@
     "hideKey": "Hide key",
     "saveKey": "Save Key",
     "stegOptions": "Steganography Options",
-    "bitOrder": "Bit Order"
+    "bitOrder": "Bit Order",
+    "apiBaseUrl": "API Base URL",
+    "apiBaseUrlHint": "Override the default OpenRouter endpoint. Leave empty to use the default.",
+    "resetDefaults": "Reset"
   },
   "transform": {
     "inputPlaceholder": "Enter text to transform...",

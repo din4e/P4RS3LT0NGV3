@@ -3,6 +3,7 @@
 
 import { useState, useCallback, useMemo } from 'react'
 import { useClipboard } from '@/hooks/useClipboard'
+import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 import { cn } from '@/lib/utils'
 import { allTransforms, transformsByCategory } from '@/lib/transformers'
 import type { BaseTransformer, TransformOptions } from '@/lib/transformers'
@@ -23,6 +24,7 @@ function getCategoryOrder(): string[] {
 
 export default function Tool() {
   const { copyToClipboard } = useClipboard()
+  const addHistoryItem = useCopyHistoryStore((s) => s.addItem)
   const [copied, setCopied] = useState<string | null>(null)
 
   // Input
@@ -67,10 +69,11 @@ export default function Tool() {
   const flash = useCallback(
     (key: string, text: string) => {
       copyToClipboard(text)
+      addHistoryItem(text, 'Splitter')
       setCopied(key)
       setTimeout(() => setCopied(null), 1200)
     },
-    [copyToClipboard],
+    [copyToClipboard, addHistoryItem],
   )
 
   const handleTransformChange = useCallback((index: number, value: string) => {

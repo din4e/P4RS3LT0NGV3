@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { X, Save, Eye, EyeOff, KeyRound, UserRound, SlidersHorizontal } from 'lucide-react'
+import { X, Save, Eye, EyeOff, KeyRound, UserRound, SlidersHorizontal, Globe } from 'lucide-react'
 import { useAppStore } from '@/stores/useAppStore'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/utils'
@@ -26,12 +26,23 @@ export function AdvancedSettingsPanel() {
   const setApiKey = useSettingsStore((s) => s.setApiKey)
   const stegBitOrder = useSettingsStore((s) => s.stegBitOrder)
 
+  // API Base URL
+  const apiBaseUrl = useSettingsStore((s) => s.apiBaseUrl)
+  const setApiBaseUrl = useSettingsStore((s) => s.setApiBaseUrl)
+  const [baseUrlInput, setBaseUrlInput] = useState(apiBaseUrl)
+
   // Local UI state for the password visibility toggle
   const [showApiKey, setShowApiKey] = useState(false)
   const [keyInput, setKeyInput] = useState(apiKey)
 
   const handleSaveApiKey = () => {
     setApiKey(keyInput)
+  }
+
+  const handleSaveBaseUrl = () => {
+    const url = baseUrlInput.trim()
+    setApiBaseUrl(url)
+    localStorage.setItem('api_base_url', url)
   }
 
   return (
@@ -133,6 +144,64 @@ export function AdvancedSettingsPanel() {
             <Save className="h-3 w-3" />
             {t('saveKey')}
           </button>
+        </section>
+
+        {/* ---- Divider ---- */}
+        <hr className="border-[var(--border)]" />
+
+        {/* ---- API Base URL Section ---- */}
+        <section className="space-y-3">
+          <h4 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">
+            <Globe className="h-3.5 w-3.5" />
+            {t('apiBaseUrl')}
+          </h4>
+          <p className="text-xs text-[var(--muted-foreground)]">
+            {t('apiBaseUrlHint')}
+          </p>
+
+          {/* Input */}
+          <input
+            type="text"
+            value={baseUrlInput}
+            onChange={(e) => setBaseUrlInput(e.target.value)}
+            placeholder="https://openrouter.ai/api/v1"
+            autoComplete="off"
+            spellCheck={false}
+            className={cn(
+              'w-full px-2.5 py-1.5 text-sm rounded-md',
+              'bg-[var(--muted)] text-[var(--foreground)]',
+              'border border-[var(--border)]',
+              'focus:outline-none focus:ring-2 focus:ring-[var(--ring)]',
+              'placeholder:text-[var(--muted-foreground)]',
+            )}
+          />
+
+          {/* Save button */}
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={handleSaveBaseUrl}
+              className={cn(
+                'inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md',
+                'bg-[var(--primary)] text-[var(--primary-foreground)]',
+                'hover:opacity-90 transition-opacity',
+              )}
+            >
+              <Save className="h-3 w-3" />
+              {t('saveKey')}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setBaseUrlInput(''); setApiBaseUrl(''); localStorage.removeItem('api_base_url') }}
+              className={cn(
+                'inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md',
+                'text-[var(--muted-foreground)]',
+                'hover:text-[var(--foreground)] hover:bg-[var(--muted)] transition-colors',
+              )}
+            >
+              {t('resetDefaults')}
+            </button>
+          </div>
         </section>
 
         {/* ---- Divider ---- */}

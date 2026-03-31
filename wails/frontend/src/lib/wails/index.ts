@@ -30,12 +30,21 @@ export async function callOpenRouter(
 ): Promise<string> {
   const app = await getWailsApp()
   if (app) {
+    // Sync base URL to Go backend before calling
+    const baseUrl = localStorage.getItem('api_base_url') || ''
+    if (app.GetAPIBaseURL() !== baseUrl) {
+      await app.SetAPIBaseURL(baseUrl)
+    }
     return app.CallOpenRouter(model, typeof messages === 'string' ? messages : JSON.stringify(messages), temperature, maxTokens)
   }
 
   // Fallback: direct fetch (browser mode)
   const apiKey = _apiKey || localStorage.getItem('openrouter_api_key') || ''
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+  const baseUrl = localStorage.getItem('api_base_url') || ''
+  const endpoint = baseUrl
+    ? (baseUrl.endsWith('/chat/completions') ? baseUrl : baseUrl.replace(/\/$/, '') + '/chat/completions')
+    : 'https://openrouter.ai/api/v1/chat/completions'
+  const response = await fetch(endpoint, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
