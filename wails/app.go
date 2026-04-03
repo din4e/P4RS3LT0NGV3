@@ -31,8 +31,9 @@ const (
 
 // App struct
 type App struct {
-	ctx       context.Context
-	apiBaseURL string // custom API base URL (empty = use default OpenRouter)
+	ctx        context.Context
+	apiBaseURL string     // custom API base URL (empty = use default OpenRouter)
+	cliBridge  *CLIBridge // CLI bridge for transforms
 }
 
 // NewApp creates a new App application struct
@@ -44,6 +45,13 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	// Initialize CLI bridge
+	cliBridge, err := NewCLIBridge()
+	if err != nil {
+		println("Warning: Failed to initialize CLI bridge:", err.Error())
+	} else {
+		a.cliBridge = cliBridge
+	}
 }
 
 // ---------- Helpers ----------
@@ -343,4 +351,211 @@ func (a *App) WriteClipboard(text string) error {
 		return fmt.Errorf("writing clipboard: %w", err)
 	}
 	return nil
+}
+
+// ---------- CLI Bridge Methods ----------
+
+// CLITransformInfo represents transform info for frontend
+type CLITransformInfo struct {
+	Key         string                 `json:"key"`
+	Name        string                 `json:"name"`
+	Category    string                 `json:"category"`
+	Priority    int                    `json:"priority"`
+	CanDecode   bool                   `json:"canDecode"`
+	Description string                 `json:"description"`
+	InputKind   string                 `json:"inputKind"`
+	Options     []CLITransformOption   `json:"options"`
+}
+
+// CLITransformOption represents a transform option for frontend
+type CLITransformOption struct {
+	ID      string      `json:"id"`
+	Label   string      `json:"label"`
+	Type    string      `json:"type"`
+	Default interface{} `json:"default"`
+	Min     *float64    `json:"min"`
+	Max     *float64    `json:"max"`
+	Step    *float64    `json:"step"`
+	Options []struct {
+		Label string `json:"label"`
+		Value string `json:"value"`
+	} `json:"options"`
+}
+
+// CLIListTransforms returns a list of all available transforms
+func (a *App) CLIListTransforms() (string, error) {
+	if a.cliBridge == nil {
+		return "", fmt.Errorf("CLI bridge not initialized")
+	}
+
+	transforms, err := a.cliBridge.ListTransforms()
+	if err != nil {
+		return "", err
+	}
+
+	// Convert to JSON
+	result := make([]CLITransformInfo, len(transforms))
+	for i, t := range transforms {
+		result[i] = CLITransformInfo{
+			Key:         t.Key,
+			Name:        t.Name,
+			Category:    t.Category,
+			Priority:    t.Priority,
+			CanDecode:   t.CanDecode,
+			Description: t.Description,
+			InputKind:   t.InputKind,
+			Options:     make([]CLITransformOption, len(t.Options)),
+		}
+		for j, opt := range t.Options {
+			result[i].Options[j] = CLITransformOption{
+				ID:      opt.ID,
+				Label:   opt.Label,
+				Type:    opt.Type,
+				Default: opt.Default,
+				Min:     opt.Min,
+				Max:     opt.Max,
+				Step:    opt.Step,
+				Options: opt.Options,
+			}
+		}
+	}
+
+	bytes, err := json.Marshal(result)
+	if err != nil {
+		return "", fmt.Errorf("marshalling transforms: %w", err)
+	}
+	return string(bytes), nil
+}
+
+// CLIInspectTransform returns detailed info about a specific transform
+func (a *App) CLIInspectTransform(transformKey string) (string, error) {
+	if a.cliBridge == nil {
+		return "", fmt.Errorf("CLI bridge not initialized")
+	}
+
+	info, err := a.cliBridge.InspectTransform(transformKey)
+	if err != nil {
+		return "", err
+	}
+
+	result := CLITransformInfo{
+		Key:         info.Key,
+		Name:        info.Name,
+		Category:    info.Category,
+		Priority:    info.Priority,
+		CanDecode:   info.CanDecode,
+		Description: info.Description,
+		InputKind:   info.InputKind,
+		Options:     make([]CLITransformOption, len(info.Options)),
+	}
+	for j, opt := range info.Options {
+		result.Options[j] = CLITransformOption{
+			ID:      opt.ID,
+			Label:   opt.Label,
+			Type:    opt.Type,
+			Default: opt.Default,
+			Min:     opt.Min,
+			Max:     opt.Max,
+			Step:    opt.Step,
+			Options: opt.Options,
+		}
+	}
+
+	bytes, err := json.Marshal(result)
+	if err != nil {
+		return "", fmt.Errorf("marshalling transform info: %w", err)
+	}
+	return string(bytes), nil
+}
+
+// CLIRunTransform executes a transform with the given parameters
+func (a *App) CLIRunTransform(action, transformKey, text, optionsJSON string) (string, error) {
+	if a.cliBridge == nil {
+		return "", fmt.Errorf("CLI bridge not initialized")
+	}
+
+	var options map[string]interface{}
+	if optionsJSON != "" {
+		if err := json.Unmarshal([]byte(optionsJSON), &options); err != nil {
+			return "", fmt.Errorf("parsing options JSON: %w", err)
+		}
+	}
+
+	result, err := a.cliBridge.RunTransform(action, transformKey, text, options)
+	if err != nil {
+		return "", err
+	}
+
+	bytes, err := json.Marshal(result)
+	if err != nil {
+		return "", fmt.Errorf("marshalling result: %w", err)
+	}
+	return string(bytes), nil
+}
+
+// CLIAutoDecode attempts to automatically decode text
+func (a *App) CLIAutoDecode(text string) (string, error) {
+	if a.cliBridge == nil {
+		return "", fmt.Errorf("CLI bridge not initialized")
+	}
+
+	result, err := a.cliBridge.AutoDecode(text)
+	if err != nil {
+		return "", err
+	}
+
+	bytes, err := json.Marshal(result)
+	if err != nil {
+		return "", fmt.Errorf("marshalling result: %w", err)
+	}
+	return string(bytes), nil
+}
+
+// CLICheckDependencies checks if CLI dependencies are available
+func (a *App) CLICheckDependencies() string {
+	if a.cliBridge == nil {
+		// Try to create a temporary bridge to check dependencies
+		cliBridge, err := NewCLIBridge()
+		if err != nil {
+			bytes, _ := json.Marshal(map[string]bool{"node": false, "python": false, "cli_bridge": false})
+			return string(bytes)
+		}
+		cliBridge = cliBridge // prevent unused variable error
+	}
+
+	result := a.cliBridge.CheckCLIDependencies()
+	bytes, _ := json.Marshal(result)
+	return string(bytes)
+}
+
+// CLIEncode is a convenience method for encoding text
+func (a *App) CLIEncode(transformKey, text, optionsJSON string) (string, error) {
+	if a.cliBridge == nil {
+		return "", fmt.Errorf("CLI bridge not initialized")
+	}
+
+	var options map[string]interface{}
+	if optionsJSON != "" {
+		if err := json.Unmarshal([]byte(optionsJSON), &options); err != nil {
+			return "", fmt.Errorf("parsing options JSON: %w", err)
+		}
+	}
+
+	return a.cliBridge.Encode(transformKey, text, options)
+}
+
+// CLIDecode is a convenience method for decoding text
+func (a *App) CLIDecode(transformKey, text, optionsJSON string) (string, error) {
+	if a.cliBridge == nil {
+		return "", fmt.Errorf("CLI bridge not initialized")
+	}
+
+	var options map[string]interface{}
+	if optionsJSON != "" {
+		if err := json.Unmarshal([]byte(optionsJSON), &options); err != nil {
+			return "", fmt.Errorf("parsing options JSON: %w", err)
+		}
+	}
+
+	return a.cliBridge.Decode(transformKey, text, options)
 }
