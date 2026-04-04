@@ -15,7 +15,8 @@
     "gibberish": "乱语生成",
     "promptcraft": "提示词工坊",
     "translate": "翻译",
-    "anticlassifier": "反分类器"
+    "anticlassifier": "反分类器",
+    "ccbos": "CC-BOS 文言文越狱"
   },
   "common": {
     "copy": "复制",

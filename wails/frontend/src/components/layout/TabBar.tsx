@@ -15,6 +15,7 @@ import {
   WandSparkles,
   Languages,
   Bot,
+  Scroll,
   type LucideIcon,
 } from 'lucide-react'
 import { useAppStore, TOOL_CONFIGS, type ToolConfig } from '@/stores/useAppStore'
@@ -37,6 +38,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   WandSparkles,
   Languages,
   Bot,
+  Scroll,
 }
 
 /**
