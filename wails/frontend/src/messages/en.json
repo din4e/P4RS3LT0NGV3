@@ -15,7 +15,8 @@
     "gibberish": "Gibberish",
     "promptcraft": "PromptCraft",
     "translate": "Translate",
-    "anticlassifier": "Anti-Classifier"
+    "anticlassifier": "Anti-Classifier",
+    "ccbos": "CC-BOS Classical Chinese"
   },
   "common": {
     "copy": "Copy",

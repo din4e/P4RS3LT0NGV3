@@ -23,6 +23,7 @@ const TOOL_COMPONENT_MAP: Record<string, React.LazyExoticComponent<React.Compone
   promptcraft: lazy(() => import('@/components/tools/PromptCraftTool')),
   translate: lazy(() => import('@/components/tools/TranslateTool')),
   anticlassifier: lazy(() => import('@/components/tools/AntiClassifierTool')),
+  ccbos: lazy(() => import('@/components/tools/CCBosTool')),
 }
 
 /**

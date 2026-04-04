@@ -15,7 +15,8 @@
     "gibberish": "意味不明テキスト",
     "promptcraft": "プロンプト工房",
     "translate": "翻訳",
-    "anticlassifier": "アンチクラシファイア"
+    "anticlassifier": "アンチクラシファイア",
+    "ccbos": "CC-BOS 漢文"
   },
   "common": {
     "copy": "コピー",

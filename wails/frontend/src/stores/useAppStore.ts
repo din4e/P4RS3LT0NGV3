@@ -28,6 +28,7 @@ export const TOOL_CONFIGS: ToolConfig[] = [
   { id: 'promptcraft', nameKey: 'promptcraft', icon: 'WandSparkles', shortcut: 'P', order: 10 },
   { id: 'translate', nameKey: 'translate', icon: 'Languages', shortcut: 'L', order: 11 },
   { id: 'anticlassifier', nameKey: 'anticlassifier', icon: 'Bot', shortcut: 'A', order: 12 },
+  { id: 'ccbos', nameKey: 'ccbos', icon: 'Scroll', shortcut: 'C', order: 13 },
 ]
 
 /**
