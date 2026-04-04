@@ -1,24 +1,26 @@
 // @ts-nocheck
 // randomizer transform
 import { BaseTransformer } from '../BaseTransformer';
+import { getTransformRegistry } from '../transformRegistry';
 
 export const randomizer = new BaseTransformer({
 
         name: 'Random Mix',
     priority: 20,
-    // Get a list of transforms suitable for randomization
+    // Keys must match `allTransforms` in index.ts (camelCase export names)
         getRandomizableTransforms() {
             const suitable = [
                 'base64', 'binary', 'hex', 'morse', 'rot13', 'caesar', 'atbash', 'rot5',
-                'upside_down', 'bubble', 'small_caps', 'fullwidth', 'leetspeak', 'superscript', 'subscript',
-                'quenya', 'tengwar', 'klingon', 'dovahzul', 'elder_futhark',
+                'upsideDown', 'bubble', 'smallCaps', 'fullwidth', 'leetspeak', 'superscript', 'subscript',
+                'quenya', 'tengwar', 'klingon', 'dovahzul', 'elderFuthark',
                 'hieroglyphics', 'ogham', 'mathematical', 'cursive', 'medieval',
-                'monospace', 'greek', 'braille', 'alternating_case', 'reverse_words',
-                'title_case', 'sentence_case', 'camel_case', 'snake_case', 'kebab_case', 'random_case',
-                'regional_indicator', 'fraktur', 'cyrillic_stylized', 'katakana', 'hiragana', 'emoji_speak',
-                'base58', 'base62', 'roman_numerals', 'vigenere', 'rail_fence', 'base64url'
+                'monospace', 'greek', 'braille', 'alternatingCase', 'reverseWords',
+                'titleCase', 'sentenceCase', 'camelCase', 'snakeCase', 'kebabCase', 'randomCase',
+                'regionalIndicator', 'fraktur', 'cyrillicStylized', 'katakana', 'hiragana', 'emojiSpeak',
+                'base58', 'base62', 'romanNumerals', 'vigenere', 'railFence', 'base64url'
             ];
-            return suitable.filter(name => window.transforms[name]);
+            const map = getTransformRegistry();
+            return suitable.filter((name) => map && map[name]);
         },
         
         // Apply random transforms to each word in a sentence
@@ -61,8 +63,10 @@ export const randomizer = new BaseTransformer({
             const transformedWords = words.map(wordObj => {
                 if (wordObj.isWord) {
                     const randomTransform = selectedTransforms[Math.floor(Math.random() * selectedTransforms.length)];
-                    const transform = window.transforms[randomTransform];
-                    
+                    const map = getTransformRegistry();
+                    const transform = map?.[randomTransform];
+                    if (!transform?.func) return wordObj;
+
                     try {
                         const transformed = transform.func(wordObj.text);
                         return {
