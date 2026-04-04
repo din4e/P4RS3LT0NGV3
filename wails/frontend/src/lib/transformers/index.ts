@@ -1,5 +1,6 @@
 // Auto-generated barrel export - do not edit manually
 import { BaseTransformer } from './BaseTransformer'
+import { setTransformRegistry } from './transformRegistry'
 
 export { BaseTransformer } from "./BaseTransformer"
 export type { TransformerConfig, ConfigurableOption, TransformOptions, SelectOption } from "./BaseTransformer"
@@ -521,3 +522,5 @@ export const transformsByCategory: Record<string, BaseTransformer[]> = {
   'unicode': [boldItalic, bold, bubble, chemical, circled, cursive, cyrillicStylized, dashedUnderline, dottedUnderline, doubleStruck, fraktur, fullwidth, greek, hiragana, italic, katakana, mathematical, medieval, mirror, monospace, negativeSquared, overline, parenthesized, regionalIndicator, smallCaps, squared, strikethrough, subscript, superscript, underline, upsideDown, vaporwave, wavyUnderline, wideSpacing, wingdings, zalgo],
   'visual': [disemvowel, emojiSpeak, rovarspraket, ubbiDubbi],
 }
+
+setTransformRegistry(allTransforms)

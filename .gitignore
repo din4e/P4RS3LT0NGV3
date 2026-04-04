@@ -27,6 +27,7 @@ js/data/emojiData.js
 .env.production.local
 
 # IDE & Editor files
+.claude/
 .vscode/
 .idea/
 *.swp
