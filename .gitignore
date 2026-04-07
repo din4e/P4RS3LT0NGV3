@@ -30,6 +30,7 @@ js/data/emojiData.js
 .claude/
 .vscode/
 .idea/
+.omc/
 *.swp
 *.swo
 *~
@@ -46,6 +47,7 @@ desktop.ini
 # Temporary files
 *.tmp
 *.temp
+tmp/
 .tmp/
 .temp/
 

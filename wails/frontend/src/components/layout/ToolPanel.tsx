@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, lazy, Component, type ErrorInfo, type ReactNode } from 'react'
+import { Suspense, lazy, Component, type ErrorInfo, type ReactNode, useEffect, useState } from 'react'
 import { useAppStore } from '@/stores/useAppStore'
 import { cn } from '@/lib/utils'
 
@@ -26,28 +26,60 @@ const TOOL_COMPONENT_MAP: Record<string, React.LazyExoticComponent<React.Compone
   ccbos: lazy(() => import('@/components/tools/CCBosTool')),
 }
 
+// Track which tools have been loaded (for preloading)
+const loadedTools = new Set<string>()
+
 /**
- * Renders the active tool's content panel with lazy loading, a loading
- * spinner fallback, and a per-tool error boundary.
+ * Renders all tool components but only shows the active one.
+ * This keeps tool state (like running tasks) preserved when switching tabs.
  */
 export function ToolPanel() {
   const activeTab = useAppStore((s) => s.activeTab)
+  const [mountedTabs, setMountedTabs] = useState<Set<string>>(new Set([activeTab]))
 
-  const ToolComponent = TOOL_COMPONENT_MAP[activeTab]
+  // Add active tab to mounted set when it changes
+  useEffect(() => {
+    setMountedTabs((prev) => {
+      if (prev.has(activeTab)) return prev
+      return new Set([...prev, activeTab])
+    })
+  }, [activeTab])
+
 
   return (
-    <section className="flex-1 overflow-auto p-4">
-      <ErrorBoundary key={activeTab}>
-        <Suspense fallback={<LoadingSkeleton />}>
-          {ToolComponent ? (
-            <ToolComponent />
-          ) : (
-            <div className="flex items-center justify-center h-full text-[var(--muted-foreground)]">
-              No tool configured for &quot;{activeTab}&quot;
-            </div>
-          )}
-        </Suspense>
-      </ErrorBoundary>
+    <section className="flex-1 overflow-auto p-4 relative">
+      {Array.from(mountedTabs).map((tabId) => {
+        const ToolComponent = TOOL_COMPONENT_MAP[tabId]
+        const isActive = tabId === activeTab
+
+        return (
+          <div
+            key={tabId}
+            className={cn(
+              'absolute inset-0 p-4 overflow-auto',
+              isActive ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+            )}
+            aria-hidden={!isActive}
+          >
+            <ErrorBoundary key={tabId}>
+              <Suspense fallback={isActive ? <LoadingSkeleton /> : null}>
+                {ToolComponent ? (
+                  <ToolComponent />
+                ) : (
+                  <div className="flex items-center justify-center h-full text-[var(--muted-foreground)]">
+                    No tool configured for &quot;{tabId}&quot;
+                  </div>
+                )}
+              </Suspense>
+            </ErrorBoundary>
+          </div>
+        )
+      })}
+
+      {/* Show loading for unmounted active tab */}
+      {!mountedTabs.has(activeTab) && TOOL_COMPONENT_MAP[activeTab] && (
+        <LoadingSkeleton />
+      )}
     </section>
   )
 }

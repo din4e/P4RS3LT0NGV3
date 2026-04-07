@@ -320,7 +320,7 @@ export default function Tool() {
   }, [apiKey, input, output, langDetected, handleCopy])
 
   return (
-    <div className="flex flex-col gap-4 max-w-4xl mx-auto">
+    <div className="flex flex-col gap-4 ">
       {/* Input section */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">

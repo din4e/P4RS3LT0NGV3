@@ -184,6 +184,73 @@ func (a *App) CallOpenRouter(model string, messages []map[string]interface{}, te
 	return string(respBody), nil
 }
 
+// CallChatAPI sends a chat completion request to any OpenAI-compatible API.
+// This is used for multi-provider support with dynamic credentials.
+func (a *App) CallChatAPI(baseURL, apiKey, model string, messages []map[string]interface{}, temperature float64, maxTokens int) (string, error) {
+	if apiKey == "" {
+		return "", fmt.Errorf("API key is required")
+	}
+
+	reqBody := openRouterRequest{
+		Model:       model,
+		Messages:    messages,
+		Temperature: temperature,
+		MaxTokens:   maxTokens,
+	}
+
+	bodyBytes, err := json.Marshal(reqBody)
+	if err != nil {
+		return "", fmt.Errorf("marshalling request body: %w", err)
+	}
+
+	// Ensure URL ends with /chat/completions
+	endpoint := baseURL
+	if endpoint != "" && !contains(endpoint, "/chat/completions") {
+		endpoint = endpoint + "/chat/completions"
+	}
+
+	req, err := http.NewRequestWithContext(a.ctx, http.MethodPost, endpoint, bytes.NewReader(bodyBytes))
+	if err != nil {
+		return "", fmt.Errorf("creating request: %w", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+apiKey)
+	req.Header.Set("HTTP-Referer", "https://github.com/p4rs3lt0ngv3")
+	req.Header.Set("X-Title", "P4RS3LT0NGV3")
+
+	client := &http.Client{Timeout: 120 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("sending request to API: %w", err)
+	}
+	defer resp.Body.Close()
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("reading response body: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("API error (status %d): %s", resp.StatusCode, string(respBody))
+	}
+
+	return string(respBody), nil
+}
+
+func contains(s, substr string) bool {
+	return len(s) >= len(substr) && (s == substr || len(s) > 0 && containsHelper(s, substr))
+}
+
+func containsHelper(s, substr string) bool {
+	for i := 0; i <= len(s)-len(substr); i++ {
+		if s[i:i+len(substr)] == substr {
+			return true
+		}
+	}
+	return false
+}
+
 // ---------- API Base URL ----------
 
 // SetAPIBaseURL stores a custom API base URL. Pass empty string to reset to default.

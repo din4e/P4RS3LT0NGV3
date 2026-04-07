@@ -38,7 +38,9 @@
     "output": "出力",
     "apply": "適用",
     "reset": "リセット",
-    "noResults": "結果なし"
+    "noResults": "結果なし",
+    "default": "デフォルト",
+    "selectModel": "モデルを選択"
   },
   "header": {
     "history": "履歴",
@@ -64,7 +66,12 @@
     "bitOrder": "ビット順序",
     "apiBaseUrl": "API ベースURL",
     "apiBaseUrlHint": "デフォルトのOpenRouterエンドポイントを上書きします。空欄でデフォルトを使用。",
-    "resetDefaults": "リセット"
+    "resetDefaults": "リセット",
+    "apiProvider": "APIプロバイダー",
+    "apiProviderHint": "プロバイダーを素早く選択してベースURLを自動設定。",
+    "globalProviders": "グローバルプロバイダー",
+    "chineseIntlProviders": "中国 (国際版)",
+    "chineseProviders": "中国 (国内版)"
   },
   "transform": {
     "inputPlaceholder": "変換するテキストを入力...",
@@ -118,6 +125,34 @@
     "apiKeyPlaceholder": "sk-or-...",
     "saveKey": "キーを保存",
     "stegOptions": "ステガノグラフィオプション",
-    "bitOrder": "ビット順序"
+    "bitOrder": "ビット順序",
+    "providers": {
+      "myProviders": "マイプロバイダー",
+      "addProvider": "プロバイダーを追加",
+      "editProvider": "プロバイダーを編集",
+      "deleteProvider": "プロバイダーを削除",
+      "setDefault": "デフォルトに設定",
+      "refreshModels": "モデルを更新",
+      "modelCount": "{count} モデル",
+      "noModelsFetched": "モデル未取得",
+      "noProviders": "プロバイダーが設定されていません",
+      "addFirstProvider": "最初のプロバイダーを追加",
+      "confirmDelete": "このプロバイダーを削除しますか？",
+      "presets": "クイックプリセット",
+      "name": "プロバイダー名",
+      "namePlaceholder": "例：マイOpenRouter",
+      "baseUrl": "ベースURL",
+      "apiKey": "APIキー",
+      "showKey": "キーを表示",
+      "hideKey": "キーを隠す",
+      "testConnection": "接続テスト",
+      "testSuccess": "接続成功！",
+      "testErrorMissing": "ベースURLとAPIキーを入力してください",
+      "testErrorUnknown": "接続に失敗しました",
+      "save": "保存",
+      "cancel": "キャンセル",
+      "noModels": "モデルがありません",
+      "noProvider": "プロバイダー未設定"
+    }
   }
 }

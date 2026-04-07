@@ -51,11 +51,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // --- Apply the `dark` class to <html> whenever isDarkTheme changes -------
   useEffect(() => {
     const root = document.documentElement
+
+    // Add class to disable transitions during theme change
+    root.classList.add('theme-transitioning')
+
     if (isDarkTheme) {
       root.classList.add('dark')
     } else {
       root.classList.remove('dark')
     }
+
+    // Remove the transition-blocking class after a frame
+    requestAnimationFrame(() => {
+      root.classList.remove('theme-transitioning')
+    })
   }, [isDarkTheme])
 
   // --- Persist user preference to localStorage ------------------------------
