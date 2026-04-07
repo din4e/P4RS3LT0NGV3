@@ -64,6 +64,11 @@
     "bitOrder": "位序",
     "apiBaseUrl": "API 基础地址",
     "apiBaseUrlHint": "覆盖默认的 OpenRouter 接口地址。留空则使用默认地址。",
+    "apiProvider": "API 提供商",
+    "apiProviderHint": "快速选择提供商以自动配置基础地址。",
+    "globalProviders": "国际提供商",
+    "chineseIntlProviders": "中国 (国际版)",
+    "chineseProviders": "中国 (国内版)",
     "resetDefaults": "重置"
   },
   "transform": {

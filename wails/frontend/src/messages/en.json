@@ -64,6 +64,11 @@
     "bitOrder": "Bit Order",
     "apiBaseUrl": "API Base URL",
     "apiBaseUrlHint": "Override the default OpenRouter endpoint. Leave empty to use the default.",
+    "apiProvider": "API Provider",
+    "apiProviderHint": "Quick-select a provider to auto-configure the base URL.",
+    "globalProviders": "Global Providers",
+    "chineseIntlProviders": "Chinese (International)",
+    "chineseProviders": "Chinese (Domestic)",
     "resetDefaults": "Reset"
   },
   "transform": {

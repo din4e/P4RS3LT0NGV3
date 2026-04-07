@@ -64,7 +64,12 @@
     "bitOrder": "ビット順序",
     "apiBaseUrl": "API ベースURL",
     "apiBaseUrlHint": "デフォルトのOpenRouterエンドポイントを上書きします。空欄でデフォルトを使用。",
-    "resetDefaults": "リセット"
+    "resetDefaults": "リセット",
+    "apiProvider": "APIプロバイダー",
+    "apiProviderHint": "プロバイダーを素早く選択してベースURLを自動設定。",
+    "globalProviders": "グローバルプロバイダー",
+    "chineseIntlProviders": "中国 (国際版)",
+    "chineseProviders": "中国 (国内版)"
   },
   "transform": {
     "inputPlaceholder": "変換するテキストを入力...",

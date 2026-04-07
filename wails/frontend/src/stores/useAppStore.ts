@@ -65,7 +65,7 @@ interface AppState {
 
 export const useAppStore = create<AppState>((set) => ({
   activeTab: 'transforms',
-  isDarkTheme: true,
+  isDarkTheme: false, // Default to light theme
   showCopyHistory: false,
   showAdvancedSettings: false,
 
