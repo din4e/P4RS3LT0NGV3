@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import type { APIProvider } from "@/types/provider";
 
 /**
@@ -75,13 +76,6 @@ interface SettingsState {
 }
 
 /**
- * Generate unique provider ID
- */
-function generateProviderId(): string {
-  return `provider_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
-}
-
-/**
  * Migrate legacy single-provider settings to multi-provider
  */
 function migrateFromLegacy(state: Partial<SettingsState>): Partial<SettingsState> {
@@ -117,148 +111,182 @@ function migrateFromLegacy(state: Partial<SettingsState>): Partial<SettingsState
   };
 }
 
-export const useSettingsStore = create<SettingsState>((set, get) => ({
-  // ===== Initial State =====
-  providers: {},
-  defaultProviderId: null,
-  toolProviders: {},
+export const useSettingsStore = create<SettingsState>()(
+  persist(
+    (set, get) => ({
+      // ===== Initial State =====
+      providers: {},
+      defaultProviderId: null,
+      toolProviders: {},
 
-  apiKeyConfigured: false,
-  apiKey: "",
-  selectedModels: {},
-  temperatures: {},
-  stegBitOrder: "LSB",
-  apiBaseUrl: "",
+      apiKeyConfigured: false,
+      apiKey: "",
+      selectedModels: {},
+      temperatures: {},
+      stegBitOrder: "LSB",
+      apiBaseUrl: "",
 
-  // ===== Provider Actions =====
+      // ===== Provider Actions =====
 
-  setProvider: (provider: APIProvider) =>
-    set((state) => {
-      const providers = { ...state.providers, [provider.id]: provider };
+      setProvider: (provider: APIProvider) =>
+        set((state) => {
+          const providers = { ...state.providers, [provider.id]: provider };
 
-      // If this is the first provider or marked as default, ensure it's the default
-      let defaultProviderId = state.defaultProviderId;
-      if (provider.isDefault || !defaultProviderId) {
-        defaultProviderId = provider.id;
-        // Ensure only one default
-        Object.keys(providers).forEach((id) => {
-          if (id !== provider.id && providers[id].isDefault) {
-            providers[id] = { ...providers[id], isDefault: false };
+          // If this is the first provider or marked as default, ensure it's the default
+          let defaultProviderId = state.defaultProviderId;
+          if (provider.isDefault || !defaultProviderId) {
+            defaultProviderId = provider.id;
+            // Ensure only one default
+            Object.keys(providers).forEach((id) => {
+              if (id !== provider.id && providers[id].isDefault) {
+                providers[id] = { ...providers[id], isDefault: false };
+              }
+            });
           }
-        });
-      }
 
-      return { providers, defaultProviderId };
+          return { providers, defaultProviderId };
+        }),
+
+      removeProvider: (id: string) =>
+        set((state) => {
+          const { [id]: removed, ...rest } = state.providers;
+          const defaultProviderId =
+            state.defaultProviderId === id ? null : state.defaultProviderId;
+
+          return {
+            providers: rest,
+            defaultProviderId,
+          };
+        }),
+
+      setDefaultProvider: (id: string) =>
+        set((state) => {
+          if (!state.providers[id]) return state;
+
+          const providers = { ...state.providers };
+          Object.keys(providers).forEach((pid) => {
+            providers[pid] = { ...providers[pid], isDefault: pid === id };
+          });
+
+          return { providers, defaultProviderId: id };
+        }),
+
+      setProviderModels: (id: string, models: string[]) =>
+        set((state) => {
+          if (!state.providers[id]) return state;
+
+          return {
+            providers: {
+              ...state.providers,
+              [id]: {
+                ...state.providers[id],
+                models,
+                lastFetched: Date.now(),
+              },
+            },
+          };
+        }),
+
+      setToolProvider: (toolId: string, providerId: string | null) =>
+        set((state) => {
+          const toolProviders = { ...state.toolProviders };
+          if (providerId === null) {
+            delete toolProviders[toolId];
+          } else {
+            toolProviders[toolId] = providerId;
+          }
+          return { toolProviders };
+        }),
+
+      getEffectiveProvider: (toolId: string): APIProvider | null => {
+        const state = get();
+
+        // Check tool override first
+        const toolProviderId = state.toolProviders[toolId];
+        if (toolProviderId && state.providers[toolProviderId]?.isEnabled) {
+          return state.providers[toolProviderId];
+        }
+
+        // Fall back to default provider
+        if (state.defaultProviderId && state.providers[state.defaultProviderId]?.isEnabled) {
+          return state.providers[state.defaultProviderId];
+        }
+
+        // Legacy fallback
+        if (state.apiKey) {
+          return {
+            id: "legacy",
+            name: "Legacy",
+            baseUrl: state.apiBaseUrl || "https://openrouter.ai/api/v1",
+            apiKey: state.apiKey,
+            isEnabled: true,
+            isDefault: true,
+          };
+        }
+
+        return null;
+      },
+
+      getEffectiveModel: (toolId: string): string => {
+        const state = get();
+        return state.selectedModels[toolId] ?? "";
+      },
+
+      // ===== Legacy Actions =====
+
+      setApiKey: (key: string) =>
+        set({
+          apiKey: key,
+          apiKeyConfigured: key.length > 0,
+        }),
+
+      setApiBaseUrl: (url: string) => set({ apiBaseUrl: url }),
+
+      getModel: (toolId: string): string => {
+        return get().selectedModels[toolId] ?? "";
+      },
+
+      setModel: (toolId: string, model: string) =>
+        set((state) => ({
+          selectedModels: { ...state.selectedModels, [toolId]: model },
+        })),
     }),
-
-  removeProvider: (id: string) =>
-    set((state) => {
-      const { [id]: removed, ...rest } = state.providers;
-      const defaultProviderId =
-        state.defaultProviderId === id ? null : state.defaultProviderId;
-
-      return {
-        providers: rest,
-        defaultProviderId,
-      };
-    }),
-
-  setDefaultProvider: (id: string) =>
-    set((state) => {
-      if (!state.providers[id]) return state;
-
-      const providers = { ...state.providers };
-      Object.keys(providers).forEach((pid) => {
-        providers[pid] = { ...providers[pid], isDefault: pid === id };
-      });
-
-      return { providers, defaultProviderId: id };
-    }),
-
-  setProviderModels: (id: string, models: string[]) =>
-    set((state) => {
-      if (!state.providers[id]) return state;
-
-      return {
-        providers: {
-          ...state.providers,
-          [id]: {
-            ...state.providers[id],
-            models,
-            lastFetched: Date.now(),
-          },
-        },
-      };
-    }),
-
-  setToolProvider: (toolId: string, providerId: string | null) =>
-    set((state) => {
-      const toolProviders = { ...state.toolProviders };
-      if (providerId === null) {
-        delete toolProviders[toolId];
-      } else {
-        toolProviders[toolId] = providerId;
-      }
-      return { toolProviders };
-    }),
-
-  getEffectiveProvider: (toolId: string): APIProvider | null => {
-    const state = get();
-
-    // Check tool override first
-    const toolProviderId = state.toolProviders[toolId];
-    if (toolProviderId && state.providers[toolProviderId]?.isEnabled) {
-      return state.providers[toolProviderId];
-    }
-
-    // Fall back to default provider
-    if (state.defaultProviderId && state.providers[state.defaultProviderId]?.isEnabled) {
-      return state.providers[state.defaultProviderId];
-    }
-
-    // Legacy fallback
-    if (state.apiKey) {
-      return {
-        id: "legacy",
-        name: "Legacy",
-        baseUrl: state.apiBaseUrl || "https://openrouter.ai/api/v1",
+    {
+      name: "p4rs3lt0ngv3-settings",
+      storage: createJSONStorage(() => localStorage),
+      version: 1,
+      migrate: (persistedState: any, version: number) => {
+        // Handle future migrations here
+        if (version === 0) {
+          // Migrate from version 0 to 1
+          const state = migrateFromLegacy(persistedState);
+          return state;
+        }
+        return persistedState;
+      },
+      partialize: (state) => ({
+        // Only persist these fields (exclude actions)
+        providers: state.providers,
+        defaultProviderId: state.defaultProviderId,
+        toolProviders: state.toolProviders,
         apiKey: state.apiKey,
-        isEnabled: true,
-        isDefault: true,
-      };
+        apiKeyConfigured: state.apiKeyConfigured,
+        selectedModels: state.selectedModels,
+        temperatures: state.temperatures,
+        stegBitOrder: state.stegBitOrder,
+        apiBaseUrl: state.apiBaseUrl,
+      }),
     }
+  )
+);
 
-    return null;
-  },
-
-  getEffectiveModel: (toolId: string): string => {
-    const state = get();
-    return state.selectedModels[toolId] ?? "";
-  },
-
-  // ===== Legacy Actions =====
-
-  setApiKey: (key: string) =>
-    set({
-      apiKey: key,
-      apiKeyConfigured: key.length > 0,
-    }),
-
-  setApiBaseUrl: (url: string) => set({ apiBaseUrl: url }),
-
-  getModel: (toolId: string): string => {
-    return get().selectedModels[toolId] ?? "";
-  },
-
-  setModel: (toolId: string, model: string) =>
-    set((state) => ({
-      selectedModels: { ...state.selectedModels, [toolId]: model },
-    })),
-}));
-
-// Run migration on store initialization
+// Run migration on store initialization (for legacy data)
 const initialState = useSettingsStore.getState();
 const migratedState = migrateFromLegacy(initialState);
-if (migratedState.providers && Object.keys(migratedState.providers).length > 0) {
+if (
+  migratedState.providers &&
+  Object.keys(migratedState.providers).length > 0 &&
+  (!initialState.providers || Object.keys(initialState.providers).length === 0)
+) {
   useSettingsStore.setState(migratedState);
 }
