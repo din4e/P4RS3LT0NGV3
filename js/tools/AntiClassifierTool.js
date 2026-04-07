@@ -24,6 +24,7 @@ class AntiClassifierTool extends Tool {
             acInput: '',
             acOutput: '',
             acError: '',
+            acLexemeAnalysis: { totalFindings: 0, findings: [], summary: 'No Latin-root wording findings.' },
             acLoading: false,
             acModel: localStorage.getItem('ac-model') || 'anthropic/claude-sonnet-4.6',
             acModels: models,
@@ -48,6 +49,13 @@ class AntiClassifierTool extends Tool {
                 return (typeof window !== 'undefined' && window.ANTICLASSIFIER_SYSTEM_PROMPT)
                     ? window.ANTICLASSIFIER_SYSTEM_PROMPT
                     : '';
+            },
+            acRefreshLexemeAnalysis: function() {
+                if (typeof window === 'undefined' || !window.LexemeAnalysis || typeof window.LexemeAnalysis.analyze !== 'function') {
+                    this.acLexemeAnalysis = { totalFindings: 0, findings: [], summary: 'Lexeme analysis unavailable.' };
+                    return;
+                }
+                this.acLexemeAnalysis = window.LexemeAnalysis.analyze(this.acInput);
             },
             acRun: async function() {
                 const apiKey = this.acGetApiKey();
@@ -122,6 +130,39 @@ class AntiClassifierTool extends Tool {
             acCopyOutput: function() {
                 if (this.acOutput) {
                     this.copyToClipboard(this.acOutput);
+                }
+            },
+            acGetLexemeAnalysis: function() {
+                return this.acLexemeAnalysis || { totalFindings: 0, findings: [], summary: 'No Latin-root wording findings.' };
+            },
+            acNeutralizeInput: function() {
+                const analysis = this.acGetLexemeAnalysis();
+                if (!analysis.totalFindings || !window.LexemeAnalysis || typeof window.LexemeAnalysis.neutralizeText !== 'function') {
+                    return;
+                }
+                this.acInput = window.LexemeAnalysis.neutralizeText(this.acInput, analysis);
+                if (typeof this.showNotification === 'function') {
+                    this.showNotification('Applied neutral Latin-root rewrites', 'success', 'fas fa-seedling');
+                }
+            },
+            acApplyLexemeRewrite: function(term, rewrite) {
+                if (!term || !rewrite) {
+                    return;
+                }
+                const escapedTerm = String(term).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                this.acInput = this.acInput.replace(new RegExp('\\b' + escapedTerm + '\\b', 'i'), rewrite);
+                if (typeof this.showNotification === 'function') {
+                    this.showNotification('Applied rewrite for ' + term, 'success', 'fas fa-pen');
+                }
+            }
+        };
+    }
+
+    getVueWatchers() {
+        return {
+            acInput: function() {
+                if (typeof this.acRefreshLexemeAnalysis === 'function') {
+                    this.acRefreshLexemeAnalysis();
                 }
             }
         };

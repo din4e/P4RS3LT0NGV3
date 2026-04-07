@@ -3946,6 +3946,143 @@ html {
     text-underline-offset: 2px;
 }
 
+.lexeme-analysis-card {
+    margin: 0 0 14px 0;
+    padding: 14px;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    background:
+        linear-gradient(135deg, rgba(25, 118, 210, 0.08), rgba(102, 187, 106, 0.06)),
+        var(--main-bg-color);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+.lexeme-analysis-header {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.lexeme-analysis-header h4 {
+    margin: 2px 0 6px 0;
+    font-size: 1rem;
+}
+
+.lexeme-analysis-header p {
+    margin: 0;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.lexeme-analysis-kicker {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-color);
+}
+
+.lexeme-neutralize-btn {
+    align-self: center;
+}
+
+.lexeme-analysis-list {
+    display: grid;
+    gap: 10px;
+}
+
+.lexeme-analysis-item {
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+    padding: 12px;
+}
+
+.lexeme-analysis-item-top {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.lexeme-analysis-term-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.lexeme-term {
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.lexeme-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--input-border);
+    background: var(--secondary-bg);
+    color: var(--text-muted);
+    font-size: 0.74rem;
+    line-height: 1.4;
+}
+
+.lexeme-analysis-domain {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    text-align: right;
+}
+
+.lexeme-analysis-rationale {
+    margin: 0 0 10px 0;
+    line-height: 1.45;
+    color: var(--text-color);
+}
+
+.lexeme-analysis-rewrites {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.lexeme-rewrite-btn {
+    padding: 7px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(25, 118, 210, 0.35);
+    background: rgba(25, 118, 210, 0.08);
+    color: var(--text-color);
+    font: inherit;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.lexeme-rewrite-btn:hover {
+    transform: translateY(-1px);
+    background: rgba(25, 118, 210, 0.14);
+    box-shadow: 0 4px 10px rgba(25, 118, 210, 0.14);
+}
+
+@media (max-width: 720px) {
+    .lexeme-analysis-header,
+    .lexeme-analysis-item-top {
+        flex-direction: column;
+    }
+
+    .lexeme-analysis-domain {
+        text-align: left;
+    }
+
+    .lexeme-neutralize-btn {
+        width: 100%;
+    }
+}
+
 .bijection-section .bij-options.options-grid {
     margin-top: 0;
     margin-bottom: 8px;
@@ -5139,4 +5276,3 @@ html {
         margin-left: var(--spacing-md);
     }
 }
-

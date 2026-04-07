@@ -20,6 +20,7 @@ class BijectionTool extends Tool {
             bijectionIncludeExamples: true,
             bijectionAutoCopy: false,
             bijectionInput: '',
+            bijectionLexemeAnalysis: { totalFindings: 0, findings: [], summary: 'No Latin-root wording findings.' },
             bijectionMapping: {},
             bijectionOutputs: []
         };
@@ -27,6 +28,36 @@ class BijectionTool extends Tool {
 
     getVueMethods() {
         return {
+            bijectionRefreshLexemeAnalysis() {
+                if (typeof window === 'undefined' || !window.LexemeAnalysis || typeof window.LexemeAnalysis.analyze !== 'function') {
+                    this.bijectionLexemeAnalysis = { totalFindings: 0, findings: [], summary: 'Lexeme analysis unavailable.' };
+                    return;
+                }
+                this.bijectionLexemeAnalysis = window.LexemeAnalysis.analyze(this.bijectionInput);
+            },
+            bijectionGetLexemeAnalysis() {
+                return this.bijectionLexemeAnalysis || { totalFindings: 0, findings: [], summary: 'No Latin-root wording findings.' };
+            },
+            bijectionNeutralizeInput() {
+                const analysis = this.bijectionGetLexemeAnalysis();
+                if (!analysis.totalFindings || !window.LexemeAnalysis || typeof window.LexemeAnalysis.neutralizeText !== 'function') {
+                    return;
+                }
+                this.bijectionInput = window.LexemeAnalysis.neutralizeText(this.bijectionInput, analysis);
+                if (typeof this.showNotification === 'function') {
+                    this.showNotification('Applied neutral Latin-root rewrites', 'success', 'fas fa-seedling');
+                }
+            },
+            bijectionApplyLexemeRewrite(term, rewrite) {
+                if (!term || !rewrite) {
+                    return;
+                }
+                const escapedTerm = String(term).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                this.bijectionInput = this.bijectionInput.replace(new RegExp('\\b' + escapedTerm + '\\b', 'i'), rewrite);
+                if (typeof this.showNotification === 'function') {
+                    this.showNotification('Applied rewrite for ' + term, 'success', 'fas fa-pen');
+                }
+            },
             generateBijectionMapping() {
                 const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,!?';
                 const mapping = {};
@@ -226,6 +257,16 @@ Now, please translate and respond to this message in alphapr: ${encoded}`;
                 a.download = 'bijection_attacks.txt';
                 a.click();
                 setTimeout(() => URL.revokeObjectURL(url), 200);
+            }
+        };
+    }
+
+    getVueWatchers() {
+        return {
+            bijectionInput: function() {
+                if (typeof this.bijectionRefreshLexemeAnalysis === 'function') {
+                    this.bijectionRefreshLexemeAnalysis();
+                }
             }
         };
     }

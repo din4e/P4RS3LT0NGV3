@@ -21,6 +21,7 @@ class PromptCraftTool extends Tool {
             pcInput: '',
             pcOutput: '',
             pcOutputs: [],
+            pcLexemeAnalysis: { totalFindings: 0, findings: [], summary: 'No Latin-root wording findings.' },
             pcStrategy: 'rephrase',
             pcModel: localStorage.getItem('pc-model') || 'nousresearch/hermes-3-llama-3.1-405b',
             pcTemperature,
@@ -77,6 +78,13 @@ class PromptCraftTool extends Tool {
                     base = this.pcCustomInstruction;
                 }
                 return base;
+            },
+            pcRefreshLexemeAnalysis: function() {
+                if (typeof window === 'undefined' || !window.LexemeAnalysis || typeof window.LexemeAnalysis.analyze !== 'function') {
+                    this.pcLexemeAnalysis = { totalFindings: 0, findings: [], summary: 'Lexeme analysis unavailable.' };
+                    return;
+                }
+                this.pcLexemeAnalysis = window.LexemeAnalysis.analyze(this.pcInput);
             },
             pcRunMutation: async function() {
                 const apiKey = this.pcGetApiKey();
@@ -163,6 +171,39 @@ class PromptCraftTool extends Tool {
             },
             pcUseAsInput: function(text) {
                 this.pcInput = text;
+            },
+            pcGetLexemeAnalysis: function() {
+                return this.pcLexemeAnalysis || { totalFindings: 0, findings: [], summary: 'No Latin-root wording findings.' };
+            },
+            pcNeutralizeInput: function() {
+                const analysis = this.pcGetLexemeAnalysis();
+                if (!analysis.totalFindings || !window.LexemeAnalysis || typeof window.LexemeAnalysis.neutralizeText !== 'function') {
+                    return;
+                }
+                this.pcInput = window.LexemeAnalysis.neutralizeText(this.pcInput, analysis);
+                if (typeof this.showNotification === 'function') {
+                    this.showNotification('Applied neutral Latin-root rewrites', 'success', 'fas fa-seedling');
+                }
+            },
+            pcApplyLexemeRewrite: function(term, rewrite) {
+                if (!term || !rewrite) {
+                    return;
+                }
+                const escapedTerm = String(term).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                this.pcInput = this.pcInput.replace(new RegExp('\\b' + escapedTerm + '\\b', 'i'), rewrite);
+                if (typeof this.showNotification === 'function') {
+                    this.showNotification('Applied rewrite for ' + term, 'success', 'fas fa-pen');
+                }
+            }
+        };
+    }
+
+    getVueWatchers() {
+        return {
+            pcInput: function() {
+                if (typeof this.pcRefreshLexemeAnalysis === 'function') {
+                    this.pcRefreshLexemeAnalysis();
+                }
             }
         };
     }

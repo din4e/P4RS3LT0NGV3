@@ -12,6 +12,48 @@
                 </label>
             </div>
 
+            <div v-if="pcGetLexemeAnalysis().totalFindings" class="lexeme-analysis-card">
+                <div class="lexeme-analysis-header">
+                    <div>
+                        <div class="lexeme-analysis-kicker">Latin-Root Analysis</div>
+                        <h4>{{ pcGetLexemeAnalysis().summary }}</h4>
+                        <p>This input contains affix patterns that skew toward destructive or lethal framing. Use the generated rewrites to neutralize tone before mutation.</p>
+                    </div>
+                    <button type="button" class="action-button copy lexeme-neutralize-btn" @click="pcNeutralizeInput">
+                        <i class="fas fa-seedling"></i> Neutralize flagged terms
+                    </button>
+                </div>
+
+                <div class="lexeme-analysis-list">
+                    <div v-for="finding in pcGetLexemeAnalysis().findings" :key="finding.id" class="lexeme-analysis-item">
+                        <div class="lexeme-analysis-item-top">
+                            <div class="lexeme-analysis-term-group">
+                                <code class="lexeme-term">{{ finding.term }}</code>
+                                <span class="lexeme-chip">{{ finding.partOfSpeech }}</span>
+                                <span class="lexeme-chip">{{ finding.affixes.join(', ') }}</span>
+                                <span class="lexeme-chip">confidence {{ Math.round(finding.confidence * 100) }}%</span>
+                            </div>
+                            <div class="lexeme-analysis-domain">
+                                <span v-if="finding.semanticDomain"><strong>Domain:</strong> {{ finding.semanticDomain }}</span>
+                                <span v-else><strong>Domain:</strong> unresolved root</span>
+                            </div>
+                        </div>
+                        <p class="lexeme-analysis-rationale">{{ finding.rationale }}</p>
+                        <div class="lexeme-analysis-rewrites">
+                            <button
+                                v-for="rewrite in finding.rewrites"
+                                :key="finding.id + '-' + rewrite"
+                                type="button"
+                                class="lexeme-rewrite-btn"
+                                @click="pcApplyLexemeRewrite(finding.term, rewrite)"
+                            >
+                                {{ rewrite }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="pc-controls">
                 <div class="pc-strategies">
                     <div class="pc-label" id="pc-strategy-label">Strategy</div>

@@ -61,6 +61,7 @@ class TransformTool extends Tool {
         
         return {
             transformInput: 'Hello World',
+            transformLexemeAnalysis: { totalFindings: 0, findings: [], summary: 'No Latin-root wording findings.' },
             transformOutput: '',
             activeTransform: null,
             transforms: transforms,
@@ -249,6 +250,36 @@ class TransformTool extends Tool {
                     return 'textarea';
                 }
                 return 'text';
+            },
+            transformRefreshLexemeAnalysis: function() {
+                if (typeof window === 'undefined' || !window.LexemeAnalysis || typeof window.LexemeAnalysis.analyze !== 'function') {
+                    this.transformLexemeAnalysis = { totalFindings: 0, findings: [], summary: 'Lexeme analysis unavailable.' };
+                    return;
+                }
+                this.transformLexemeAnalysis = window.LexemeAnalysis.analyze(this.transformInput);
+            },
+            transformGetLexemeAnalysis: function() {
+                return this.transformLexemeAnalysis || { totalFindings: 0, findings: [], summary: 'No Latin-root wording findings.' };
+            },
+            transformNeutralizeInput: function() {
+                const analysis = this.transformGetLexemeAnalysis();
+                if (!analysis.totalFindings || !window.LexemeAnalysis || typeof window.LexemeAnalysis.neutralizeText !== 'function') {
+                    return;
+                }
+                this.transformInput = window.LexemeAnalysis.neutralizeText(this.transformInput, analysis);
+                if (typeof this.showNotification === 'function') {
+                    this.showNotification('Applied neutral Latin-root rewrites', 'success', 'fas fa-seedling');
+                }
+            },
+            transformApplyLexemeRewrite: function(term, rewrite) {
+                if (!term || !rewrite) {
+                    return;
+                }
+                const escapedTerm = String(term).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                this.transformInput = this.transformInput.replace(new RegExp('\\b' + escapedTerm + '\\b', 'i'), rewrite);
+                if (typeof this.showNotification === 'function') {
+                    this.showNotification('Applied rewrite for ' + term, 'success', 'fas fa-pen');
+                }
             },
             openTransformOptions: function(transform, event) {
                 if (event) {
@@ -623,6 +654,9 @@ class TransformTool extends Tool {
     getVueWatchers() {
         return {
             transformInput() {
+                if (typeof this.transformRefreshLexemeAnalysis === 'function') {
+                    this.transformRefreshLexemeAnalysis();
+                }
                 if (this.activeTransform && this.activeTab === 'transforms') {
                     const opts = this.getMergedOptionsForTransform(this.activeTransform.name);
                     this.transformOutput = this.activeTransform.func(this.transformInput, opts);
@@ -668,6 +702,5 @@ if (typeof module !== 'undefined' && module.exports) {
 } else {
     window.TransformTool = TransformTool;
 }
-
 
 

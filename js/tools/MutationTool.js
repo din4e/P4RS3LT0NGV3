@@ -15,6 +15,7 @@ class MutationTool extends Tool {
     getVueData() {
         return {
             fuzzerInput: '',
+            fuzzerLexemeAnalysis: { totalFindings: 0, findings: [], summary: 'No Latin-root wording findings.' },
             fuzzerCount: 20,
             fuzzerSeed: '',
             fuzzUseRandomMix: true,
@@ -30,6 +31,36 @@ class MutationTool extends Tool {
     
     getVueMethods() {
         return {
+            fuzzerRefreshLexemeAnalysis: function() {
+                if (typeof window === 'undefined' || !window.LexemeAnalysis || typeof window.LexemeAnalysis.analyze !== 'function') {
+                    this.fuzzerLexemeAnalysis = { totalFindings: 0, findings: [], summary: 'Lexeme analysis unavailable.' };
+                    return;
+                }
+                this.fuzzerLexemeAnalysis = window.LexemeAnalysis.analyze(this.fuzzerInput);
+            },
+            fuzzerGetLexemeAnalysis: function() {
+                return this.fuzzerLexemeAnalysis || { totalFindings: 0, findings: [], summary: 'No Latin-root wording findings.' };
+            },
+            fuzzerNeutralizeInput: function() {
+                const analysis = this.fuzzerGetLexemeAnalysis();
+                if (!analysis.totalFindings || !window.LexemeAnalysis || typeof window.LexemeAnalysis.neutralizeText !== 'function') {
+                    return;
+                }
+                this.fuzzerInput = window.LexemeAnalysis.neutralizeText(this.fuzzerInput, analysis);
+                if (typeof this.showNotification === 'function') {
+                    this.showNotification('Applied neutral Latin-root rewrites', 'success', 'fas fa-seedling');
+                }
+            },
+            fuzzerApplyLexemeRewrite: function(term, rewrite) {
+                if (!term || !rewrite) {
+                    return;
+                }
+                const escapedTerm = String(term).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                this.fuzzerInput = this.fuzzerInput.replace(new RegExp('\\b' + escapedTerm + '\\b', 'i'), rewrite);
+                if (typeof this.showNotification === 'function') {
+                    this.showNotification('Applied rewrite for ' + term, 'success', 'fas fa-pen');
+                }
+            },
             seededRandomFactory: function(seedStr) {
                 if (!seedStr) return Math.random;
                 let h = 1779033703 ^ seedStr.length;
@@ -106,6 +137,16 @@ class MutationTool extends Tool {
             }
         };
     }
+
+    getVueWatchers() {
+        return {
+            fuzzerInput: function() {
+                if (typeof this.fuzzerRefreshLexemeAnalysis === 'function') {
+                    this.fuzzerRefreshLexemeAnalysis();
+                }
+            }
+        };
+    }
 }
 
 // Export
@@ -114,6 +155,5 @@ if (typeof module !== 'undefined' && module.exports) {
 } else {
     window.MutationTool = MutationTool;
 }
-
 
 

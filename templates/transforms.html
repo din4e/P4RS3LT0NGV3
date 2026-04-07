@@ -21,6 +21,41 @@
                         />
                     </div>
 
+                    <div v-if="transformGetLexemeAnalysis().totalFindings" class="lexeme-analysis-card transform-lexeme-card">
+                        <div class="lexeme-analysis-header">
+                            <div>
+                                <div class="lexeme-analysis-kicker">Latin-Root Analysis</div>
+                                <h4>{{ transformGetLexemeAnalysis().summary }}</h4>
+                                <p>This shared input feeds transforms and inline translation. Neutralizing flagged wording here affects both paths.</p>
+                            </div>
+                            <button type="button" class="action-button copy lexeme-neutralize-btn" @click="transformNeutralizeInput">
+                                <i class="fas fa-seedling"></i> Neutralize flagged terms
+                            </button>
+                        </div>
+                        <div class="lexeme-analysis-list">
+                            <div v-for="finding in transformGetLexemeAnalysis().findings" :key="finding.id" class="lexeme-analysis-item">
+                                <div class="lexeme-analysis-item-top">
+                                    <div class="lexeme-analysis-term-group">
+                                        <code class="lexeme-term">{{ finding.term }}</code>
+                                        <span class="lexeme-chip">{{ finding.partOfSpeech }}</span>
+                                        <span class="lexeme-chip">{{ finding.family }}</span>
+                                        <span class="lexeme-chip">confidence {{ Math.round(finding.confidence * 100) }}%</span>
+                                    </div>
+                                    <div class="lexeme-analysis-domain">
+                                        <span v-if="finding.semanticDomain"><strong>Domain:</strong> {{ finding.semanticDomain }}</span>
+                                        <span v-else><strong>Domain:</strong> unresolved root</span>
+                                    </div>
+                                </div>
+                                <p class="lexeme-analysis-rationale">{{ finding.rationale }}</p>
+                                <div class="lexeme-analysis-rewrites">
+                                    <button v-for="rewrite in finding.rewrites" :key="finding.id + '-' + rewrite" type="button" class="lexeme-rewrite-btn" @click="transformApplyLexemeRewrite(finding.term, rewrite)">
+                                        {{ rewrite }}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="transform-section">
                         <div class="transform-category-legend">
                             <div class="legend-title">Categories:</div>
