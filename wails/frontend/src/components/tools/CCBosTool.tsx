@@ -6,7 +6,8 @@ import { useClipboard } from '@/hooks/useClipboard'
 import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/utils'
-import { callOpenRouter, isWailsMode } from '@/lib/wails'
+import { isWailsMode } from '@/lib/wails'
+import { chatCompletion, hasProvider } from '@/lib/services/chatCompletion'
 import { Scroll, Sparkles, Languages, FlaskConical, Play, ChevronDown, ChevronRight, Copy, Check, Loader2, AlertCircle } from 'lucide-react'
 
 // ── Dimension Configuration ────────────────────────────────────────────────────
@@ -47,14 +48,16 @@ const DIMENSION_OPTIONS = {
 } as const
 
 const GENERATION_MODELS = [
-  { id: 'deepseek/deepseek-chat', name: 'DeepSeek Chat', note: '推荐' },
-  { id: 'openai/gpt-4o', name: 'GPT-4o', note: 'OpenAI' },
-  { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet', note: 'Anthropic' },
+  { id: 'deepseek-chat', name: 'DeepSeek Chat', provider: 'deepseek', note: '推荐' },
+  { id: 'glm-4-plus', name: 'GLM-4 Plus', provider: 'zhipu', note: '智谱' },
+  { id: 'openai/gpt-4o', name: 'GPT-4o', provider: 'openrouter', note: 'OpenAI' },
+  { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet', provider: 'openrouter', note: 'Anthropic' },
 ]
 
 const EVALUATION_MODELS = [
-  { id: 'openai/gpt-4o', name: 'GPT-4o', note: '评估模型' },
-  { id: 'deepseek/deepseek-chat', name: 'DeepSeek Chat', note: '评估' },
+  { id: 'openai/gpt-4o', name: 'GPT-4o', provider: 'openrouter', note: '评估模型' },
+  { id: 'deepseek-chat', name: 'DeepSeek Chat', provider: 'deepseek', note: '评估' },
+  { id: 'glm-4-plus', name: 'GLM-4 Plus', provider: 'zhipu', note: '评估' },
 ]
 
 // ── helpers ──────────────────────────────────────────────────────────
@@ -64,51 +67,20 @@ async function callModel(
   messages: Array<Record<string, string>>,
   temperature: number,
   maxTokens: number,
+  providerId?: string,
 ): Promise<string> {
-  if (isWailsMode()) {
-    const result = await callOpenRouter(model, messages as any, temperature, maxTokens)
-    const parsed = JSON.parse(result)
-    if (parsed.error) {
-      throw new Error(typeof parsed.error === 'string' ? parsed.error : parsed.error.message || 'API error')
-    }
-    if (parsed.choices?.[0]?.message?.content) {
-      return parsed.choices[0].message.content.trim()
-    }
-    throw new Error('Empty response from model')
+  try {
+    const result = await chatCompletion({
+      model,
+      messages: messages as Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
+      temperature,
+      maxTokens,
+      providerId,
+    })
+    return result.trim()
+  } catch (err: any) {
+    throw new Error(err.message || 'API call failed')
   }
-
-  // Direct fetch fallback
-  const apiKey = localStorage.getItem('openrouter_api_key') || ''
-  if (!apiKey) throw new Error('No API key found')
-
-  const baseUrl = localStorage.getItem('api_base_url') || ''
-  const endpoint = baseUrl
-    ? (baseUrl.endsWith('/chat/completions') ? baseUrl : baseUrl.replace(/\/$/, '') + '/chat/completions')
-    : 'https://openrouter.ai/api/v1/chat/completions'
-
-  const resp = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': window.location.origin,
-      'X-Title': 'P4RS3LT0NGV3 CC-BOS',
-    },
-    body: JSON.stringify({ model, messages, temperature, max_tokens: maxTokens }),
-  })
-
-  if (resp.status === 401) throw new Error('Invalid API key')
-  if (resp.status === 402) throw new Error('Insufficient credits')
-  if (resp.status === 403) throw new Error('Access denied')
-
-  const data = await resp.json()
-  if (data.error) {
-    throw new Error(typeof data.error === 'string' ? data.error : data.error.message || 'API error')
-  }
-  if (data.choices?.[0]?.message?.content) {
-    return data.choices[0].message.content.trim()
-  }
-  throw new Error('Empty response from model')
 }
 
 function extractContent(startMarker: string, text: string): string | null {
@@ -162,8 +134,8 @@ export default function Tool() {
   const [translatedResponse, setTranslatedResponse] = useState('')
   const [rawResponse, setRawResponse] = useState('')
   const [model, setModel] = useState(() => {
-    if (typeof window !== 'undefined') return localStorage.getItem('ccbos-model') || 'deepseek/deepseek-chat'
-    return 'deepseek/deepseek-chat'
+    if (typeof window !== 'undefined') return localStorage.getItem('ccbos-model') || 'deepseek-chat'
+    return 'deepseek-chat'
   })
   const [evalModel, setEvalModel] = useState(() => {
     if (typeof window !== 'undefined') return localStorage.getItem('ccbos-eval-model') || 'openai/gpt-4o'
@@ -203,12 +175,14 @@ export default function Tool() {
     setTranslatedResponse('')
     setRawResponse('')
 
+    // Track best result outside try block so we can show it on error
+    let bestQuery = ''
+    let globalBestScore = 0
+
     try {
       // Initialize population
       const population = initializePopulation(populationSize)
       let bestFly = population[0]
-      let bestQuery = ''
-      let globalBestScore = 0
       let stagnationCount = 0
 
       for (let iter = 0; iter < maxIterations; iter++) {
@@ -228,40 +202,53 @@ export default function Tool() {
             },
           ])
 
-          const query = await generateQuery(fly, intention, originalQuery, model)
-          const evalResult = await evaluateQuery(query, intention, evalModel)
+          try {
+            const query = await generateQuery(fly, intention, originalQuery, model)
+            const evalResult = await evaluateQuery(query, intention, evalModel)
 
-          if (evalResult.score > globalBestScore) {
-            globalBestScore = evalResult.score
-            bestFly = fly
-            bestQuery = query
-            stagnationCount = 0
-          } else {
-            stagnationCount++
-          }
+            if (evalResult.score > globalBestScore) {
+              globalBestScore = evalResult.score
+              bestFly = fly
+              bestQuery = query
+              stagnationCount = 0
+            } else {
+              stagnationCount++
+            }
 
-          setProgress((prev) => [
-            ...prev.slice(0, -1),
-            {
-              iteration: iter + 1,
-              score: evalResult.score,
-              status: evalResult.score > globalBestScore * 0.9 ? 'completed' : 'stagnation',
-              message: evalResult.analysis,
-            },
-          ])
-
-          // Early stopping
-          if (globalBestScore >= earlyStoppingThreshold) {
             setProgress((prev) => [
-              ...prev,
+              ...prev.slice(0, -1),
               {
                 iteration: iter + 1,
-                score: globalBestScore,
-                status: 'completed',
-                message: `达到成功阈值 ${earlyStoppingThreshold}，提前停止`,
+                score: evalResult.score,
+                status: evalResult.score > globalBestScore * 0.9 ? 'completed' : 'stagnation',
+                message: evalResult.analysis,
               },
             ])
-            break
+
+            // Early stopping
+            if (globalBestScore >= earlyStoppingThreshold) {
+              setProgress((prev) => [
+                ...prev,
+                {
+                  iteration: iter + 1,
+                  score: globalBestScore,
+                  status: 'completed',
+                  message: `达到成功阈值 ${earlyStoppingThreshold}，提前停止`,
+                },
+              ])
+              break
+            }
+          } catch (flyErr: any) {
+            // Log error for this fly but continue with others
+            setProgress((prev) => [
+              ...prev.slice(0, -1),
+              {
+                iteration: iter + 1,
+                score: 0,
+                status: 'stagnation',
+                message: `错误: ${flyErr.message}`,
+              },
+            ])
           }
         }
 
@@ -280,12 +267,22 @@ export default function Tool() {
         setBestScore(globalBestScore)
 
         // Translate to English
-        const translatePrompt = `请将以下文言文翻译成英文:\n\n${bestQuery}`
-        const translated = await callModel(model, [{ role: 'user', content: translatePrompt }], 0.3, 1000)
-        setTranslatedResponse(translated)
+        try {
+          const translatePrompt = `请将以下文言文翻译成英文:\n\n${bestQuery}`
+          const translated = await callModel(model, [{ role: 'user', content: translatePrompt }], 0.3, 1000)
+          setTranslatedResponse(translated)
+        } catch (translateErr: any) {
+          // Translation failed, but we still have the result
+          setTranslatedResponse(`翻译失败: ${translateErr.message}`)
+        }
       }
     } catch (err: any) {
       setError(err.message || 'An error occurred during optimization')
+      // Still show the best result found so far
+      if (bestQuery) {
+        setGeneratedQuery(bestQuery)
+        setBestScore(globalBestScore)
+      }
     } finally {
       setLoading(false)
     }
@@ -540,7 +537,7 @@ export default function Tool() {
         <button
           type="button"
           onClick={runFullOptimization}
-          disabled={loading || !intention.trim() || !originalQuery.trim() || (!apiKeyConfigured && !isWailsMode())}
+          disabled={loading || !intention.trim() || !originalQuery.trim() || (!hasProvider() && !isWailsMode())}
           className={btnPrimary}
         >
           {loading ? (

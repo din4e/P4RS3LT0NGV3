@@ -38,7 +38,9 @@
     "output": "Output",
     "apply": "Apply",
     "reset": "Reset",
-    "noResults": "No results"
+    "noResults": "No results",
+    "default": "Default",
+    "selectModel": "Select Model"
   },
   "header": {
     "history": "History",
@@ -123,6 +125,34 @@
     "apiKeyPlaceholder": "sk-or-...",
     "saveKey": "Save Key",
     "stegOptions": "Steganography Options",
-    "bitOrder": "Bit Order"
+    "bitOrder": "Bit Order",
+    "providers": {
+      "myProviders": "My Providers",
+      "addProvider": "Add Provider",
+      "editProvider": "Edit Provider",
+      "deleteProvider": "Delete Provider",
+      "setDefault": "Set as Default",
+      "refreshModels": "Refresh Models",
+      "modelCount": "{count} models",
+      "noModelsFetched": "No models fetched",
+      "noProviders": "No providers configured yet",
+      "addFirstProvider": "Add Your First Provider",
+      "confirmDelete": "Are you sure you want to delete this provider?",
+      "presets": "Quick Presets",
+      "name": "Provider Name",
+      "namePlaceholder": "e.g., My OpenRouter",
+      "baseUrl": "Base URL",
+      "apiKey": "API Key",
+      "showKey": "Show Key",
+      "hideKey": "Hide Key",
+      "testConnection": "Test Connection",
+      "testSuccess": "Connection successful!",
+      "testErrorMissing": "Please enter base URL and API key",
+      "testErrorUnknown": "Connection failed",
+      "save": "Save",
+      "cancel": "Cancel",
+      "noModels": "No models available",
+      "noProvider": "No provider configured"
+    }
   }
 }

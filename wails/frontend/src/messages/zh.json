@@ -38,7 +38,9 @@
     "output": "输出",
     "apply": "应用",
     "reset": "重置",
-    "noResults": "无结果"
+    "noResults": "无结果",
+    "default": "默认",
+    "selectModel": "选择模型"
   },
   "header": {
     "history": "历史记录",
@@ -123,6 +125,34 @@
     "apiKeyPlaceholder": "sk-or-...",
     "saveKey": "保存密钥",
     "stegOptions": "隐写选项",
-    "bitOrder": "位序"
+    "bitOrder": "位序",
+    "providers": {
+      "myProviders": "我的提供商",
+      "addProvider": "添加提供商",
+      "editProvider": "编辑提供商",
+      "deleteProvider": "删除提供商",
+      "setDefault": "设为默认",
+      "refreshModels": "刷新模型",
+      "modelCount": "{count} 个模型",
+      "noModelsFetched": "未获取模型",
+      "noProviders": "尚未配置提供商",
+      "addFirstProvider": "添加第一个提供商",
+      "confirmDelete": "确定要删除此提供商吗？",
+      "presets": "快速预设",
+      "name": "提供商名称",
+      "namePlaceholder": "例如：我的 OpenRouter",
+      "baseUrl": "基础地址",
+      "apiKey": "API 密钥",
+      "showKey": "显示密钥",
+      "hideKey": "隐藏密钥",
+      "testConnection": "测试连接",
+      "testSuccess": "连接成功！",
+      "testErrorMissing": "请输入基础地址和 API 密钥",
+      "testErrorUnknown": "连接失败",
+      "save": "保存",
+      "cancel": "取消",
+      "noModels": "无可用模型",
+      "noProvider": "未配置提供商"
+    }
   }
 }

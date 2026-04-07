@@ -1,14 +1,49 @@
 {
-  "$schema": "https://wails.io/schemas/config.v2.json",
   "name": "P4RS3LT0NGV3",
-  "outputfilename": "P4RS3LT0NGV3",
-  "version": "0.2.0",
-  "frontend:install": "npm install",
   "frontend:build": "npm run build",
+  "frontend:install": "npm install",
+  "frontend:dev": "",
+  "frontend:dev:build": "",
+  "frontend:dev:install": "",
   "frontend:dev:watcher": "npm run dev",
   "frontend:dev:serverUrl": "auto",
-  "author": {
+  "wailsjsdir": "D:/Projects/TtPublic/P4RS3LT0NGV3/wails/frontend",
+  "version": "0.2.0",
+  "projectdir": "D:\\Projects\\TtPublic\\P4RS3LT0NGV3\\wails",
+  "build:dir": "build",
+  "build:tags": "",
+  "outputfilename": "P4RS3LT0NGV3.exe",
+  "OutputType": "",
+  "Platform": "",
+  "runNonNativeBuildHooks": false,
+  "postBuildHooks": null,
+  "preBuildHooks": null,
+  "Author": {
     "name": "din4e",
     "email": "410691529@qq.com"
+  },
+  "Info": {
+    "companyName": "P4RS3LT0NGV3",
+    "productName": "P4RS3LT0NGV3",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright.........",
+    "comments": "Built using Wails (https://wails.io)",
+    "fileAssociations": null,
+    "protocols": null
+  },
+  "debounceMS": 100,
+  "devServer": "localhost:34115",
+  "appargs": "",
+  "nsisType": "multiple",
+  "obfuscated": false,
+  "garbleargs": "",
+  "frontend:dir": "frontend",
+  "viteServerTimeout": 10,
+  "bindings": {
+    "ts_generation": {
+      "prefix": "",
+      "suffix": "",
+      "outputType": ""
+    }
   }
 }
