@@ -1,0 +1,74 @@
+name: Release on tag
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & upload (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.x"
+          cache: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "wails/frontend/package-lock.json"
+
+      - name: Install Linux deps (Wails/WebKit)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libgtk-3-dev \
+            libwebkit2gtk-4.1-dev
+
+      - name: Install frontend deps
+        working-directory: wails/frontend
+        run: npm ci
+
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.11.0
+
+      - name: Build app
+        working-directory: wails
+        run: wails build
+
+      - name: Package (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "wails/build/bin/*" -DestinationPath "P4RS3LT0NGV3-${{ github.ref_name }}-windows.zip"
+
+      - name: Package (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          cd wails/build/bin
+          tar -czf ../../../../P4RS3LT0NGV3-${{ github.ref_name }}-${{ runner.os }}.tar.gz .
+
+      - name: Create release & upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            P4RS3LT0NGV3-${{ github.ref_name }}-windows.zip
+            P4RS3LT0NGV3-${{ github.ref_name }}-Linux.tar.gz
+            P4RS3LT0NGV3-${{ github.ref_name }}-macOS.tar.gz
+          fail_on_unmatched_files: false
