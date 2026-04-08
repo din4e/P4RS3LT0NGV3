@@ -20,6 +20,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Debug workspace
+        shell: bash
+        run: |
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+          pwd
+          ls -la
+          echo "--- wails dir ---"
+          ls -la ./wails || true
+          echo "--- wails/frontend dir ---"
+          ls -la ./wails/frontend || true
+
       - uses: actions/setup-go@v5
         with:
           go-version: "1.22.x"
@@ -49,8 +60,12 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.11.0
 
       - name: Build app
-        working-directory: wails
-        run: wails build
+        shell: bash
+        run: |
+          cd wails
+          pwd
+          ls -la
+          wails build
 
       - name: Package (Windows)
         if: runner.os == 'Windows'
