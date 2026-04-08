@@ -42,7 +42,8 @@ jobs:
 
       - name: Install frontend deps
         working-directory: wails/frontend
-        run: npm ci
+        run: |
+          npm ci --no-audit --no-fund || npm install --no-audit --no-fund
 
       - name: Install Wails CLI
         run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.11.0
