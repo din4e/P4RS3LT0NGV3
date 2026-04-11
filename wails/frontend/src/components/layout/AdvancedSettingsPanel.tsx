@@ -484,11 +484,11 @@ export function AdvancedSettingsPanel() {
         {/* Version Info Footer */}
         <div className="shrink-0 px-4 py-3 border-t border-[var(--border)] bg-[var(--muted)]/30">
           <div className="flex items-center justify-between text-xs text-[var(--muted-foreground)]">
-            <span className="font-medium">P4RS3LT0NGV3</span>
-            <span>v0.2.0</span>
+            <span className="font-medium">P4RS3LT0NGV3 GUI</span>
+            <span>v0.2.2</span>
           </div>
           <div className="mt-1 text-[10px] text-[var(--muted-foreground)]/70">
-            © 2025 din4e
+            © 2026 din4e
           </div>
         </div>
       </aside>

@@ -1,13 +1,15 @@
 // @ts-nocheck
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { useClipboard } from '@/hooks/useClipboard'
 import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/utils'
 import { isWailsMode } from '@/lib/wails'
 import { chatCompletion, hasProvider } from '@/lib/services/chatCompletion'
+
+const TOOL_ID = 'ccbos'
 import { Scroll, Sparkles, Languages, FlaskConical, Play, ChevronDown, ChevronRight, Copy, Check, Loader2, AlertCircle } from 'lucide-react'
 
 // ── Dimension Configuration ────────────────────────────────────────────────────
@@ -47,14 +49,14 @@ const DIMENSION_OPTIONS = {
   },
 } as const
 
-const GENERATION_MODELS = [
+const FALLBACK_GEN_MODELS = [
   { id: 'deepseek-chat', name: 'DeepSeek Chat', provider: 'deepseek', note: '推荐' },
   { id: 'glm-4-plus', name: 'GLM-4 Plus', provider: 'zhipu', note: '智谱' },
   { id: 'openai/gpt-4o', name: 'GPT-4o', provider: 'openrouter', note: 'OpenAI' },
   { id: 'anthropic/claude-3.5-sonnet', name: 'Claude 3.5 Sonnet', provider: 'openrouter', note: 'Anthropic' },
 ]
 
-const EVALUATION_MODELS = [
+const FALLBACK_EVAL_MODELS = [
   { id: 'openai/gpt-4o', name: 'GPT-4o', provider: 'openrouter', note: '评估模型' },
   { id: 'deepseek-chat', name: 'DeepSeek Chat', provider: 'deepseek', note: '评估' },
   { id: 'glm-4-plus', name: 'GLM-4 Plus', provider: 'zhipu', note: '评估' },
@@ -76,6 +78,7 @@ async function callModel(
       temperature,
       maxTokens,
       providerId,
+      toolId: TOOL_ID,
     })
     return result.trim()
   } catch (err: any) {
@@ -127,6 +130,25 @@ export default function Tool() {
   const { copyToClipboard } = useClipboard()
   const addHistoryItem = useCopyHistoryStore((s) => s.addItem)
   const apiKeyConfigured = useSettingsStore((s) => s.apiKeyConfigured)
+  const getEffectiveProvider = useSettingsStore((s) => s.getEffectiveProvider)
+
+  const provider = useMemo(() => getEffectiveProvider(TOOL_ID), [getEffectiveProvider])
+  const hasProviderConfigured = !!provider
+
+  // Build model options from provider or fallback
+  const genModelOptions = useMemo(() => {
+    if (provider?.models?.length) {
+      return provider.models.map((id) => ({ id, name: id.split('/').pop() || id, provider: provider.name, note: '' }))
+    }
+    return FALLBACK_GEN_MODELS
+  }, [provider])
+
+  const evalModelOptions = useMemo(() => {
+    if (provider?.models?.length) {
+      return provider.models.map((id) => ({ id, name: id.split('/').pop() || id, provider: provider.name, note: '' }))
+    }
+    return FALLBACK_EVAL_MODELS
+  }, [provider])
 
   const [intention, setIntention] = useState('')
   const [originalQuery, setOriginalQuery] = useState('')
@@ -459,9 +481,9 @@ export default function Tool() {
               }
             }}
           >
-            {GENERATION_MODELS.map((m) => (
+            {genModelOptions.map((m) => (
               <option key={m.id} value={m.id}>
-                {m.name} ({m.note})
+                {m.name}{m.note ? ` (${m.note})` : ` (${m.provider})`}
               </option>
             ))}
           </select>
@@ -480,9 +502,9 @@ export default function Tool() {
               }
             }}
           >
-            {EVALUATION_MODELS.map((m) => (
+            {evalModelOptions.map((m) => (
               <option key={m.id} value={m.id}>
-                {m.name} ({m.note})
+                {m.name}{m.note ? ` (${m.note})` : ` (${m.provider})`}
               </option>
             ))}
           </select>
