@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { useAppStore } from '@/stores/useAppStore'
 import { useSettingsStore } from '@/stores/useSettingsStore'
-import { getAPIKeyStatus } from '@/lib/wails'
+import { getAPIKeyStatus, isWailsMode } from '@/lib/wails'
 
 const THEME_STORAGE_KEY = 'theme'
 const THEME_DARK = 'dark'
@@ -126,6 +126,36 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
 
     return () => cleanup?.()
+  }, [])
+
+  // --- Intercept external links and open in system browser ------------------
+  useEffect(() => {
+    if (!isWailsMode()) return
+
+    const handler = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement).closest('a')
+      if (!target) return
+
+      const href = target.getAttribute('href')
+      if (!href) return
+
+      // Only intercept http/https external links
+      if (!href.startsWith('http://') && !href.startsWith('https://')) return
+
+      e.preventDefault()
+
+      // Call Go backend to open in system browser
+      try {
+        const go = (window as unknown as { go?: { main?: { App?: { OpenInBrowser?: (url: string) => void } } } })
+        go.go?.main?.App?.OpenInBrowser?.(href)
+      } catch {
+        // Fallback: open in new tab
+        window.open(href, '_blank')
+      }
+    }
+
+    document.addEventListener('click', handler)
+    return () => document.removeEventListener('click', handler)
   }, [])
 
   return <>{children}</>

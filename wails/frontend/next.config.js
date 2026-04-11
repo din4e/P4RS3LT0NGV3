@@ -9,10 +9,8 @@ const nextConfig = {
   // Parent repo (P4RS3LT0NGV3) also has package-lock.json; without this, Next
   // picks the wrong workspace root and file tracing can stall or take extreme time.
   outputFileTracingRoot: path.join(__dirname),
-  // Windows: disable experimental tracing to avoid 0xc0000005 crash
-  experimental: {
-    outputFileTracing: false,
-  },
+  // Next.js 15+ no longer supports disabling tracing via outputFileTracing: false.
+  // Use outputFileTracingRoot / outputFileTracingExcludes if tracing mis-resolves paths.
   images: { unoptimized: true },
   trailingSlash: true,
   assetPrefix: process.env.NODE_ENV === 'production' ? './' : '',

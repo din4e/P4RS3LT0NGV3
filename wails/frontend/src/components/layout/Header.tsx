@@ -140,7 +140,7 @@ export function Header() {
         </HeaderButton>
 
         <a
-          href="https://github.com/elder-plinius/P4RS3LT0NGV3"
+          href="https://github.com/din4e/P4RS3LT0NGV3"
           target="_blank"
           rel="noopener noreferrer"
           title={t('github')}
