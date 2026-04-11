@@ -1,13 +1,15 @@
 // @ts-nocheck
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { useClipboard } from '@/hooks/useClipboard'
 import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/utils'
 import { OPENROUTER_MODELS } from '@/lib/utils/openrouterModels'
-import { callOpenRouter as wailsCallOpenRouter, isWailsMode } from '@/lib/wails'
+import { chatCompletion, isWailsMode } from '@/lib/services/chatCompletion'
+
+const TOOL_ID = 'promptcraft'
 
 // ── strategy data ────────────────────────────────────────────────────
 
@@ -42,61 +44,7 @@ const SYSTEM_PROMPTS: Record<string, string> = {
   custom: '',
 }
 
-// ── helpers ──────────────────────────────────────────────────────────
-
-async function callOpenRouter(
-  model: string,
-  messages: Array<Record<string, string>>,
-  temperature: number,
-  maxTokens: number,
-): Promise<string> {
-  if (isWailsMode()) {
-    const result = await wailsCallOpenRouter(
-      model,
-      messages as any,
-      temperature,
-      maxTokens,
-    )
-    // callOpenRouter returns the content directly
-    const parsed = JSON.parse(result)
-    if (parsed.error) {
-      throw new Error(typeof parsed.error === 'string' ? parsed.error : parsed.error.message || 'API error')
-    }
-    if (parsed.choices?.[0]?.message?.content) {
-      return parsed.choices[0].message.content.trim()
-    }
-    throw new Error('Empty response from model')
-  }
-
-  // Direct fetch fallback
-  const apiKey = localStorage.getItem('openrouter_api_key') || ''
-  if (!apiKey) throw new Error('No API key found. Set your OpenRouter key in Settings.')
-
-  const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': window.location.href || 'https://p4rs3lt0ngv3.app',
-      'X-Title': 'P4RS3LT0NGV3 PromptCraft',
-    },
-    body: JSON.stringify({ model, messages, temperature, max_tokens: maxTokens }),
-  })
-
-  if (resp.status === 401) throw new Error('Invalid API key. Check your OpenRouter key in Settings.')
-  if (resp.status === 402) throw new Error('Insufficient credits on your OpenRouter account.')
-  if (resp.status === 403) throw new Error('Access denied. Your key may lack permissions for this model.')
-
-  const data = await resp.json()
-  if (data.error) {
-    const msg = typeof data.error === 'string' ? data.error : data.error.message || 'API error'
-    throw new Error(msg)
-  }
-  if (data.choices?.[0]?.message?.content) {
-    return data.choices[0].message.content.trim()
-  }
-  throw new Error('Empty response from model')
-}
+const FALLBACK_MODEL = 'nousresearch/hermes-3-llama-3.1-405b'
 
 // ── component ────────────────────────────────────────────────────────
 
@@ -104,13 +52,25 @@ export default function Tool() {
   const { copyToClipboard } = useClipboard()
   const addHistoryItem = useCopyHistoryStore((s) => s.addItem)
   const apiKeyConfigured = useSettingsStore((s) => s.apiKeyConfigured)
+  const getEffectiveProvider = useSettingsStore((s) => s.getEffectiveProvider)
+
+  const provider = useMemo(() => getEffectiveProvider(TOOL_ID), [getEffectiveProvider])
+  const hasProviderConfigured = !!provider
+
+  // Build model options from provider or fallback to hardcoded list
+  const modelOptions = useMemo(() => {
+    if (provider?.models?.length) {
+      return provider.models.map((id) => ({ id, name: id.split('/').pop() || id, provider: provider.name }))
+    }
+    return OPENROUTER_MODELS.map((m) => ({ id: m.id, name: m.name, provider: m.provider }))
+  }, [provider])
 
   const [input, setInput] = useState('')
   const [strategy, setStrategy] = useState('rephrase')
   const [customInstruction, setCustomInstruction] = useState('')
   const [model, setModel] = useState(() => {
-    if (typeof window !== 'undefined') return localStorage.getItem('pc-model') || 'nousresearch/hermes-3-llama-3.1-405b'
-    return 'nousresearch/hermes-3-llama-3.1-405b'
+    if (typeof window !== 'undefined') return localStorage.getItem('pc-model') || FALLBACK_MODEL
+    return FALLBACK_MODEL
   })
   const [temperature, setTemperature] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -124,6 +84,12 @@ export default function Tool() {
   const [error, setError] = useState('')
   const [outputs, setOutputs] = useState<string[]>([])
   const [copied, setCopied] = useState<string | null>(null)
+
+  // Ensure model is valid when provider changes
+  const effectiveModel = useMemo(() => {
+    if (modelOptions.some((m) => m.id === model)) return model
+    return modelOptions[0]?.id || FALLBACK_MODEL
+  }, [model, modelOptions])
 
   const flash = useCallback(
     (key: string, text: string) => {
@@ -140,8 +106,8 @@ export default function Tool() {
       setError('Enter a prompt to mutate.')
       return
     }
-    if (!apiKeyConfigured && !isWailsMode()) {
-      setError('No API key found. Set your OpenRouter key in Settings first.')
+    if (!apiKeyConfigured && !isWailsMode() && !hasProviderConfigured) {
+      setError('No API key found. Configure a provider in Settings first.')
       return
     }
 
@@ -150,7 +116,7 @@ export default function Tool() {
     setOutputs([])
 
     try {
-      localStorage.setItem('pc-model', model)
+      localStorage.setItem('pc-model', effectiveModel)
       localStorage.setItem('pc-temperature', String(temperature))
     } catch { /* ignore */ }
 
@@ -164,15 +130,16 @@ export default function Tool() {
 
     try {
       const requests = Array.from({ length: maxVariants }, () =>
-        callOpenRouter(
-          model,
-          [
+        chatCompletion({
+          model: effectiveModel,
+          messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: input },
           ],
-          temp,
-          2048,
-        ),
+          temperature: temp,
+          maxTokens: 2048,
+          toolId: TOOL_ID,
+        }),
       )
 
       const results = await Promise.allSettled(requests)
@@ -190,7 +157,7 @@ export default function Tool() {
     } finally {
       setLoading(false)
     }
-  }, [input, strategy, customInstruction, model, temperature, count, apiKeyConfigured])
+  }, [input, strategy, customInstruction, effectiveModel, temperature, count, apiKeyConfigured, hasProviderConfigured])
 
   const copyAll = useCallback(() => {
     if (outputs.length === 0) return
@@ -235,7 +202,9 @@ export default function Tool() {
           PromptCraft
         </h2>
         <p className="text-sm text-[var(--muted-foreground)] mt-1">
-          AI-assisted prompt mutation via OpenRouter
+          {hasProviderConfigured
+            ? `AI-assisted prompt mutation via ${provider.name}`
+            : 'AI-assisted prompt mutation via OpenRouter'}
         </p>
       </div>
 
@@ -292,13 +261,18 @@ export default function Tool() {
       {/* Options */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         <div className="flex flex-col gap-1">
-          <label className={labelCls}>Model</label>
+          <label className={labelCls}>
+            Model {hasProviderConfigured && <span className="text-[var(--primary)]">({provider.name})</span>}
+          </label>
           <select
             className={selectCls}
-            value={model}
-            onChange={(e) => setModel(e.target.value)}
+            value={effectiveModel}
+            onChange={(e) => {
+              setModel(e.target.value)
+              localStorage.setItem('pc-model', e.target.value)
+            }}
           >
-            {OPENROUTER_MODELS.map((m) => (
+            {modelOptions.map((m) => (
               <option key={m.id} value={m.id}>
                 {m.name} ({m.provider})
               </option>
@@ -391,7 +365,7 @@ export default function Tool() {
       {outputs.length === 0 && !loading && !error && (
         <div className="flex flex-col items-center gap-2 py-8 text-[var(--muted-foreground)]">
           <p>Enter a prompt and choose a mutation strategy.</p>
-          <p className="text-xs">Uses OpenRouter API &mdash; requires an API key set in Settings.</p>
+          <p className="text-xs">Uses configured provider &mdash; requires a provider set in Settings.</p>
         </div>
       )}
     </div>

@@ -1,12 +1,14 @@
 // @ts-nocheck
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { useClipboard } from '@/hooks/useClipboard'
 import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/utils'
-import { callOpenRouter, isWailsMode } from '@/lib/wails'
+import { chatCompletion, isWailsMode } from '@/lib/services/chatCompletion'
+
+const TOOL_ID = 'translate'
 
 // ── data ─────────────────────────────────────────────────────────────
 
@@ -46,6 +48,7 @@ const MAIN_LANGS: LangEntry[] = [
 ]
 
 const EXOTIC_LANGS: LangEntry[] = [
+  { code: 'lzh', name: 'Classical Chinese', flag: 'CN', label: '文言文' },
   { code: 'la', name: 'Latin', flag: 'VA', label: 'Dead' },
   { code: 'sa', name: 'Sanskrit', flag: 'IN', label: 'Ancient' },
   { code: 'grc', name: 'Ancient Greek', flag: 'GR', label: 'Ancient' },
@@ -58,7 +61,7 @@ const EXOTIC_LANGS: LangEntry[] = [
   { code: 'sw', name: 'Swahili', flag: 'KE', label: 'African' },
 ]
 
-const TRANSLATE_MODELS = [
+const FALLBACK_MODELS = [
   { id: 'google/gemma-3-27b-it', name: 'Gemma 3 27B', note: 'Best quality' },
   { id: 'google/gemma-3-12b-it', name: 'Gemma 3 12B', note: 'Fast + good' },
   { id: 'google/gemma-3-4b-it', name: 'Gemma 3 4B', note: 'Fastest' },
@@ -82,71 +85,53 @@ function getFlag(code: string): string {
   return FLAG_MAP[code] || '\uD83C\uDF10'
 }
 
-// ── helpers ──────────────────────────────────────────────────────────
-
-async function callTranslate(
-  model: string,
-  messages: Array<Record<string, string>>,
-  temperature: number,
-  maxTokens: number,
-): Promise<string> {
-  if (isWailsMode()) {
-    const result = await callOpenRouter(model, messages as any, temperature, maxTokens)
-    const parsed = JSON.parse(result)
-    if (parsed.error) {
-      throw new Error(typeof parsed.error === 'string' ? parsed.error : parsed.error.message || 'API error')
-    }
-    if (parsed.choices?.[0]?.message?.content) {
-      return parsed.choices[0].message.content.trim()
-    }
-    throw new Error('No translation returned.')
-  }
-
-  const apiKey = localStorage.getItem('openrouter_api_key') || ''
-  if (!apiKey) throw new Error('No API key. Set your OpenRouter key in Settings.')
-
-  const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      'HTTP-Referer': window.location.href || 'https://p4rs3lt0ngv3.app',
-      'X-Title': 'P4RS3LT0NGV3 Translate',
-    },
-    body: JSON.stringify({ model, messages, temperature, max_tokens: maxTokens }),
-  })
-
-  if (resp.status === 401) throw new Error('Invalid API key.')
-  if (resp.status === 402) throw new Error('Insufficient credits.')
-  if (resp.status === 403) throw new Error('Access denied.')
-
-  const data = await resp.json()
-  if (data.error) {
-    throw new Error(typeof data.error === 'string' ? data.error : data.error.message || 'API error')
-  }
-  if (data.choices?.[0]?.message?.content) {
-    return data.choices[0].message.content.trim()
-  }
-  throw new Error('No translation returned.')
-}
-
 // ── component ────────────────────────────────────────────────────────
 
 export default function Tool() {
   const { copyToClipboard } = useClipboard()
   const addHistoryItem = useCopyHistoryStore((s) => s.addItem)
   const apiKeyConfigured = useSettingsStore((s) => s.apiKeyConfigured)
+  const getEffectiveProvider = useSettingsStore((s) => s.getEffectiveProvider)
+  const getEffectiveModel = useSettingsStore((s) => s.getEffectiveModel)
+  const setModel = useSettingsStore((s) => s.setModel)
+
+  const provider = useMemo(() => getEffectiveProvider('translate'), [getEffectiveProvider])
+  const hasProvider = !!provider
+
+  // Build model options from provider or fallback
+  const modelOptions = useMemo(() => {
+    if (provider?.models?.length) {
+      return provider.models.map((id) => ({ id, name: id.split('/').pop() || id, note: '' }))
+    }
+    return FALLBACK_MODELS
+  }, [provider])
 
   const [input, setInput] = useState('')
   const [output, setOutput] = useState('')
-  const [model, setModel] = useState(() => {
-    if (typeof window !== 'undefined') return localStorage.getItem('translate-model') || 'google/gemma-3-27b-it'
-    return 'google/gemma-3-27b-it'
+  const [model, setLocalModel] = useState(() => {
+    if (typeof window === 'undefined') return FALLBACK_MODELS[0].id
+    const saved = localStorage.getItem('translate-model')
+    if (saved) return saved
+    // Try to use the system-configured model for this tool
+    const sysModel = useSettingsStore.getState().getEffectiveModel('translate')
+    return sysModel || FALLBACK_MODELS[0].id
   })
   const [loading, setLoading] = useState(false)
   const [activeLang, setActiveLang] = useState('')
   const [error, setError] = useState('')
   const [copied, setCopied] = useState(false)
+
+  // Ensure model is valid when provider changes
+  const effectiveModel = useMemo(() => {
+    if (modelOptions.some((m) => m.id === model)) return model
+    return modelOptions[0]?.id || ''
+  }, [model, modelOptions])
+
+  const handleModelChange = useCallback((newModel: string) => {
+    setLocalModel(newModel)
+    localStorage.setItem('translate-model', newModel)
+    setModel('translate', newModel)
+  }, [setModel])
 
   const flash = useCallback(
     async (text: string) => {
@@ -165,8 +150,8 @@ export default function Tool() {
       setError('Enter text to translate.')
       return
     }
-    if (!apiKeyConfigured && !isWailsMode()) {
-      setError('No API key. Set your OpenRouter key in Settings.')
+    if (!apiKeyConfigured && !isWailsMode() && !hasProvider) {
+      setError('No API key. Configure a provider in Settings.')
       return
     }
 
@@ -175,9 +160,7 @@ export default function Tool() {
     setError('')
     setOutput('')
 
-    try {
-      localStorage.setItem('translate-model', model)
-    } catch { /* ignore */ }
+    localStorage.setItem('translate-model', effectiveModel)
 
     const prompt =
       `You are a professional English (en) to ${lang.name} (${lang.code}) translator. ` +
@@ -187,18 +170,19 @@ export default function Tool() {
       `Please translate the following English text into ${lang.name}:\n\n${input}`
 
     try {
-      const result = await callTranslate(
-        model,
-        [
+      const result = await chatCompletion({
+        model: effectiveModel,
+        messages: [
           {
             role: 'system',
             content: 'You are a professional translator using the TranslateGemma translation protocol. Output ONLY the translated text. No explanations, notes, preamble, or alternatives. Preserve all formatting, line breaks, and structure.',
           },
           { role: 'user', content: prompt },
         ],
-        0.2,
-        4096,
-      )
+        temperature: 0.2,
+        maxTokens: 4096,
+        toolId: TOOL_ID,
+      })
       setOutput(result)
       flash(result)
     } catch (e: any) {
@@ -207,7 +191,7 @@ export default function Tool() {
       setLoading(false)
       setActiveLang('')
     }
-  }, [input, model, apiKeyConfigured, flash])
+  }, [input, effectiveModel, apiKeyConfigured, hasProvider, flash])
 
   // ── styles ─────────────────────────────────────────────────────
 
@@ -222,15 +206,6 @@ export default function Tool() {
     'bg-[var(--muted)] text-[var(--foreground)] border border-[var(--border)] ' +
     'focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]'
 
-  const btnPrimary =
-    'inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-medium ' +
-    'bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 transition-opacity'
-
-  const btnSecondary =
-    'inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium ' +
-    'bg-[var(--secondary)] text-[var(--secondary-foreground)] border border-[var(--border)] ' +
-    'hover:bg-[var(--accent)] transition-colors'
-
   const labelCls = 'text-xs font-medium text-[var(--muted-foreground)] mb-1'
 
   // ── render ─────────────────────────────────────────────────────
@@ -243,7 +218,9 @@ export default function Tool() {
           Translate
         </h2>
         <p className="text-sm text-[var(--muted-foreground)] mt-1">
-          AI-powered translation via OpenRouter
+          {hasProvider
+            ? `AI-powered translation via ${provider.name}`
+            : 'AI-powered translation via OpenRouter'}
         </p>
       </div>
 
@@ -261,10 +238,14 @@ export default function Tool() {
 
       {/* Model */}
       <div className="flex flex-col gap-1">
-        <label className={labelCls}>Model</label>
-        <select className={selectCls} value={model} onChange={(e) => setModel(e.target.value)}>
-          {TRANSLATE_MODELS.map((m) => (
-            <option key={m.id} value={m.id}>{m.name} ({m.note})</option>
+        <label className={labelCls}>
+          Model {hasProvider && <span className="text-[var(--primary)]">({provider.name})</span>}
+        </label>
+        <select className={selectCls} value={effectiveModel} onChange={(e) => handleModelChange(e.target.value)}>
+          {modelOptions.map((m) => (
+            <option key={m.id} value={m.id}>
+              {m.name}{m.note ? ` (${m.note})` : ''}
+            </option>
           ))}
         </select>
       </div>

@@ -48,6 +48,9 @@ export interface ChatCompletionOptions {
 
   /** Provider ID override (optional - uses default if not specified) */
   providerId?: string;
+
+  /** Tool ID for provider resolution (defaults to "ccbos" for backward compat) */
+  toolId?: string;
 }
 
 /**
@@ -56,14 +59,14 @@ export interface ChatCompletionOptions {
 export async function chatCompletion(
   options: ChatCompletionOptions
 ): Promise<string> {
-  const { model, messages, temperature = 0.7, maxTokens = 2000, providerId } = options;
+  const { model, messages, temperature = 0.7, maxTokens = 2000, providerId, toolId = "ccbos" } = options;
 
   const state = useSettingsStore.getState();
 
   // Resolve provider
   let provider = providerId
     ? state.providers[providerId]
-    : state.getEffectiveProvider("ccbos");
+    : state.getEffectiveProvider(toolId);
 
   // Fallback to legacy settings if no provider found
   if (!provider && state.apiKey) {
