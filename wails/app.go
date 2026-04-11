@@ -401,6 +401,13 @@ func (a *App) SaveFileDialog(filename string, content string) error {
 	return nil
 }
 
+// ---------- External Browser ----------
+
+// OpenInBrowser opens the given URL in the system's default browser.
+func (a *App) OpenInBrowser(url string) {
+	runtime.BrowserOpenURL(a.ctx, url)
+}
+
 // ---------- Clipboard ----------
 
 // ReadClipboard reads the current text content from the OS clipboard.

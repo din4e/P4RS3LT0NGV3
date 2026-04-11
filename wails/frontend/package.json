@@ -1,6 +1,6 @@
 {
   "name": "p4rs3lt0ngv3-wails-frontend",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "private": true,
   "scripts": {
     "dev": "next dev",
