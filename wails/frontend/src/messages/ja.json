@@ -105,6 +105,23 @@
     "selectCarrier": "キャリアEmojiを選択",
     "invisibleText": "不可視テキスト"
   },
+  "anticlassifier": {
+    "title": "アンチクラシファイア",
+    "description": "コンテンツフィルターのロバスト性をテストする構文的プロンプト書き換え",
+    "inputLabel": "書き換えるプロンプト",
+    "inputPlaceholder": "分析・書き換えするプロンプトを入力...",
+    "rewriteButton": "プロンプトを書き換え",
+    "analyzing": "分析中...",
+    "copyOutput": "出力をコピー",
+    "result": "結果",
+    "maxTokens": "最大トークン数",
+    "temperature": "温度：{value}",
+    "emptyState": "プロンプトを入力し、書き換えをクリックしてください。",
+    "emptyHint": "設定済みプロバイダーを使用 — 設定でプロバイダーを構成してください。",
+    "errorNoInput": "分析するプロンプトを入力してください。",
+    "errorNoProvider": "APIキーが見つかりません。設定でプロバイダーを構成してください。",
+    "errorRequestFailed": "リクエストに失敗しました。"
+  },
   "promptcraft": {
     "inputPlaceholder": "変異させるプロンプトを入力...",
     "strategy": "戦略",

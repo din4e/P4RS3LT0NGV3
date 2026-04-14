@@ -2,6 +2,7 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { useClipboard } from '@/hooks/useClipboard'
 import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -16,6 +17,8 @@ const FALLBACK_MODEL = 'anthropic/claude-sonnet-4.6'
 // ── component ────────────────────────────────────────────────────────
 
 export default function Tool() {
+  const t = useTranslations('anticlassifier')
+  const tc = useTranslations('common')
   const { copyToClipboard } = useClipboard()
   const addHistoryItem = useCopyHistoryStore((s) => s.addItem)
   const apiKeyConfigured = useSettingsStore((s) => s.apiKeyConfigured)
@@ -71,11 +74,11 @@ export default function Tool() {
 
   const run = useCallback(async () => {
     if (!input.trim()) {
-      setError('Enter a prompt to analyze.')
+      setError(t('errorNoInput'))
       return
     }
     if (!apiKeyConfigured && !isWailsMode() && !hasProviderConfigured) {
-      setError('No API key found. Configure a provider in Settings first.')
+      setError(t('errorNoProvider'))
       return
     }
 
@@ -101,11 +104,11 @@ export default function Tool() {
       })
       setOutput(result)
     } catch (e: any) {
-      setError(e.message || 'Request failed.')
+      setError(e.message || t('errorRequestFailed'))
     } finally {
       setLoading(false)
     }
-  }, [input, effectiveModel, temperature, maxTokens, apiKeyConfigured, hasProviderConfigured])
+  }, [input, effectiveModel, temperature, maxTokens, apiKeyConfigured, hasProviderConfigured, t])
 
   // ── styles ─────────────────────────────────────────────────────
 
@@ -124,100 +127,107 @@ export default function Tool() {
     'inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-medium ' +
     'bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90 transition-opacity disabled:opacity-50'
 
+  const panelCls = 'rounded-lg border border-[var(--border)] bg-[var(--card)] p-4 sm:p-5'
   const labelCls = 'text-xs font-medium text-[var(--muted-foreground)] mb-1'
 
   // ── render ─────────────────────────────────────────────────────
 
   return (
-    <div className="flex flex-col gap-6 p-4 ">
+    <div className="flex flex-col gap-4 sm:gap-5">
       {/* Header */}
-      <div>
+      <div className={panelCls}>
         <h2 className="text-lg font-semibold text-[var(--foreground)]">
-          Anti-Classifier
+          {t('title')}
         </h2>
         <p className="text-sm text-[var(--muted-foreground)] mt-1">
-          {hasProviderConfigured
-            ? `Syntactic prompt rewriting via ${provider.name} to test content filter robustness`
-            : 'Syntactic prompt rewriting via OpenRouter to test content filter robustness'}
+          {t('description')}
         </p>
       </div>
 
-      {/* Input */}
-      <div className="flex flex-col gap-1">
-        <label className={labelCls}>Prompt to rewrite</label>
-        <textarea
-          className={cn(inputCls, 'min-h-[80px] resize-y')}
-          placeholder="Enter a prompt to analyze and rewrite..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          rows={4}
-        />
-      </div>
-
-      {/* Controls */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="flex flex-col gap-1">
-          <label className={labelCls}>
-            Model {hasProviderConfigured && <span className="text-[var(--primary)]">({provider.name})</span>}
-          </label>
-          <select
-            className={selectCls}
-            value={effectiveModel}
-            onChange={(e) => {
-              setModel(e.target.value)
-              localStorage.setItem('ac-model', e.target.value)
-            }}
-          >
-            {modelOptions.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.name} ({m.provider})
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className={labelCls}>Max Tokens</label>
-          <input
-            className={inputCls}
-            type="number"
-            min={100}
-            max={32000}
-            value={maxTokens}
-            onChange={(e) => setMaxTokens(Math.max(100, Number(e.target.value)))}
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className={labelCls}>Temperature: {temperature.toFixed(2)}</label>
-          <input
-            type="range"
-            min={0}
-            max={2}
-            step={0.05}
-            value={temperature}
-            onChange={(e) => setTemperature(Number(e.target.value))}
-            className="accent-[var(--primary)]"
-          />
-        </div>
-      </div>
-
-      {/* Action */}
-      <div className="flex flex-wrap gap-2">
-        <button className={btnPrimary} onClick={run} disabled={loading}>
-          {loading ? 'Analyzing...' : 'Rewrite Prompt'}
-        </button>
-        {output && (
-          <button
-            className={cn(
-              'inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium border transition-colors',
-              copied
-                ? 'bg-green-500/10 text-green-500 border-green-500/30'
-                : 'bg-[var(--secondary)] text-[var(--secondary-foreground)] border-[var(--border)] hover:bg-[var(--accent)]',
+      <div className="grid gap-4 lg:grid-cols-5">
+        {/* Input + Action */}
+        <section className={cn(panelCls, 'lg:col-span-3')}>
+          <div className="flex flex-col gap-1">
+            <label className={labelCls}>{t('inputLabel')}</label>
+            <textarea
+              className={cn(inputCls, 'min-h-[140px] resize-y')}
+              placeholder={t('inputPlaceholder')}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              rows={6}
+            />
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button className={btnPrimary} onClick={run} disabled={loading}>
+              {loading ? t('analyzing') : t('rewriteButton')}
+            </button>
+            {output && (
+              <button
+                className={cn(
+                  'inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium border transition-colors',
+                  copied
+                    ? 'bg-green-500/10 text-green-500 border-green-500/30'
+                    : 'bg-[var(--secondary)] text-[var(--secondary-foreground)] border-[var(--border)] hover:bg-[var(--accent)]',
+                )}
+                onClick={() => flash(output)}
+              >
+                {copied ? tc('copied') : t('copyOutput')}
+              </button>
             )}
-            onClick={() => flash(output)}
-          >
-            {copied ? 'Copied!' : 'Copy Output'}
-          </button>
-        )}
+          </div>
+        </section>
+
+        {/* Controls */}
+        <section className={cn(panelCls, 'lg:col-span-2')}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
+            <div className="flex flex-col gap-1">
+              <label className={labelCls}>
+                {tc('model')} {hasProviderConfigured && <span className="text-[var(--primary)]">({provider.name})</span>}
+              </label>
+              <select
+                className={selectCls}
+                value={effectiveModel}
+                onChange={(e) => {
+                  setModel(e.target.value)
+                  localStorage.setItem('ac-model', e.target.value)
+                }}
+              >
+                {modelOptions.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name} ({m.provider})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className={labelCls}>{t('maxTokens')}</label>
+              <input
+                className={inputCls}
+                type="number"
+                min={100}
+                max={32000}
+                value={maxTokens}
+                onChange={(e) => setMaxTokens(Math.max(100, Number(e.target.value)))}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className={labelCls}>{t('temperature', { value: temperature.toFixed(2) })}</label>
+              <input
+                type="range"
+                min={0}
+                max={2}
+                step={0.05}
+                value={temperature}
+                onChange={(e) => setTemperature(Number(e.target.value))}
+                className="accent-[var(--primary)]"
+              />
+              <div className="flex justify-between text-[11px] text-[var(--muted-foreground)]">
+                <span>0.00</span>
+                <span>2.00</span>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
 
       {/* Error */}
@@ -229,12 +239,12 @@ export default function Tool() {
 
       {/* Output */}
       {output && (
-        <div className="flex flex-col gap-1">
-          <label className={labelCls}>Result</label>
+        <div className={cn(panelCls, 'flex flex-col gap-1')}>
+          <label className={labelCls}>{t('result')}</label>
           <textarea
             readOnly
             value={output}
-            className={cn(inputCls, 'min-h-[120px] resize-y')}
+            className={cn(inputCls, 'min-h-[220px] resize-y')}
             rows={6}
           />
         </div>
@@ -242,9 +252,9 @@ export default function Tool() {
 
       {/* Empty state */}
       {!output && !loading && !error && (
-        <div className="flex flex-col items-center gap-2 py-8 text-[var(--muted-foreground)]">
-          <p>Enter a prompt and click Rewrite to transform it.</p>
-          <p className="text-xs">Uses configured provider &mdash; requires a provider set in Settings.</p>
+        <div className={cn(panelCls, 'flex flex-col items-center gap-2 py-8 text-center text-[var(--muted-foreground)]')}>
+          <p>{t('emptyState')}</p>
+          <p className="text-xs">{t('emptyHint')}</p>
         </div>
       )}
     </div>

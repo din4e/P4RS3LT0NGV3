@@ -105,6 +105,23 @@
     "selectCarrier": "选择载体 Emoji",
     "invisibleText": "隐形文本"
   },
+  "anticlassifier": {
+    "title": "反分类器",
+    "description": "语法改写提示词以测试内容过滤器的鲁棒性",
+    "inputLabel": "待改写提示词",
+    "inputPlaceholder": "输入要分析和改写的提示词...",
+    "rewriteButton": "改写提示词",
+    "analyzing": "分析中...",
+    "copyOutput": "复制输出",
+    "result": "结果",
+    "maxTokens": "最大 Token 数",
+    "temperature": "温度：{value}",
+    "emptyState": "输入提示词并点击改写以进行转换。",
+    "emptyHint": "使用已配置的提供商 — 需要在设置中配置提供商。",
+    "errorNoInput": "请输入要分析的提示词。",
+    "errorNoProvider": "未找到 API 密钥，请先在设置中配置提供商。",
+    "errorRequestFailed": "请求失败。"
+  },
   "promptcraft": {
     "inputPlaceholder": "输入要变异的提示词...",
     "strategy": "策略",

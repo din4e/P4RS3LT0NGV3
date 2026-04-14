@@ -105,6 +105,23 @@
     "selectCarrier": "Select a carrier emoji",
     "invisibleText": "Invisible Text"
   },
+  "anticlassifier": {
+    "title": "Anti-Classifier",
+    "description": "Syntactic prompt rewriting to test content filter robustness",
+    "inputLabel": "Prompt to rewrite",
+    "inputPlaceholder": "Enter a prompt to analyze and rewrite...",
+    "rewriteButton": "Rewrite Prompt",
+    "analyzing": "Analyzing...",
+    "copyOutput": "Copy Output",
+    "result": "Result",
+    "maxTokens": "Max Tokens",
+    "temperature": "Temperature: {value}",
+    "emptyState": "Enter a prompt and click Rewrite to transform it.",
+    "emptyHint": "Uses configured provider — requires a provider set in Settings.",
+    "errorNoInput": "Enter a prompt to analyze.",
+    "errorNoProvider": "No API key found. Configure a provider in Settings first.",
+    "errorRequestFailed": "Request failed."
+  },
   "promptcraft": {
     "inputPlaceholder": "Enter your prompt to mutate...",
     "strategy": "Strategy",
