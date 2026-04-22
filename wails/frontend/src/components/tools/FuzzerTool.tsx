@@ -132,7 +132,7 @@ export default function Tool() {
   )
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-4">
       {/* Mode Toggle */}
       <div className="flex items-center gap-1 rounded-lg bg-[var(--muted)] p-1">
         <button

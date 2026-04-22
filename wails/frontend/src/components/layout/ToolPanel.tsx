@@ -24,6 +24,12 @@ const TOOL_COMPONENT_MAP: Record<string, React.LazyExoticComponent<React.Compone
   translate: lazy(() => import('@/components/tools/TranslateTool')),
   anticlassifier: lazy(() => import('@/components/tools/AntiClassifierTool')),
   ccbos: lazy(() => import('@/components/tools/CCBosTool')),
+  guardrails: lazy(() => import('@/components/tools/GuardrailsTool')),
+  mutator: lazy(() => import('@/components/tools/MutatorTool')),
+  multiturn: lazy(() => import('@/components/tools/MultiTurnTool')),
+  injection: lazy(() => import('@/components/tools/InjectionDetectorTool')),
+  benchmark: lazy(() => import('@/components/tools/BenchmarkTool')),
+  refinement: lazy(() => import('@/components/tools/RefinementTool')),
 }
 
 // Track which tools have been loaded (for preloading)

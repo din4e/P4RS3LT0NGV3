@@ -430,7 +430,7 @@ export default function Tool() {
   }
 
   return (
-    <div className="flex flex-col gap-6 p-4 ">
+    <div className="flex flex-col gap-4">
       {/* Header */}
       <div>
         <h2 className="text-lg font-semibold text-[var(--foreground)] flex items-center gap-2.5">

@@ -16,6 +16,12 @@ import {
   Languages,
   Bot,
   Scroll,
+  ShieldCheck,
+  GitBranch,
+  MessagesSquare,
+  Search,
+  BarChart3,
+  Drill,
   type LucideIcon,
 } from 'lucide-react'
 import { useAppStore, TOOL_CONFIGS, type ToolConfig } from '@/stores/useAppStore'
@@ -36,6 +42,12 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Languages,
   Bot,
   Scroll,
+  ShieldCheck,
+  GitBranch,
+  MessagesSquare,
+  Search,
+  BarChart3,
+  Drill,
 }
 
 export function TabBar() {

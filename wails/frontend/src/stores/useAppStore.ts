@@ -29,6 +29,12 @@ export const TOOL_CONFIGS: ToolConfig[] = [
   { id: 'translate', nameKey: 'translate', icon: 'Languages', shortcut: 'L', order: 11 },
   { id: 'anticlassifier', nameKey: 'anticlassifier', icon: 'Bot', shortcut: 'A', order: 12 },
   { id: 'ccbos', nameKey: 'ccbos', icon: 'Scroll', shortcut: 'C', order: 13 },
+  { id: 'guardrails', nameKey: 'guardrails', icon: 'ShieldCheck', shortcut: 'R', order: 14 },
+  { id: 'mutator', nameKey: 'mutator', icon: 'GitBranch', shortcut: 'M', order: 15 },
+  { id: 'multiturn', nameKey: 'multiturn', icon: 'MessagesSquare', shortcut: 'U', order: 16 },
+  { id: 'injection', nameKey: 'injection', icon: 'Search', shortcut: 'I', order: 17 },
+  { id: 'benchmark', nameKey: 'benchmark', icon: 'BarChart3', shortcut: 'N', order: 18 },
+  { id: 'refinement', nameKey: 'refinement', icon: 'Drill', shortcut: 'E', order: 19 },
 ]
 
 /**
