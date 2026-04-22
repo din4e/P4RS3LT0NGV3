@@ -1,6 +1,6 @@
 {
   "app": {
-    "title": "P4RS3LT0NGV3",
+    "title": "P4RS3LT0NGV3(GUI)",
     "subtitle": "通用文本转换器与隐写工具"
   },
   "tools": {
@@ -251,19 +251,43 @@
     "noResults": "输入提示词并开始精炼攻击。"
   },
   "promptcraft": {
+    "description": "通过 LLM 进行 AI 辅助提示词工坊与变异",
+    "descriptionWithProvider": "通过 {provider} 进行 AI 辅助提示词工坊与变异",
+    "sourcePrompt": "源提示词",
     "inputPlaceholder": "输入要变异的提示词...",
     "strategy": "策略",
     "rephrase": "改写",
     "obfuscate": "混淆",
-    "roleplay": "角色扮演",
-    "multilingual": "多语言",
+    "roleplay": "角色扮演包裹",
+    "multilingual": "多语言混合",
     "expand": "扩展",
     "compress": "压缩",
     "metaphor": "隐喻",
     "fragment": "碎片化",
     "custom": "自定义",
+    "customInstruction": "自定义变异指令",
+    "customInstructionPlaceholder": "描述如何变异这个提示词...",
     "variants": "变体",
-    "generate": "生成"
+    "generate": "生成",
+    "generating": "生成中...",
+    "mutatePrompt": "变异提示词",
+    "copyAll": "复制全部",
+    "use": "使用",
+    "useAsInput": "作为新的输入",
+    "emptyState": "输入提示词并选择一种变异策略。",
+    "emptyHint": "使用已配置提供商 — 需要在设置中先配置提供商。",
+    "errorNoInput": "请输入要变异的提示词。",
+    "errorNoProvider": "未找到 API 密钥，请先在设置中配置提供商。",
+    "errorRequestFailed": "请求失败",
+    "desc_rephrase": "换词改写，保持原意不变",
+    "desc_obfuscate": "通过间接表达混淆真实含义",
+    "desc_roleplay": "嵌入虚构场景进行包裹",
+    "desc_multilingual": "混合多种语言表达",
+    "desc_expand": "扩展更多细节和上下文",
+    "desc_compress": "压缩至最少 Token 数",
+    "desc_metaphor": "通过隐喻和类比表达",
+    "desc_fragment": "拆分为零散碎片片段",
+    "desc_custom": "自定义变异指令"
   },
   "settings": {
     "apiKeyLabel": "OpenRouter API 密钥",

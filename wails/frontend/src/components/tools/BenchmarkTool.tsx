@@ -87,7 +87,7 @@ export default function Tool() {
 
   return (
     <div className="flex flex-col gap-4 sm:gap-5">
-      <div className={panelCls}>
+      <div>
         <h2 className="text-lg font-semibold text-[var(--foreground)]">{t('title')}</h2>
         <p className="text-sm text-[var(--muted-foreground)] mt-1">{t('description')}</p>
       </div>

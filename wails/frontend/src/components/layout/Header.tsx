@@ -37,10 +37,6 @@ import { cn } from '@/lib/utils'
 const LANGUAGES = [
   { code: 'en', name: 'English', nativeName: 'English' },
   { code: 'zh', name: 'Chinese', nativeName: '中文' },
-  { code: 'ja', name: 'Japanese', nativeName: '日本語' },
-  { code: 'es', name: 'Spanish', nativeName: 'Español' },
-  { code: 'fr', name: 'French', nativeName: 'Français' },
-  { code: 'de', name: 'German', nativeName: 'Deutsch' },
 ]
 
 export function Header() {

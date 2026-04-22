@@ -2,6 +2,7 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
 import { useClipboard } from '@/hooks/useClipboard'
 import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -49,6 +50,17 @@ const FALLBACK_MODEL = 'nousresearch/hermes-3-llama-3.1-405b'
 // ── component ────────────────────────────────────────────────────────
 
 export default function Tool() {
+  const t = useTranslations('promptcraft')
+  const tc = useTranslations('common')
+  const locale = useLocale()
+  const isZhLocale = locale.startsWith('zh')
+  const tt = useCallback((key: string, fallback: string, values?: Record<string, unknown>) => {
+    if (t.has(key)) {
+      return values ? t(key, values) : t(key)
+    }
+    return fallback
+  }, [t])
+
   const { copyToClipboard } = useClipboard()
   const addHistoryItem = useCopyHistoryStore((s) => s.addItem)
   const apiKeyConfigured = useSettingsStore((s) => s.apiKeyConfigured)
@@ -103,11 +115,11 @@ export default function Tool() {
 
   const runMutation = useCallback(async () => {
     if (!input.trim()) {
-      setError('Enter a prompt to mutate.')
+      setError(t('errorNoInput'))
       return
     }
     if (!apiKeyConfigured && !isWailsMode() && !hasProviderConfigured) {
-      setError('No API key found. Configure a provider in Settings first.')
+      setError(t('errorNoProvider'))
       return
     }
 
@@ -148,16 +160,16 @@ export default function Tool() {
         if (result.status === 'fulfilled') {
           out.push(result.value)
         } else {
-          setError(result.reason?.message || 'Request failed')
+          setError(result.reason?.message || t('errorRequestFailed'))
         }
       }
       setOutputs(out)
     } catch (e: any) {
-      setError(e.message || 'Request failed')
+      setError(e.message || t('errorRequestFailed'))
     } finally {
       setLoading(false)
     }
-  }, [input, strategy, customInstruction, effectiveModel, temperature, count, apiKeyConfigured, hasProviderConfigured])
+  }, [input, strategy, customInstruction, effectiveModel, temperature, count, apiKeyConfigured, hasProviderConfigured, t])
 
   const copyAll = useCallback(() => {
     if (outputs.length === 0) return
@@ -203,17 +215,17 @@ export default function Tool() {
         </h2>
         <p className="text-sm text-[var(--muted-foreground)] mt-1">
           {hasProviderConfigured
-            ? `AI-assisted prompt mutation via ${provider.name}`
-            : 'AI-assisted prompt mutation via OpenRouter'}
+            ? tt('descriptionWithProvider', `AI-assisted prompt crafting & mutation via ${provider.name}`, { provider: provider.name })
+            : tt('description', 'AI-assisted prompt crafting & mutation via OpenRouter')}
         </p>
       </div>
 
       {/* Input */}
       <div className="flex flex-col gap-1">
-        <label className={labelCls}>Source Prompt</label>
+        <label className={labelCls}>{tt('sourcePrompt', 'Source Prompt')}</label>
         <textarea
           className={cn(inputCls, 'min-h-[80px] resize-y')}
-          placeholder="Enter your prompt to mutate..."
+          placeholder={tt('inputPlaceholder', 'Enter your prompt to mutate...')}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           rows={4}
@@ -222,14 +234,14 @@ export default function Tool() {
 
       {/* Strategy grid */}
       <div className="flex flex-col gap-2">
-        <label className={labelCls}>Strategy</label>
+        <label className={labelCls}>{tt('strategy', 'Strategy')}</label>
         <div className="flex flex-wrap gap-1.5">
           {STRATEGIES.map((s) => (
             <button
               key={s.id}
               type="button"
               onClick={() => setStrategy(s.id)}
-              title={s.desc}
+              title={tt(`desc_${s.id}`, s.desc)}
               className={cn(
                 'inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-md border transition-colors',
                 strategy === s.id
@@ -238,7 +250,7 @@ export default function Tool() {
               )}
             >
               <span>{s.icon}</span>
-              <span>{s.name}</span>
+              <span>{isZhLocale ? `${tt(s.id, s.name)} (${s.name})` : tt(s.id, s.name)}</span>
             </button>
           ))}
         </div>
@@ -247,10 +259,10 @@ export default function Tool() {
       {/* Custom instruction */}
       {strategy === 'custom' && (
         <div className="flex flex-col gap-1">
-          <label className={labelCls}>Custom Mutation Instruction</label>
+          <label className={labelCls}>{tt('customInstruction', 'Custom Mutation Instruction')}</label>
           <textarea
             className={cn(inputCls, 'min-h-[60px] resize-y')}
-            placeholder="Describe how to mutate the prompt..."
+            placeholder={tt('customInstructionPlaceholder', 'Describe how to mutate the prompt...')}
             value={customInstruction}
             onChange={(e) => setCustomInstruction(e.target.value)}
             rows={2}
@@ -262,7 +274,7 @@ export default function Tool() {
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         <div className="flex flex-col gap-1">
           <label className={labelCls}>
-            Model {hasProviderConfigured && <span className="text-[var(--primary)]">({provider.name})</span>}
+            {tc('model')} {hasProviderConfigured && <span className="text-[var(--primary)]">({provider.name})</span>}
           </label>
           <select
             className={selectCls}
@@ -280,7 +292,7 @@ export default function Tool() {
           </select>
         </div>
         <div className="flex flex-col gap-1">
-          <label className={labelCls}>Variants</label>
+          <label className={labelCls}>{tt('variants', 'Variants')}</label>
           <input
             className={inputCls}
             type="number"
@@ -292,7 +304,7 @@ export default function Tool() {
         </div>
         <div className="flex flex-col gap-1">
           <label className={labelCls}>
-            Temperature: {temperature.toFixed(2)}
+            {tc('temperature')}: {temperature.toFixed(2)}
           </label>
           <input
             type="range"
@@ -309,11 +321,11 @@ export default function Tool() {
       {/* Actions */}
       <div className="flex flex-wrap gap-2">
         <button className={btnPrimary} onClick={runMutation} disabled={loading}>
-          {loading ? 'Generating...' : 'Mutate Prompt'}
+          {loading ? tt('generating', 'Generating...') : tt('mutatePrompt', 'Mutate Prompt')}
         </button>
         {outputs.length > 0 && (
           <button className={btnSecondary} onClick={copyAll}>
-            {copied === 'all' ? 'Copied!' : 'Copy All'}
+            {copied === 'all' ? tc('copied') : tt('copyAll', 'Copy All')}
           </button>
         )}
       </div>
@@ -341,15 +353,15 @@ export default function Tool() {
                   <button
                     className="px-2 py-0.5 text-xs rounded border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--accent)] transition-colors text-[var(--foreground)]"
                     onClick={() => useAsInput(out)}
-                    title="Use as new input"
+                    title={tt('useAsInput', 'Use as new input')}
                   >
-                    &larr; Use
+                    &larr; {tt('use', 'Use')}
                   </button>
                   <button
                     className="px-2 py-0.5 text-xs rounded border border-[var(--border)] bg-[var(--background)] hover:bg-[var(--accent)] transition-colors text-[var(--foreground)]"
                     onClick={() => flash(`out-${i}`, out)}
                   >
-                    {copied === `out-${i}` ? 'Copied!' : 'Copy'}
+                    {copied === `out-${i}` ? tc('copied') : tc('copy')}
                   </button>
                 </div>
               </div>
@@ -364,8 +376,8 @@ export default function Tool() {
       {/* Empty state */}
       {outputs.length === 0 && !loading && !error && (
         <div className="flex flex-col items-center gap-2 py-8 text-[var(--muted-foreground)]">
-          <p>Enter a prompt and choose a mutation strategy.</p>
-          <p className="text-xs">Uses configured provider &mdash; requires a provider set in Settings.</p>
+          <p>{tt('emptyState', 'Enter a prompt and choose a mutation strategy.')}</p>
+          <p className="text-xs">{tt('emptyHint', 'Uses configured provider — requires a provider set in Settings.')}</p>
         </div>
       )}
     </div>

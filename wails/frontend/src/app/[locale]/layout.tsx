@@ -6,12 +6,8 @@ import { Toaster } from 'sonner'
 import { AppProvider } from '@/components/layout/AppProvider'
 import en from '@/messages/en.json'
 import zh from '@/messages/zh.json'
-import ja from '@/messages/ja.json'
-import es from '@/messages/es.json'
-import fr from '@/messages/fr.json'
-import de from '@/messages/de.json'
 
-const messageMap: Record<string, Record<string, unknown>> = { en, zh, ja, es, fr, de }
+const messageMap: Record<string, Record<string, unknown>> = { en, zh }
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
