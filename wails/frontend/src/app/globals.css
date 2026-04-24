@@ -123,6 +123,30 @@ a {
 }
 
 /* ------------------------------------------------------------------ */
+/* SignWriting font — ISWA 2010 glyphs                                */
+/* ------------------------------------------------------------------ */
+
+@font-face {
+  font-family: 'Noto Sans SignWriting';
+  src: url('/fonts/NotoSansSignWriting-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+1D800-1DAFF, U+1DA00-1DA8F, U+1D900-1D9FF;
+}
+
+.signwriting-output {
+  font-family: 'Noto Sans SignWriting', monospace !important;
+  line-height: 2 !important;
+  letter-spacing: 0.1em !important;
+}
+
+.signwriting-preview {
+  font-family: 'Noto Sans SignWriting', monospace;
+  line-height: 1.8;
+}
+
+/* ------------------------------------------------------------------ */
 /* Textarea styling                                                   */
 /* ------------------------------------------------------------------ */
 

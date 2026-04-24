@@ -7,42 +7,27 @@ export const yenc = new BaseTransformer({
     priority: 250,
     category: 'encoding',
     func: function(text: string): string {
-        // YEnc encodes bytes by adding 42 (0x2A) and escaping special characters
+        // YEnc encodes bytes by adding 42 (0x2A)
         const bytes = new TextEncoder().encode(text);
-        let result = '';
-        
+        const output = [];
+
         for (const byte of bytes) {
-            let encoded = (byte + 42) % 256;
-            
-            // Escape special characters: NULL (0), LF (10), CR (13), = (61)
-            if (encoded === 0 || encoded === 10 || encoded === 13 || encoded === 61) {
-                result += '=' + String.fromCharCode((encoded + 64) % 256);
-            } else {
-                result += String.fromCharCode(encoded);
-            }
+            output.push((byte + 42) % 256);
         }
-        
-        return result;
+
+        // Output as hex bytes for displayability
+        return output.map(b => b.toString(16).toUpperCase().padStart(2, '0')).join(' ');
     },
     reverse: function(text: string): string {
+        const tokens = text.trim().split(/\s+/);
         const bytes = [];
-        let i = 0;
-        
-        while (i < text.length) {
-            if (text[i] === '=' && i + 1 < text.length) {
-                // Escaped character
-                const escaped = text.charCodeAt(i + 1);
-                const decoded = (escaped - 64) % 256;
-                bytes.push((decoded - 42 + 256) % 256);
-                i += 2;
-            } else {
-                // Normal character
-                const encoded = text.charCodeAt(i);
-                bytes.push((encoded - 42 + 256) % 256);
-                i++;
-            }
+
+        for (const token of tokens) {
+            const encoded = parseInt(token, 16);
+            if (isNaN(encoded)) continue;
+            bytes.push((encoded - 42 + 256) % 256);
         }
-        
+
         try {
             return new TextDecoder().decode(new Uint8Array(bytes));
         } catch (e) {
@@ -51,14 +36,13 @@ export const yenc = new BaseTransformer({
     },
     preview: function(text: string): string {
         if (!text) return '[yenc]';
-        const result = this.func(text.slice(0, 3));
-        return result.substring(0, 8) + '...';
+        return this.func(text.slice(0, 5));
     },
     detector: function(text: string): boolean {
-        // YEnc produces binary-like data, hard to detect reliably
-        // Check for escape sequences (= followed by character)
-        const escapePattern = /=[\x00-\xFF]/;
-        return escapePattern.test(text) && text.length >= 8;
+        if (!text || text.length < 4) return false;
+        // Detect space-separated hex bytes
+        const tokens = text.trim().split(/\s+/);
+        if (tokens.length < 3) return false;
+        return tokens.every(t => /^[0-9A-Fa-f]{2}$/.test(t));
     }
 });
-

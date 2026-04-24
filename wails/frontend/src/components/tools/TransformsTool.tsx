@@ -57,11 +57,12 @@ const CATEGORY_COLORS: Record<string, { bg: string; border: string; text: string
   format:   { bg: 'bg-orange-500/10', border: 'border-orange-500/40', text: 'text-orange-400' },
   special:  { bg: 'bg-fuchsia-500/10',border: 'border-fuchsia-500/40',text: 'text-fuchsia-400' },
   technical:{ bg: 'bg-cyan-500/10',   border: 'border-cyan-500/40',   text: 'text-cyan-400' },
+  signwriting:{ bg: 'bg-amber-400/10', border: 'border-amber-400/40', text: 'text-amber-300' },
   unicode:  { bg: 'bg-indigo-500/10', border: 'border-indigo-500/40', text: 'text-indigo-400' },
   visual:   { bg: 'bg-pink-500/10',   border: 'border-pink-500/40',   text: 'text-pink-400' },
 }
 
-const LEGEND_ORDER = ['ancient', 'case', 'cipher', 'encoding', 'fantasy', 'format', 'special', 'technical', 'unicode', 'visual']
+const LEGEND_ORDER = ['ancient', 'case', 'cipher', 'encoding', 'fantasy', 'format', 'signwriting', 'special', 'technical', 'unicode', 'visual']
 
 /* ------------------------------------------------------------------ */
 /* localStorage helpers                                                */
@@ -453,7 +454,10 @@ export default function TransformsTool() {
             />
           </span>
           {preview && (
-            <span className="text-[10px] opacity-60 truncate w-full">{preview}</span>
+            <span className={cn(
+              'text-[10px] opacity-60 truncate w-full',
+              transform.category === 'signwriting' && 'signwriting-preview',
+            )}>{preview}</span>
           )}
         </button>
       </div>
@@ -614,6 +618,7 @@ export default function TransformsTool() {
                 'w-full h-32 lg:h-40 resize-y rounded-lg border px-3 py-2 text-sm',
                 'bg-[var(--muted)] border-[var(--border)] text-[var(--foreground)]',
                 'focus:outline-none',
+                activeTransform?.category === 'signwriting' && 'signwriting-output',
               )}
             />
             <p className="text-[10px] text-[var(--muted-foreground)]">

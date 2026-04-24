@@ -178,6 +178,14 @@ import { wideSpacing } from './unicode/wide-spacing'
 import { wingdings } from './unicode/wingdings'
 import { zalgo } from './unicode/zalgo'
 
+// signwriting
+import { aslSignwriting } from './signwriting/asl-signwriting'
+import { ipaLipreading } from './signwriting/ipa-lipreading'
+import { jslSignwriting } from './signwriting/jsl-signwriting'
+import { librasSignwriting } from './signwriting/libras-signwriting'
+import { morseBlink } from './signwriting/morse-blink'
+import { tactileSignwriting } from './signwriting/tactile-signwriting'
+
 // visual
 import { disemvowel } from './visual/disemvowel'
 import { emojiSpeak } from './visual/emoji-speak'
@@ -344,6 +352,12 @@ export { disemvowel }
 export { emojiSpeak }
 export { rovarspraket }
 export { ubbiDubbi }
+export { aslSignwriting }
+export { ipaLipreading }
+export { jslSignwriting }
+export { librasSignwriting }
+export { morseBlink }
+export { tactileSignwriting }
 
 // All transforms as a map
 export const allTransforms: Record<string, BaseTransformer> = {
@@ -506,6 +520,12 @@ export const allTransforms: Record<string, BaseTransformer> = {
   emojiSpeak,
   rovarspraket,
   ubbiDubbi,
+  aslSignwriting,
+  ipaLipreading,
+  jslSignwriting,
+  librasSignwriting,
+  morseBlink,
+  tactileSignwriting,
 }
 
 export const transformList: BaseTransformer[] = Object.values(allTransforms)
@@ -520,6 +540,7 @@ export const transformsByCategory: Record<string, BaseTransformer[]> = {
   'special': [randomizer],
   'technical': [a1z26, braille, brainfuck, icao, itu, maritimeFlags, morse, nato, semaphore, tapCode],
   'unicode': [boldItalic, bold, bubble, chemical, circled, cursive, cyrillicStylized, dashedUnderline, dottedUnderline, doubleStruck, fraktur, fullwidth, greek, hiragana, italic, katakana, mathematical, medieval, mirror, monospace, negativeSquared, overline, parenthesized, regionalIndicator, smallCaps, squared, strikethrough, subscript, superscript, underline, upsideDown, vaporwave, wavyUnderline, wideSpacing, wingdings, zalgo],
+  'signwriting': [aslSignwriting, ipaLipreading, jslSignwriting, librasSignwriting, morseBlink, tactileSignwriting],
   'visual': [disemvowel, emojiSpeak, rovarspraket, ubbiDubbi],
 }
 

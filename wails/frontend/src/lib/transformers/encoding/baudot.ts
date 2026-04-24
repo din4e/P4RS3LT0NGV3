@@ -6,6 +6,7 @@ export const baudot = new BaseTransformer({
     name: 'Baudot Code (ITA2)',
     priority: 250,
     category: 'encoding',
+    inputKind: 'textarea',
     // Baudot/ITA2 5-bit code (letters and figures shift)
     letters: {
         0b00000: ' ', // NULL/blank
@@ -50,7 +51,7 @@ export const baudot = new BaseTransformer({
         0b00111: '8',
         0b01000: '7',
         0b01001: '\r',
-        0b01010: '\u0005', // ENQ
+        0b01010: '', // ENQ
         0b01011: '4',
         0b01100: '\'', // Bell
         0b01101: ',',
@@ -87,40 +88,41 @@ export const baudot = new BaseTransformer({
                 figuresToCode[char] = parseInt(code);
             }
         }
-        
-        let result = '';
+
+        const codes = [];
         let inFigures = false;
-        
+
         for (const char of text.toUpperCase()) {
             // Check if we need to shift
             const isFigure = /[0-9\-'():!$?&.\/+=]/.test(char);
-            
+
             if (isFigure && !inFigures) {
-                result += String.fromCharCode(0b11100); // Figures shift
+                codes.push(0b11100); // Figures shift
                 inFigures = true;
             } else if (!isFigure && inFigures) {
-                result += String.fromCharCode(0b11111); // Letters shift (approximate)
+                codes.push(0b11111); // Letters shift
                 inFigures = false;
             }
-            
+
             // Encode character
             const code = inFigures ? figuresToCode[char] : lettersToCode[char];
             if (code !== undefined) {
-                result += String.fromCharCode(code);
-            } else {
-                result += char; // Keep unmapped
+                codes.push(code);
             }
         }
-        
-        return result;
+
+        // Output as 5-bit binary strings for displayability
+        return codes.map(c => c.toString(2).padStart(5, '0')).join(' ');
     },
     reverse: function(text: string): string {
         let result = '';
         let inFigures = false;
-        
-        for (let i = 0; i < text.length; i++) {
-            const code = text.charCodeAt(i) & 0x1F; // 5 bits
-            
+
+        const tokens = text.trim().split(/\s+/);
+        for (const token of tokens) {
+            if (!/^[01]{1,5}$/.test(token)) continue;
+            const code = parseInt(token, 2);
+
             if (code === 0b11100) {
                 inFigures = true;
                 continue;
@@ -128,25 +130,24 @@ export const baudot = new BaseTransformer({
                 inFigures = false;
                 continue;
             }
-            
+
             const map = inFigures ? this.figures : this.letters;
             const char = map[code];
             if (char && char !== 'Figures' && char !== 'Letters') {
                 result += char;
             }
         }
-        
+
         return result;
     },
     preview: function(text: string): string {
         if (!text) return '[baudot]';
-        return this.func(text.slice(0, 5));
+        const encoded = this.func(text.slice(0, 8));
+        return encoded.length > 40 ? encoded.slice(0, 40) + '...' : encoded;
     },
     detector: function(text: string): boolean {
-        // Baudot uses 5-bit codes (0-31)
-        // Check for characters in the 5-bit range
-        const has5Bit = /[\x00-\x1F]/.test(text);
-        return has5Bit && text.length >= 5;
+        const tokens = text.trim().split(/\s+/);
+        if (tokens.length < 3) return false;
+        return tokens.every(t => /^[01]{5}$/.test(t));
     }
 });
-

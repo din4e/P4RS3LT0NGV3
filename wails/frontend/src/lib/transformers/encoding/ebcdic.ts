@@ -73,35 +73,32 @@ export const ebcdic = new BaseTransformer({
         for (const [ebcdic, ascii] of Object.entries(this.ebcdicToAscii)) {
             asciiToEbcdic[ascii] = parseInt(ebcdic);
         }
-        
-        let result = '';
+
+        const bytes = [];
         for (const char of text) {
             const code = char.charCodeAt(0);
             // Convert lowercase letters to uppercase before encoding (EBCDIC is uppercase-only)
             if (code >= 0x61 && code <= 0x7A) { // a-z
                 const upperCode = code - 0x20; // Convert to A-Z
                 if (asciiToEbcdic[upperCode] !== undefined) {
-                    result += String.fromCharCode(asciiToEbcdic[upperCode]);
-                } else {
-                    result += char; // Keep unmapped characters
+                    bytes.push(asciiToEbcdic[upperCode]);
                 }
             } else if (asciiToEbcdic[code] !== undefined) {
-                result += String.fromCharCode(asciiToEbcdic[code]);
-            } else {
-                result += char; // Keep unmapped characters
+                bytes.push(asciiToEbcdic[code]);
             }
         }
-        
-        return result;
+
+        // Output as hex bytes for displayability
+        return bytes.map(b => b.toString(16).toUpperCase().padStart(2, '0')).join(' ');
     },
     reverse: function(text: string): string {
         let result = '';
-        for (const char of text) {
-            const code = char.charCodeAt(0);
+        const tokens = text.trim().split(/\s+/);
+        for (const token of tokens) {
+            const code = parseInt(token, 16);
+            if (isNaN(code)) continue;
             if (this.ebcdicToAscii[code] !== undefined) {
                 result += String.fromCharCode(this.ebcdicToAscii[code]);
-            } else {
-                result += char; // Keep unmapped characters
             }
         }
         return result;
@@ -112,47 +109,19 @@ export const ebcdic = new BaseTransformer({
     },
     detector: function(text: string): boolean {
         if (!text || text.length < 2) return false;
-        
-        // EBCDIC uses specific byte ranges for letters and numbers
-        // Letters: 0x81-0xA9 (A-Z)
-        // Numbers: 0xF0-0xF9 (0-9)
-        // Punctuation: 0x40-0x7F range
-        
-        // Check for EBCDIC-specific character codes (letters and numbers)
-        const hasEbcdicLetters = /[\x81-\x89\x91-\x99\xA2-\xA9]/.test(text); // A-Z in EBCDIC
-        const hasEbcdicNumbers = /[\xF0-\xF9]/.test(text); // 0-9 in EBCDIC
-        
-        // Must have at least some EBCDIC-specific characters
-        if (!hasEbcdicLetters && !hasEbcdicNumbers) return false;
-        
-        // Reject if text is already readable ASCII (common English words)
-        // This prevents false positives on plain text
-        const commonWords = /\b(the|and|for|are|but|not|you|all|can|her|was|one|our|out|day|get|has|him|his|how|man|new|now|old|see|two|way|who|boy|did|its|let|put|say|she|too|use)\b/i;
-        if (commonWords.test(text)) return false;
-        
-        // Check if decoding produces text that looks like it was encoded
-        // EBCDIC-encoded text, when decoded, should have readable ASCII
-        // If the input is already readable ASCII, it's not EBCDIC
-        const readableAscii = /^[\x20-\x7E\s]*$/.test(text);
-        if (readableAscii && !hasEbcdicLetters && !hasEbcdicNumbers) {
-            // If it's all readable ASCII and has no EBCDIC-specific codes, reject
-            return false;
-        }
-        
-        // Verify that at least some characters are in EBCDIC-specific ranges
-        // For short strings, require at least 1 EBCDIC character
-        // For longer strings, require at least 10% to be EBCDIC-specific
-        const ebcdicChars = (text.match(/[\x81-\x89\x91-\x99\xA2-\xA9\xF0-\xF9]/g) || []).length;
-        if (ebcdicChars === 0) return false;
-        
-        // For short strings (<= 20 chars), just need at least 1 EBCDIC char
-        if (text.length <= 20) {
-            return ebcdicChars >= 1;
-        }
-        
-        // For longer strings, require at least 10% to be EBCDIC-specific
-        const ebcdicRatio = ebcdicChars / text.length;
-        return ebcdicRatio >= 0.1; // At least 10% must be EBCDIC-specific
+
+        // Detect space-separated hex bytes with EBCDIC-specific ranges
+        const tokens = text.trim().split(/\s+/);
+        if (tokens.length < 2) return false;
+
+        const hexPattern = /^[0-9A-Fa-f]{2}$/;
+        if (!tokens.every(t => hexPattern.test(t))) return false;
+
+        const codes = tokens.map(t => parseInt(t, 16));
+        // EBCDIC letters: 0x81-0xA9 range, digits: 0xF0-0xF9, space: 0x40
+        const hasEbcdicLetters = codes.some(c => (c >= 0x81 && c <= 0x89) || (c >= 0x91 && c <= 0x99) || (c >= 0xA2 && c <= 0xA9));
+        const hasEbcdicDigits = codes.some(c => c >= 0xF0 && c <= 0xF9);
+
+        return hasEbcdicLetters || hasEbcdicDigits;
     }
 });
-
