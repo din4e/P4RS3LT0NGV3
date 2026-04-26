@@ -23,4 +23,10 @@ export interface GuardrailsReport {
   totalTested: number
   startedAt: number
   completedAt: number
+  meta?: {
+    model: string
+    provider: string
+    temperature: number
+    maxTokens: number
+  }
 }

@@ -1,11 +1,13 @@
 'use client'
 
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react'
+import { toast } from 'sonner'
 import { useClipboard } from '@/hooks/useClipboard'
 import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 import { allTransforms } from '@/lib/transformers'
 import { cn } from '@/lib/utils'
 import { useAIConfig, useHasProvider } from '@/hooks/useAIConfig'
+import { downloadFile } from '@/lib/wails'
 import { fuzzerRegistry, runFuzzer } from '@/lib/fuzzer'
 import type {
   AttackDefinition,
@@ -204,12 +206,11 @@ function MutationLab({ flash, copied }: { flash: (key: string, text: string) => 
   }, [input, count, seed, useRandomMix, zeroWidth, unicodeNoise, zalgo, whitespace, casing, encodeShuffleOn])
 
   const copyAllFuzz = useCallback(() => { if (outputs.length > 0) flash('all-fuzz', outputs.join('\n')) }, [outputs, flash])
-  const downloadFuzz = useCallback(() => {
+  const downloadFuzz = useCallback(async () => {
     const lines = outputs.map((s, i) => `#${i + 1}\t${s}`).join('\n')
-    const blob = new Blob([`# Parseltongue Fuzzer Output\n# count=${outputs.length}\n\n${lines}\n`], { type: 'text/plain;charset=utf-8' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a'); a.href = url; a.download = 'fuzz_cases.txt'; a.click()
-    setTimeout(() => URL.revokeObjectURL(url), 200)
+    const content = `# Parseltongue Fuzzer Output\n# count=${outputs.length}\n\n${lines}\n`
+    const ok = await downloadFile('fuzz_cases.txt', content)
+    if (ok) toast.success('Downloaded fuzz_cases.txt')
   }, [outputs])
 
   const toggleCls = 'inline-flex items-center gap-2 text-sm text-[var(--foreground)] cursor-pointer select-none'
@@ -410,12 +411,10 @@ function LLMFuzzer({
     abortRef.current?.abort()
   }, [])
 
-  const handleExport = useCallback(() => {
+  const handleExport = useCallback(async () => {
     if (!report) return
-    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a'); a.href = url; a.download = `fuzzer-report-${report.id}.json`; a.click()
-    setTimeout(() => URL.revokeObjectURL(url), 200)
+    const ok = await downloadFile(`fuzzer-report-${report.id}.json`, JSON.stringify(report, null, 2))
+    if (ok) toast.success('Report exported')
   }, [report])
 
   const anyRequiresAux = needsAuxModel

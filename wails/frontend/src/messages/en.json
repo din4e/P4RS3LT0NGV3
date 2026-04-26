@@ -150,6 +150,17 @@
     "failed": "Failed",
     "passRate": "Pass Rate",
     "exportReport": "Export Report",
+    "downloadReport": "Download Report",
+    "copyJson": "Copy JSON",
+    "exportJson": "Export JSON",
+    "exportMarkdown": "Export Markdown",
+    "exportHtml": "Export HTML",
+    "customPrompts": "Custom Prompts",
+    "addPrompt": "Add",
+    "promptPlaceholder": "Enter test prompts (one per line)...",
+    "removePrompt": "Remove",
+    "importPrompts": "Import",
+    "clearPrompts": "Clear All",
     "noResults": "Run a test to see results.",
     "noProvider": "Configure a provider in Settings first.",
     "progress": "Testing {current}/{total}"
@@ -321,7 +332,8 @@
       "save": "Save",
       "cancel": "Cancel",
       "noModels": "No models available",
-      "noProvider": "No provider configured"
+      "noProvider": "No provider configured",
+      "noKeyRequired": "No API key required for local providers"
     }
   }
 }

@@ -93,6 +93,32 @@ export function isWailsMode(): boolean {
     (!!(window as any).runtime || !!(window as any).go?.main?.App)
 }
 
+export async function saveFileDialog(filename: string, content: string): Promise<boolean> {
+  try {
+    const { SaveFileDialog } = await import('@/../../wailsjs/go/main/App')
+    await SaveFileDialog(filename, content)
+    return true
+  } catch {
+    const app = (window as any).go?.main?.App
+    if (app?.SaveFileDialog) {
+      try { await app.SaveFileDialog(filename, content); return true } catch { return false }
+    }
+    return false
+  }
+}
+
+export async function downloadFile(filename: string, content: string): Promise<boolean> {
+  if (isWailsMode()) {
+    return saveFileDialog(filename, content)
+  }
+  const blob = new Blob([content], { type: 'application/octet-stream' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url; a.download = filename; a.click()
+  setTimeout(() => URL.revokeObjectURL(url), 200)
+  return true
+}
+
 export async function setAPIBaseURL(url: string): Promise<void> {
   const app = await getWailsApp()
   if (app) {
