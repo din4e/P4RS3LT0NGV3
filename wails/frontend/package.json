@@ -3,7 +3,7 @@
   "version": "0.2.3",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -H 127.0.0.1 -p 8080",
     "clean:next": "node -e \"try{require('fs').rmSync('.next',{recursive:true,force:true})}catch(e){}\"",
     "build": "npm run clean:next && next build",
     "build:fresh": "npm run build",

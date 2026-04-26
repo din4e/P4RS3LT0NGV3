@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import {
   X, Save, Eye, EyeOff, KeyRound, Settings2, Globe, ChevronDown, ChevronRight,
-  Plus, Pencil, Trash2, Star, RefreshCw, Check, Info
+  Plus, Pencil, Trash2, Star, RefreshCw, Check, Info, Monitor
 } from 'lucide-react'
 import { useAppStore } from '@/stores/useAppStore'
 import { useSettingsStore } from '@/stores/useSettingsStore'
@@ -48,6 +48,8 @@ function getProviderIcon(name: string): React.ComponentType<{ size?: number }> |
     Hunyuan,
     SiliconCloud,
     OpenRouter,
+    Ollama: Monitor,
+    LMStudio: Monitor,
   }
 
   const key = Object.keys(iconMap).find(k => name.toLowerCase().includes(k.toLowerCase()))
@@ -229,6 +231,9 @@ export function AdvancedSettingsPanel() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1">
                           <span className="text-xs font-medium truncate">{provider.name}</span>
+                          {provider.isLocal && (
+                            <span className="text-[9px] px-1 py-0 rounded bg-blue-500/20 text-blue-400 font-medium">LOCAL</span>
+                          )}
                           {isDefault && (
                             <Star className="h-3 w-3 text-[var(--primary)] fill-current" />
                           )}
@@ -485,7 +490,7 @@ export function AdvancedSettingsPanel() {
         <div className="shrink-0 px-4 py-3 border-t border-[var(--border)] bg-[var(--muted)]/30">
           <div className="flex items-center justify-between text-xs text-[var(--muted-foreground)]">
             <span className="font-medium">P4RS3LT0NGV3(GUI)</span>
-            <span>v0.2.3</span>
+            <span>v0.2.4</span>
           </div>
           <div className="mt-1 text-[10px] text-[var(--muted-foreground)]/70">
             © 2026 din4e

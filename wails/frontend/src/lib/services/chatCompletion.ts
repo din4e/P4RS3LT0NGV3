@@ -6,26 +6,32 @@
 
 import { useSettingsStore } from "@/stores/useSettingsStore";
 
-let _wailsApp: any = null;
-
-async function getWailsApp(): Promise<any | null> {
-  if (typeof window === "undefined") return null;
-  if (_wailsApp) return _wailsApp;
-  try {
-    const wailsPath = ["../../", "../", "wailsjs/go/main/App"].join("");
-    const mod = await import(/* webpackIgnore: true */ /* @vite-ignore */ wailsPath);
-    _wailsApp = new mod.default();
-    return _wailsApp;
-  } catch {
-    return null;
-  }
-}
-
 export function isWailsMode(): boolean {
   return (
     typeof window !== "undefined" &&
     (!!(window as any).runtime || !!(window as any).go?.main?.App)
   );
+}
+
+/**
+ * Call Go backend method through Wails bindings
+ */
+async function wailsCall(method: string, ...args: unknown[]): Promise<string> {
+  // Try dynamic import of Wails binding first
+  try {
+    const wailsApp: any = await import("@/../../wailsjs/go/main/App");
+    if (wailsApp[method]) {
+      return await wailsApp[method](...args);
+    }
+  } catch {
+    // Fallback to window.go
+  }
+  // Direct window.go call
+  const app: any = (window as any).go?.main?.App;
+  if (app?.[method]) {
+    return await app[method](...args);
+  }
+  throw new Error(`Wails backend method ${method} not available`);
 }
 
 export interface ChatMessage {
@@ -84,57 +90,82 @@ export async function chatCompletion(
     throw new Error("No API provider configured. Please add a provider in Settings.");
   }
 
-  if (!provider.apiKey) {
+  const isKeyless = provider.requiresApiKey === false;
+  if (!isKeyless && !provider.apiKey) {
     throw new Error(`Provider "${provider.name}" has no API key configured.`);
   }
 
   // In Wails mode, use Go backend to avoid CORS issues
-  const app = await getWailsApp();
-  if (app && typeof app.CallChatAPI === "function") {
-    const result = await app.CallChatAPI(
-      provider.baseUrl,
-      provider.apiKey,
-      model,
-      messages,
-      temperature,
-      maxTokens
-    );
-
-    // Parse response
-    const data = JSON.parse(result);
-
-    if (data.error) {
-      throw new Error(
-        typeof data.error === "string" ? data.error : data.error.message || "API error"
+  if (isWailsMode()) {
+    const apiKeyToSend = isKeyless ? "" : provider.apiKey;
+    try {
+      const result = await wailsCall("CallChatAPI",
+        provider.baseUrl,
+        apiKeyToSend,
+        model,
+        messages,
+        temperature,
+        maxTokens
       );
-    }
 
-    const content = data.choices?.[0]?.message?.content;
-    if (!content) {
-      throw new Error("Empty response from model");
-    }
+      // Parse response
+      const data = JSON.parse(result);
 
-    return content;
+      if (data.error) {
+        throw new Error(
+          typeof data.error === "string" ? data.error : data.error.message || "API error"
+        );
+      }
+
+      const content = data.choices?.[0]?.message?.content;
+      if (!content) {
+        throw new Error("Empty response from model");
+      }
+
+      return content;
+    } catch (e) {
+      // If Go backend call fails with a meaningful error, throw it
+      if (e instanceof Error && !e.message.includes("Wails backend")) {
+        throw e;
+      }
+      // Otherwise fall through to browser fetch
+    }
   }
 
   // Browser mode: direct fetch (may have CORS issues with some providers)
   const baseUrl = provider.baseUrl.replace(/\/$/, "");
-  const endpoint = `${baseUrl}/chat/completions`;
+  const ic = provider.interactionConfig;
+  const chatPath = ic?.chatEndpoint || "/chat/completions";
+  const endpoint = `${baseUrl}${chatPath.startsWith("/") ? chatPath : "/" + chatPath}`;
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    "HTTP-Referer": typeof window !== "undefined" ? window.location.origin : "",
+    "X-Title": "P4RS3LT0NGV3",
+  };
+
+  if (!isKeyless && provider.apiKey) {
+    headers["Authorization"] = `Bearer ${provider.apiKey}`;
+  }
+
+  if (ic?.customHeaders) {
+    Object.assign(headers, ic.customHeaders);
+  }
+
+  // Build request body with optional field mapping
+  const modelField = ic?.fieldMapping?.modelField || "model";
+  const messagesField = ic?.fieldMapping?.messagesField || "messages";
+  const bodyObj: Record<string, unknown> = {
+    [modelField]: model,
+    [messagesField]: messages,
+    temperature,
+    max_tokens: maxTokens,
+  };
 
   const response = await fetch(endpoint, {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${provider.apiKey}`,
-      "Content-Type": "application/json",
-      "HTTP-Referer": typeof window !== "undefined" ? window.location.origin : "",
-      "X-Title": "P4RS3LT0NGV3",
-    },
-    body: JSON.stringify({
-      model,
-      messages,
-      temperature,
-      max_tokens: maxTokens,
-    }),
+    headers,
+    body: JSON.stringify(bodyObj),
   });
 
   if (!response.ok) {
@@ -165,7 +196,18 @@ export async function chatCompletion(
     );
   }
 
-  const content = data.choices?.[0]?.message?.content;
+  // Support custom content path from interactionConfig
+  let content: string | undefined;
+  if (ic?.responseParsing?.contentPath) {
+    const parts = ic.responseParsing.contentPath.split(".");
+    let node: any = data;
+    for (const part of parts) {
+      node = node?.[part];
+    }
+    content = typeof node === "string" ? node : undefined;
+  } else {
+    content = data.choices?.[0]?.message?.content;
+  }
 
   if (!content) {
     throw new Error("Empty response from model");

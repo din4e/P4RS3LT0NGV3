@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import { X, Eye, EyeOff, Save, Loader2, Check, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useSettingsStore } from '@/stores/useSettingsStore'
-import { testProviderConnection } from '@/lib/services/modelFetcher'
+import { testProviderConnection, fetchProviderModels } from '@/lib/services/modelFetcher'
 import { API_PROVIDERS, type APIProvider as PresetProvider } from '@/lib/utils/apiProviders'
 import type { APIProvider } from '@/types/provider'
 
@@ -52,7 +52,17 @@ export function ProviderModal({ isOpen, onClose, editProvider }: ProviderModalPr
     setName(preset.name)
     setBaseUrl(preset.baseUrl)
     setTestResult(null)
+    // Local providers don't need an API key
+    if (preset.requiresApiKey === false) {
+      setApiKey('local-no-key')
+    } else {
+      setApiKey('')
+    }
   }
+
+  const isLocalPreset = selectedPreset
+    ? API_PROVIDERS.find((p) => p.id === selectedPreset)?.requiresApiKey === false
+    : false
 
   // Test connection
   const handleTest = async () => {
@@ -78,20 +88,40 @@ export function ProviderModal({ isOpen, onClose, editProvider }: ProviderModalPr
   }
 
   // Save provider
-  const handleSave = () => {
-    if (!name.trim() || !baseUrl.trim() || !apiKey.trim()) return
+  const handleSave = async () => {
+    if (!name.trim() || !baseUrl.trim()) return
+    if (!isLocalPreset && !apiKey.trim()) return
 
+    const isNew = !editProvider
     const provider: APIProvider = {
       id: editProvider?.id || `provider_${Date.now()}`,
       name: name.trim(),
       baseUrl: baseUrl.trim().replace(/\/$/, ''),
-      apiKey: apiKey.trim(),
+      apiKey: isLocalPreset ? '' : apiKey.trim(),
       isEnabled: true,
       isDefault: editProvider?.isDefault ?? false,
       region: selectedPreset ? API_PROVIDERS.find((p) => p.id === selectedPreset)?.region : 'global',
+      requiresApiKey: isLocalPreset ? false : undefined,
+      isLocal: isLocalPreset ? true : undefined,
     }
 
     setProvider(provider)
+
+    // Auto-set as default if no default exists yet
+    if (isNew && !useSettingsStore.getState().defaultProviderId) {
+      useSettingsStore.getState().setDefaultProvider(provider.id)
+    }
+
+    // Auto-fetch models for new providers
+    if (isNew) {
+      try {
+        const models = await fetchProviderModels(provider.baseUrl, provider.apiKey)
+        useSettingsStore.getState().setProviderModels(provider.id, models)
+      } catch {
+        // Silent — user can refresh manually later
+      }
+    }
+
     onClose()
   }
 
@@ -147,8 +177,34 @@ export function ProviderModal({ isOpen, onClose, editProvider }: ProviderModalPr
             <label className="text-xs font-medium text-[var(--muted-foreground)]">
               {t('presets')}
             </label>
+            {/* Local providers */}
+            {API_PROVIDERS.filter((p) => p.region === 'local').length > 0 && (
+              <div className="space-y-1">
+                <span className="text-[10px] font-medium text-[var(--muted-foreground)] uppercase tracking-wider">Local</span>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {API_PROVIDERS.filter((p) => p.region === 'local').map((preset) => (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => handlePresetSelect(preset)}
+                      className={cn(
+                        'px-2 py-1 text-xs rounded truncate',
+                        'border transition-colors',
+                        selectedPreset === preset.id
+                          ? 'border-[var(--primary)] bg-[var(--primary)]/10 text-[var(--primary)]'
+                          : 'border-[var(--border)] hover:border-[var(--primary)]/50'
+                      )}
+                      title={preset.description}
+                    >
+                      {preset.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {/* Cloud providers */}
             <div className="grid grid-cols-3 gap-1.5 max-h-32 overflow-y-auto">
-              {API_PROVIDERS.slice(0, 12).map((preset) => (
+              {API_PROVIDERS.filter((p) => p.region !== 'local').slice(0, 12).map((preset) => (
                 <button
                   key={preset.id}
                   type="button"
@@ -205,6 +261,12 @@ export function ProviderModal({ isOpen, onClose, editProvider }: ProviderModalPr
             <label className="text-xs font-medium text-[var(--muted-foreground)]">
               {t('apiKey')}
             </label>
+            {isLocalPreset ? (
+              <div className="flex items-center gap-2 px-3 py-2 text-xs rounded-md bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/30">
+                <Check className="h-3.5 w-3.5 shrink-0" />
+                {t('noKeyRequired')}
+              </div>
+            ) : (
             <div className="flex items-center gap-1">
               <input
                 type={showKey ? 'text' : 'password'}
@@ -230,6 +292,7 @@ export function ProviderModal({ isOpen, onClose, editProvider }: ProviderModalPr
                 {showKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
+            )}
           </div>
 
           {/* Test Result */}
@@ -296,7 +359,7 @@ export function ProviderModal({ isOpen, onClose, editProvider }: ProviderModalPr
           <button
             type="button"
             onClick={handleSave}
-            disabled={!name.trim() || !baseUrl.trim() || !apiKey.trim()}
+            disabled={!name.trim() || !baseUrl.trim() || (!isLocalPreset && !apiKey.trim())}
             className={cn(
               'inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md',
               'bg-[var(--primary)] text-[var(--primary-foreground)]',

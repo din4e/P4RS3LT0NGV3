@@ -1,4 +1,24 @@
 /**
+ * Interaction config for customizing how chat requests are built and parsed.
+ * Allows non-standard providers to work with the system without code changes.
+ */
+export interface InteractionConfig {
+  /** Override endpoint path (default: /chat/completions) */
+  chatEndpoint?: string
+  /** Custom headers to send with every request */
+  customHeaders?: Record<string, string>
+  /** Request body field mappings */
+  fieldMapping?: {
+    modelField?: string    // default: "model"
+    messagesField?: string // default: "messages"
+  }
+  /** Response parsing */
+  responseParsing?: {
+    contentPath?: string   // default: "choices.0.message.content"
+  }
+}
+
+/**
  * API Provider Configuration
  * Represents a configured AI API provider with its credentials and cached models.
  */
@@ -13,7 +33,7 @@ export interface APIProvider {
   /** API base URL (e.g., https://openrouter.ai/api/v1) */
   baseUrl: string
 
-  /** API key for authentication */
+  /** API key for authentication (empty for local providers) */
   apiKey: string
 
   /** Whether this provider is active */
@@ -35,7 +55,16 @@ export interface APIProvider {
   description?: string
 
   /** Provider region for categorization */
-  region?: 'china' | 'global'
+  region?: 'china' | 'global' | 'local'
+
+  /** Whether this provider requires an API key (local providers set false) */
+  requiresApiKey?: boolean
+
+  /** Whether this is a local provider running on localhost */
+  isLocal?: boolean
+
+  /** JSON config for customizing model interaction */
+  interactionConfig?: InteractionConfig
 }
 
 /**
@@ -47,7 +76,7 @@ export interface ProviderPreset {
   name: string
   baseUrl: string
   description: string
-  region: 'china' | 'global'
+  region: 'china' | 'global' | 'local'
 }
 
 /**
