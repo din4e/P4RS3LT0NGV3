@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -187,10 +188,6 @@ func (a *App) CallOpenRouter(model string, messages []map[string]interface{}, te
 // CallChatAPI sends a chat completion request to any OpenAI-compatible API.
 // This is used for multi-provider support with dynamic credentials.
 func (a *App) CallChatAPI(baseURL, apiKey, model string, messages []map[string]interface{}, temperature float64, maxTokens int) (string, error) {
-	if apiKey == "" {
-		return "", fmt.Errorf("API key is required")
-	}
-
 	reqBody := openRouterRequest{
 		Model:       model,
 		Messages:    messages,
@@ -215,7 +212,9 @@ func (a *App) CallChatAPI(baseURL, apiKey, model string, messages []map[string]i
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+apiKey)
+	if apiKey != "" {
+		req.Header.Set("Authorization", "Bearer "+apiKey)
+	}
 	req.Header.Set("HTTP-Referer", "https://github.com/p4rs3lt0ngv3")
 	req.Header.Set("X-Title", "P4RS3LT0NGV3")
 
@@ -249,6 +248,40 @@ func containsHelper(s, substr string) bool {
 		}
 	}
 	return false
+}
+
+// FetchModelsAPI fetches available models from any OpenAI-compatible /models endpoint.
+// Routes through Go backend to avoid CORS issues with local providers.
+func (a *App) FetchModelsAPI(baseURL, apiKey string) (string, error) {
+	endpoint := strings.TrimRight(baseURL, "/") + "/models"
+
+	req, err := http.NewRequestWithContext(a.ctx, http.MethodGet, endpoint, nil)
+	if err != nil {
+		return "", fmt.Errorf("creating request: %w", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	if apiKey != "" {
+		req.Header.Set("Authorization", "Bearer "+apiKey)
+	}
+
+	client := &http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("fetching models: %w", err)
+	}
+	defer resp.Body.Close()
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("reading response body: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("API error (status %d): %s", resp.StatusCode, string(respBody))
+	}
+
+	return string(respBody), nil
 }
 
 // ---------- API Base URL ----------

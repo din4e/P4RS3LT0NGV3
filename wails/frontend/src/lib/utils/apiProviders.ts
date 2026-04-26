@@ -8,13 +8,39 @@ export interface APIProvider {
   name: string
   baseUrl: string
   description: string
-  region: 'china' | 'global'
+  region: 'china' | 'global' | 'local'
   modelPrefix?: string
   /** LobeHub icon component name */
   icon?: string
+  /** Whether this provider requires an API key */
+  requiresApiKey?: boolean
+  /** Whether this is a local provider */
+  isLocal?: boolean
 }
 
 export const API_PROVIDERS: APIProvider[] = [
+  // ============ Local Providers ============
+  {
+    id: 'ollama',
+    name: 'Ollama',
+    baseUrl: 'http://localhost:11434/v1',
+    description: 'Local LLM inference with Ollama',
+    region: 'local',
+    isLocal: true,
+    requiresApiKey: false,
+    icon: 'Ollama',
+  },
+  {
+    id: 'lmstudio',
+    name: 'LM Studio',
+    baseUrl: 'http://localhost:1234/v1',
+    description: 'Local LLM inference with LM Studio',
+    region: 'local',
+    isLocal: true,
+    requiresApiKey: false,
+    icon: 'LMStudio',
+  },
+
   // ============ Global Providers ============
   {
     id: 'openrouter',
@@ -225,4 +251,11 @@ export function getInternationalChineseProviders(): APIProvider[] {
 export function getNonChineseGlobalProviders(): APIProvider[] {
   const chineseGlobalIds = ['zhipu-global', 'minimax-global', 'moonshot-global']
   return API_PROVIDERS.filter((p) => p.region === 'global' && !chineseGlobalIds.includes(p.id))
+}
+
+/**
+ * Get local providers (Ollama, LM Studio, etc.)
+ */
+export function getLocalProviders(): APIProvider[] {
+  return API_PROVIDERS.filter((p) => p.region === 'local')
 }

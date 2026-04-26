@@ -224,6 +224,14 @@ export const useSettingsStore = create<SettingsState>()(
           };
         }
 
+        // Fallback: try any enabled keyless provider (e.g., local Ollama)
+        const keylessProvider = Object.values(state.providers).find(
+          (p) => p.isEnabled && p.requiresApiKey === false
+        );
+        if (keylessProvider) {
+          return keylessProvider;
+        }
+
         return null;
       },
 

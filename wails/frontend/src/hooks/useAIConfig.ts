@@ -100,7 +100,9 @@ export function useAIConfig(toolId: string): AIConfig {
 
   // Check if configured
   const isConfigured = useMemo(() => {
-    return provider !== null && provider.apiKey.length > 0;
+    if (!provider) return false;
+    if (provider.requiresApiKey === false) return true;
+    return provider.apiKey.length > 0;
   }, [provider]);
 
   // Set model handler
