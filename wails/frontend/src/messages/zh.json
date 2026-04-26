@@ -150,6 +150,17 @@
     "failed": "失败",
     "passRate": "通过率",
     "exportReport": "导出报告",
+    "downloadReport": "下载报告",
+    "copyJson": "复制 JSON",
+    "exportJson": "导出 JSON",
+    "exportMarkdown": "导出 Markdown",
+    "exportHtml": "导出 HTML",
+    "customPrompts": "自定义预料",
+    "addPrompt": "添加",
+    "promptPlaceholder": "输入测试预料（每行一条）...",
+    "removePrompt": "移除",
+    "importPrompts": "导入",
+    "clearPrompts": "清空",
     "noResults": "运行测试查看结果。",
     "noProvider": "请先在设置中配置提供商。",
     "progress": "测试中 {current}/{total}"
@@ -321,7 +332,8 @@
       "save": "保存",
       "cancel": "取消",
       "noModels": "无可用模型",
-      "noProvider": "未配置提供商"
+      "noProvider": "未配置提供商",
+      "noKeyRequired": "本地提供商无需 API 密钥"
     }
   }
 }

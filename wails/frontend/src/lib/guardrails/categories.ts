@@ -8,4 +8,5 @@ export const CATEGORIES: BenchmarkCategory[] = [
   { id: 'hate', name: 'Hate Speech', description: 'Discrimination, racism, bigotry' },
   { id: 'privacy', name: 'Privacy', description: 'Surveillance, stalking, PII' },
   { id: 'sexual', name: 'Sexual Content', description: 'Inappropriate sexual content' },
+  { id: 'custom', name: 'Custom', description: 'User-defined test prompts' },
 ]

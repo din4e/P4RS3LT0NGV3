@@ -2,8 +2,10 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { toast } from 'sonner'
 import { useClipboard } from '@/hooks/useClipboard'
 import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
+import { downloadFile } from '@/lib/wails'
 
 // ── types ────────────────────────────────────────────────────────────
 
@@ -270,18 +272,11 @@ export default function Tool() {
     flash('all-bij', all)
   }, [outputs, flash])
 
-  const download = useCallback(() => {
+  const download = useCallback(async () => {
     const lines = outputs.map((o) => o.prompt).join('\n\n---\n\n')
     const header = `# Parseltongue Bijection Attack Prompts\n# count=${outputs.length}\n# type=${bijType}\n# fixed_size=${fixedSize}\n# input=${bijInput.substring(0, 50)}${bijInput.length > 50 ? '...' : ''}\n\n`
-    const blob = new Blob([header + lines + '\n'], {
-      type: 'text/plain;charset=utf-8',
-    })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'bijection_attacks.txt'
-    a.click()
-    setTimeout(() => URL.revokeObjectURL(url), 200)
+    const ok = await downloadFile('bijection_attacks.txt', header + lines + '\n')
+    if (ok) toast.success('Downloaded bijection_attacks.txt')
   }, [outputs, bijType, fixedSize, bijInput])
 
   // ── styles ─────────────────────────────────────────────────────
