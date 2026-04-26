@@ -1,6 +1,6 @@
 {
   "name": "p4rs3lt0ngv3-wails-frontend",
-  "version": "0.2.3",
+  "version": "0.2.5",
   "private": true,
   "scripts": {
     "dev": "next dev -H 127.0.0.1 -p 8080",
