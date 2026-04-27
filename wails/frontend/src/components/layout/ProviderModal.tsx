@@ -180,7 +180,7 @@ export function ProviderModal({ isOpen, onClose, editProvider }: ProviderModalPr
             {/* Local providers */}
             {API_PROVIDERS.filter((p) => p.region === 'local').length > 0 && (
               <div className="space-y-1">
-                <span className="text-[10px] font-medium text-[var(--muted-foreground)] uppercase tracking-wider">Local</span>
+                <span className="text-[10px] font-medium text-[var(--muted-foreground)] uppercase tracking-wider">{t('localProviders')}</span>
                 <div className="grid grid-cols-3 gap-1.5">
                   {API_PROVIDERS.filter((p) => p.region === 'local').map((preset) => (
                     <button
@@ -202,26 +202,81 @@ export function ProviderModal({ isOpen, onClose, editProvider }: ProviderModalPr
                 </div>
               </div>
             )}
-            {/* Cloud providers */}
-            <div className="grid grid-cols-3 gap-1.5 max-h-32 overflow-y-auto">
-              {API_PROVIDERS.filter((p) => p.region !== 'local').slice(0, 12).map((preset) => (
-                <button
-                  key={preset.id}
-                  type="button"
-                  onClick={() => handlePresetSelect(preset)}
-                  className={cn(
-                    'px-2 py-1 text-xs rounded truncate',
-                    'border transition-colors',
-                    selectedPreset === preset.id
-                      ? 'border-[var(--primary)] bg-[var(--primary)]/10 text-[var(--primary)]'
-                      : 'border-[var(--border)] hover:border-[var(--primary)]/50'
-                  )}
-                  title={preset.description}
-                >
-                  {preset.name}
-                </button>
-              ))}
-            </div>
+            {/* Global providers */}
+            {API_PROVIDERS.filter((p) => p.region === 'global' && !['zhipu-global', 'minimax-global', 'moonshot-global'].includes(p.id)).length > 0 && (
+              <div className="space-y-1">
+                <span className="text-[10px] font-medium text-[var(--muted-foreground)] uppercase tracking-wider">{t('globalProviders')}</span>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {API_PROVIDERS.filter((p) => p.region === 'global' && !['zhipu-global', 'minimax-global', 'moonshot-global'].includes(p.id)).map((preset) => (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => handlePresetSelect(preset)}
+                      className={cn(
+                        'px-2 py-1 text-xs rounded truncate',
+                        'border transition-colors',
+                        selectedPreset === preset.id
+                          ? 'border-[var(--primary)] bg-[var(--primary)]/10 text-[var(--primary)]'
+                          : 'border-[var(--border)] hover:border-[var(--primary)]/50'
+                      )}
+                      title={preset.description}
+                    >
+                      {preset.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {/* Chinese domestic providers */}
+            {API_PROVIDERS.filter((p) => p.region === 'china').length > 0 && (
+              <div className="space-y-1">
+                <span className="text-[10px] font-medium text-[var(--muted-foreground)] uppercase tracking-wider">{t('chineseProviders')}</span>
+                <div className="grid grid-cols-3 gap-1.5 max-h-40 overflow-y-auto">
+                  {API_PROVIDERS.filter((p) => p.region === 'china').map((preset) => (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => handlePresetSelect(preset)}
+                      className={cn(
+                        'px-2 py-1 text-xs rounded truncate',
+                        'border transition-colors',
+                        selectedPreset === preset.id
+                          ? 'border-[var(--primary)] bg-[var(--primary)]/10 text-[var(--primary)]'
+                          : 'border-[var(--border)] hover:border-[var(--primary)]/50'
+                      )}
+                      title={preset.description}
+                    >
+                      {preset.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {/* Chinese international providers */}
+            {API_PROVIDERS.filter((p) => ['zhipu-global', 'minimax-global', 'moonshot-global'].includes(p.id)).length > 0 && (
+              <div className="space-y-1">
+                <span className="text-[10px] font-medium text-[var(--muted-foreground)] uppercase tracking-wider">{t('chineseIntlProviders')}</span>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {API_PROVIDERS.filter((p) => ['zhipu-global', 'minimax-global', 'moonshot-global'].includes(p.id)).map((preset) => (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => handlePresetSelect(preset)}
+                      className={cn(
+                        'px-2 py-1 text-xs rounded truncate',
+                        'border transition-colors',
+                        selectedPreset === preset.id
+                          ? 'border-[var(--primary)] bg-[var(--primary)]/10 text-[var(--primary)]'
+                          : 'border-[var(--border)] hover:border-[var(--primary)]/50'
+                      )}
+                      title={preset.description}
+                    >
+                      {preset.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Name */}
