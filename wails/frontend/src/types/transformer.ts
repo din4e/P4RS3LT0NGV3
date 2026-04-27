@@ -23,9 +23,13 @@ export interface CopyHistoryEntry {
 }
 
 export interface StegOptions {
-  bitOrder: 'LSB' | 'MSB'
-  vs15: boolean
-  vs16: boolean
+  bitOrder: 'msb' | 'lsb'
+  bitZeroVS: string
+  bitOneVS: string
+  initialPresentation: 'emoji' | 'text' | 'none'
+  trailingZW: string | null
+  interBitZW: string | null
+  interBitEvery: number
   [key: string]: unknown
 }
 

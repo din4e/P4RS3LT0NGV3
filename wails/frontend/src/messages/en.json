@@ -115,7 +115,27 @@
     "encodedMessage": "Encoded Message",
     "decodedMessage": "Decoded Message",
     "selectCarrier": "Select a carrier emoji",
-    "invisibleText": "Invisible Text"
+    "invisibleText": "Invisible Text",
+    "encode": "Encode",
+    "decode": "Decode",
+    "stegOptions": "Steganography Options",
+    "initialPresentation": "Initial Presentation",
+    "bitOrder": "Bit Order",
+    "bitZeroSelector": "Bit-0 Selector",
+    "bitOneSelector": "Bit-1 Selector",
+    "interBitZW": "Inter-bit Zero-Width",
+    "interBitEvery": "Inter-bit Every N bits",
+    "trailingZW": "Trailing Zero-Width",
+    "selected": "Selected:",
+    "clearSelection": "Clear selection",
+    "customEmojiPlaceholder": "Type or paste any emoji...",
+    "useEmoji": "Use",
+    "shareHint": "Copy this text and share it. Only people who know how to decode it will be able to read your message.",
+    "using": "using",
+    "decodeLabel": "Paste encoded text to reveal the hidden message",
+    "decodePlaceholder": "Paste steganographic text here...",
+    "via": "via",
+    "noHiddenMessage": "No hidden message detected in the pasted text."
   },
   "anticlassifier": {
     "title": "Anti-Classifier",
@@ -333,7 +353,11 @@
       "cancel": "Cancel",
       "noModels": "No models available",
       "noProvider": "No provider configured",
-      "noKeyRequired": "No API key required for local providers"
+      "noKeyRequired": "No API key required for local providers",
+      "localProviders": "Local",
+      "globalProviders": "Global",
+      "chineseProviders": "China",
+      "chineseIntlProviders": "China (Intl)"
     }
   }
 }
