@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
@@ -9,6 +8,7 @@ import { useSettingsStore } from '@/stores/useSettingsStore'
 import { cn } from '@/lib/utils'
 import { OPENROUTER_MODELS } from '@/lib/utils/openrouterModels'
 import { chatCompletion, isWailsMode } from '@/lib/services/chatCompletion'
+import LexemeAnalysisPanel from '@/components/shared/LexemeAnalysisPanel'
 
 const TOOL_ID = 'promptcraft'
 
@@ -54,7 +54,7 @@ export default function Tool() {
   const tc = useTranslations('common')
   const locale = useLocale()
   const isZhLocale = locale.startsWith('zh')
-  const tt = useCallback((key: string, fallback: string, values?: Record<string, unknown>) => {
+  const tt = useCallback((key: string, fallback: string, values?: Record<string, string | number | Date>) => {
     if (t.has(key)) {
       return values ? t(key, values) : t(key)
     }
@@ -231,6 +231,9 @@ export default function Tool() {
           rows={4}
         />
       </div>
+
+      {/* Lexeme Analysis */}
+      <LexemeAnalysisPanel text={input} onApplyRewrite={setInput} />
 
       {/* Strategy grid */}
       <div className="flex flex-col gap-2">

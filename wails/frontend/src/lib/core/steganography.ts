@@ -84,30 +84,22 @@ function findEmojiMatch(text: string): RegExpMatchArray | null {
 // --- Carrier definitions ---------------------------------------------------
 
 export const carriers = [
-  {
-    emoji: '\uD83D\uDC0D',
-    name: 'SNAKE',
-    desc: 'Classic Snake',
-    preview(text: string) { return encodeForPreview(this.emoji, text) },
-  },
-  {
-    emoji: '\uD83D\uDC09',
-    name: 'DRAGON',
-    desc: 'Mystical Dragon',
-    preview(text: string) { return encodeForPreview(this.emoji, text) },
-  },
-  {
-    emoji: '\uD83E\uDD8E',
-    name: 'LIZARD',
-    desc: 'Sneaky Lizard',
-    preview(text: string) { return encodeForPreview(this.emoji, text) },
-  },
-  {
-    emoji: '\uD83D\uDC0A',
-    name: 'CROCODILE',
-    desc: 'Dangerous Croc',
-    preview(text: string) { return encodeForPreview(this.emoji, text) },
-  },
+  { emoji: '🐍', name: 'SNAKE', desc: 'Classic Snake', preview(text) { return encodeForPreview(this.emoji, text) } },
+  { emoji: '🐉', name: 'DRAGON', desc: 'Mystical Dragon', preview(text) { return encodeForPreview(this.emoji, text) } },
+  { emoji: '🦎', name: 'LIZARD', desc: 'Sneaky Lizard', preview(text) { return encodeForPreview(this.emoji, text) } },
+  { emoji: '🐊', name: 'CROCODILE', desc: 'Dangerous Croc', preview(text) { return encodeForPreview(this.emoji, text) } },
+  { emoji: '🐢', name: 'TURTLE', desc: 'Steady Turtle', preview(text) { return encodeForPreview(this.emoji, text) } },
+  { emoji: '🐌', name: 'SNAIL', desc: 'Slow Snail', preview(text) { return encodeForPreview(this.emoji, text) } },
+  { emoji: '🐱', name: 'CAT', desc: 'Sly Cat', preview(text) { return encodeForPreview(this.emoji, text) } },
+  { emoji: '🦁', name: 'RACCOON', desc: 'Masked Bandit', preview(text) { return encodeForPreview(this.emoji, text) } },
+  { emoji: '🦂', name: 'SCORPION', desc: 'Lethal Stinger', preview(text) { return encodeForPreview(this.emoji, text) } },
+  { emoji: '🐺', name: 'WOLF', desc: 'Lone Wolf', preview(text) { return encodeForPreview(this.emoji, text) } },
+  { emoji: '🕷', name: 'SPIDER', desc: 'Web Spinner', preview(text) { return encodeForPreview(this.emoji, text) } },
+  { emoji: '🐸', name: 'FROG', desc: 'Leaping Frog', preview(text) { return encodeForPreview(this.emoji, text) } },
+  { emoji: '🦟', name: 'MOSQUITO', desc: 'Tiny Intruder', preview(text) { return encodeForPreview(this.emoji, text) } },
+  { emoji: '🐯', name: 'TIGER', desc: 'Fierce Tiger', preview(text) { return encodeForPreview(this.emoji, text) } },
+  { emoji: '🦅', name: 'EAGLE', desc: 'Sharp Eye', preview(text) { return encodeForPreview(this.emoji, text) } },
+  { emoji: '🐙', name: 'OCTOPUS', desc: 'Eight Arms', preview(text) { return encodeForPreview(this.emoji, text) } },
 ]
 
 // --- Emoji steganography ---------------------------------------------------

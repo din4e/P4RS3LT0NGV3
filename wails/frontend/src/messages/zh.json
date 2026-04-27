@@ -115,7 +115,27 @@
     "encodedMessage": "编码消息",
     "decodedMessage": "解码消息",
     "selectCarrier": "选择载体 Emoji",
-    "invisibleText": "隐形文本"
+    "invisibleText": "隐形文本",
+    "encode": "编码",
+    "decode": "解码",
+    "stegOptions": "隐写选项",
+    "initialPresentation": "初始呈现方式",
+    "bitOrder": "位序",
+    "bitZeroSelector": "Bit-0 选择符",
+    "bitOneSelector": "Bit-1 选择符",
+    "interBitZW": "位间零宽字符",
+    "interBitEvery": "每 N 位插入",
+    "trailingZW": "尾部零宽字符",
+    "selected": "已选择：",
+    "clearSelection": "清除选择",
+    "customEmojiPlaceholder": "输入或粘贴任意 Emoji...",
+    "useEmoji": "使用",
+    "shareHint": "复制此文本并分享。只有知道如何解码的人才能读取隐藏消息。",
+    "using": "使用",
+    "decodeLabel": "粘贴编码文本以揭示隐藏消息",
+    "decodePlaceholder": "在此粘贴隐写文本...",
+    "via": "通过",
+    "noHiddenMessage": "未在粘贴的文本中检测到隐藏消息。"
   },
   "anticlassifier": {
     "title": "反分类器",
@@ -333,7 +353,11 @@
       "cancel": "取消",
       "noModels": "无可用模型",
       "noProvider": "未配置提供商",
-      "noKeyRequired": "本地提供商无需 API 密钥"
+      "noKeyRequired": "本地提供商无需 API 密钥",
+      "localProviders": "本地",
+      "globalProviders": "国际",
+      "chineseProviders": "国内",
+      "chineseIntlProviders": "国内 (国际版)"
     }
   }
 }

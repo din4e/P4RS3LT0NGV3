@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useCallback } from 'react'
@@ -6,6 +5,7 @@ import { toast } from 'sonner'
 import { useClipboard } from '@/hooks/useClipboard'
 import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 import { downloadFile } from '@/lib/wails'
+import LexemeAnalysisPanel from '@/components/shared/LexemeAnalysisPanel'
 
 // ── types ────────────────────────────────────────────────────────────
 
@@ -330,6 +330,9 @@ export default function Tool() {
           rows={4}
         />
       </div>
+
+      {/* Lexeme Analysis */}
+      <LexemeAnalysisPanel text={bijInput} onApplyRewrite={setBijInput} />
 
       {/* Options */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

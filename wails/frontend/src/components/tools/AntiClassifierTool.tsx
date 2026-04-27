@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
@@ -10,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { OPENROUTER_MODELS } from '@/lib/utils/openrouterModels'
 import { ANTICLASSIFIER_SYSTEM_PROMPT } from '@/lib/utils/anticlassifierPrompt'
 import { chatCompletion, isWailsMode } from '@/lib/services/chatCompletion'
+import LexemeAnalysisPanel from '@/components/shared/LexemeAnalysisPanel'
 
 const TOOL_ID = 'anticlassifier'
 const FALLBACK_MODEL = 'anthropic/claude-sonnet-4.6'
@@ -143,6 +143,9 @@ export default function Tool() {
           {t('description')}
         </p>
       </div>
+
+      {/* Lexeme Analysis */}
+      <LexemeAnalysisPanel text={input} onApplyRewrite={setInput} />
 
       <div className="grid gap-4 lg:grid-cols-5">
         {/* Input + Action */}

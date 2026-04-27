@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
@@ -204,14 +203,14 @@ export default function Tool() {
         for (const item of processed) {
           if (item.split) {
             if (!messageStarted) {
-              currentMessage.push(item.firstHalf)
+              currentMessage.push(item.firstHalf ?? '')
               chunks.push(currentMessage.join(' '))
-              currentMessage = [item.secondHalf]
+              currentMessage = [item.secondHalf ?? '']
               messageStarted = true
             } else {
-              currentMessage.push(item.firstHalf)
+              currentMessage.push(item.firstHalf ?? '')
               chunks.push(currentMessage.join(' '))
-              currentMessage = [item.secondHalf]
+              currentMessage = [item.secondHalf ?? '']
             }
           } else {
             currentMessage.push((item as { whole: string }).whole)
