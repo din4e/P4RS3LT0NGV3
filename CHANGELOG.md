@@ -1,5 +1,72 @@
 # 更新日志
 
+## [v0.2.5] - 2026-04-27
+
+### 多提供商架构重构
+
+- 支持同时配置多个 AI 提供商，预设覆盖 **18+ 提供商**：
+  - **本地** — Ollama (localhost:11434)、LM Studio (localhost:1234)，无需 API Key
+  - **国际** — OpenRouter、OpenAI、Anthropic、Google AI
+  - **国内** — DeepSeek、Qwen、Moonshot、Zhipu、MiniMax、Yi、Baichuan、Baidu、Spark、Tencent、SiliconFlow、ModelScope
+  - **国内（国际版）** — Zhipu GLM、MiniMax、Kimi
+- 每个工具支持独立的提供商/模型覆盖
+- 模型列表自动发现与 1 小时缓存
+- 连接测试功能
+- LobeHub Icons 集成
+- 从单提供商（仅 OpenRouter）迁移到多提供商，Zustand `persist` middleware 自动迁移旧版配置
+- Wails Go 后端代理本地提供商请求，避免 CORS
+
+### Latin 词素分析系统
+
+- 新增 Latin 词根敏感用语检测与中和模块（`lib/data/latinAffixPolicies.ts` + `lib/utils/lexemeAnalysis.ts`）
+- 5 条检测策略：`-cide` 后缀、`-cidal` 后缀、根除类动词 (eradicate/exterminate/annihilate/obliterate)、压制类用语 (neutralize/incapacitate/suppress)、致命类用语 (lethal/fatal/terminal/mortal)
+- 自动提取根词素并通过 `DOMAIN_ALIASES` 解析语义域
+- 一键中和重写，保持原始大小写模式
+- 共享 `LexemeAnalysisPanel` 组件集成至 AntiClassifier / PromptCraft / Bijection
+
+### Emoji 隐写增强
+
+- 6 个可折叠 Emoji 分类面板（Animals, Nature, Objects, Faces & People, Symbols & Signs, Food & Drink），约 **270 个 Emoji**
+- 自定义 Emoji 输入，通过 `Intl.Segmenter` 正确提取字素簇
+- 高级隐写选项面板：初始呈现方式、位序 (MSB/LSB)、位选择符、位间/尾部零宽字符
+- `StegOptions` 接口扩展至完整 7 字段
+- Core carriers 扩充至 **16 个** 命名载体
+
+### 护栏测试增强
+
+- 导出报告支持 JSON / Markdown / HTML 多格式，HTML 含样式表格
+- 自定义预料：手动添加或从 `.txt` / `.csv` 导入，持久化至 localStorage
+- 统一原生保存对话框（通过 Wails Go 后端调用系统原生文件对话框）
+
+### ProviderModal 分组布局
+
+- 按 Local / Global / 国内 / 国内（国际版）四组分类展示
+- 移除 12 个提供商显示上限，显示全部
+- 国内分组增加滚动区域 (max-h-40)
+
+### 国际化
+
+- 隐写选项、提供商分组、Decode 面板全部中英双语翻译
+- en.json / zh.json 各新增 20+ 翻译条目
+
+### 修复
+
+- SteganographyTool 移除类内重复 Emoji（🦜×2, 🐊×2, 🔮×3, 🧿×2, 💠×2），React key 改用 `category-index`
+- SplitterTool 添加 `?? ''` 修复 TS2322/TS2345 类型错误
+- PromptCraftTool 修复 `Record<string, unknown>` → `Record<string, string | number | Date>` 兼容 next-intl
+
+### 重构
+
+- 移除 8 个工具组件的 `@ts-nocheck` 指令
+- 移除 OpenRouter 强依赖说明
+
+### 文档
+
+- README_zh 技术条目中英双语
+- 新增 `docs/TOOLS.md` 全工具技术文档（19 个工具 + 共享模块）
+
+---
+
 ## [v0.2.4] - 2026-04-24
 
 ### 新增转换分类
