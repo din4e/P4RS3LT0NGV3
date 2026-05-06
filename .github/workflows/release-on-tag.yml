@@ -1,0 +1,80 @@
+name: Release on tag
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & upload (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Debug workspace
+        shell: bash
+        run: |
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+          pwd
+          ls -la
+          echo "--- wails dir ---"
+          ls -la ./wails || true
+          echo "--- wails/frontend dir ---"
+          ls -la ./wails/frontend || true
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.x"
+          cache: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "wails/frontend/package-lock.json"
+
+      - name: Install frontend deps
+        working-directory: wails/frontend
+        run: |
+          npm ci --no-audit --no-fund || npm install --no-audit --no-fund
+
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.11.0
+
+      - name: Build app
+        shell: bash
+        run: |
+          cd wails
+          pwd
+          ls -la
+          wails build
+
+      - name: Package (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "wails/build/bin/*" -DestinationPath "P4RS3LT0NGV3-${{ github.ref_name }}-windows.zip"
+
+      - name: Package (macOS)
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          cd wails/build/bin
+          tar -czf ../../../../P4RS3LT0NGV3-${{ github.ref_name }}-macOS.tar.gz .
+
+      - name: Create release & upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            P4RS3LT0NGV3-${{ github.ref_name }}-windows.zip
+            P4RS3LT0NGV3-${{ github.ref_name }}-macOS.tar.gz
+          fail_on_unmatched_files: false

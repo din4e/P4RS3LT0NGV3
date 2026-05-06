@@ -1,322 +1,321 @@
-# 🐍 P4RS3LT0NGV3 - Universal Text Translator
+# 🐉 P4RS3LT0NGV3 - 通用文本翻译器
 
-A powerful web-based text transformation and steganography tool with **159** built-in text transforms spanning encodings, classical and modern ciphers, Unicode styles, formatting, and niche alphabets. Think of it as a universal translator for ALL alphabets and writing systems! 
+一款强大的 Web 文本转换与隐写工具，内置 **159** 种文本转换，涵盖编码、古典与现代密码、Unicode 样式、格式化及小众字母表。它就像一个适用于所有字母表和书写系统的通用翻译器！
 
-The app is a **static site**: run **`npm run build`** (after `npm install`), then open **`dist/index.html`** in your browser—no local server required. **Alternatively**, you can run it as a local app over HTTP with **`npm start`** or **`npx serve dist -l 8080`** (see [Getting Started](#getting-started) below). Core transforms, decoder, and steganography work **without** calling the cloud; features that use [OpenRouter](https://openrouter.ai/) need **network access** and an API key (see below).
+本应用是一个**静态站点**：执行 **`npm run build`**（先 `npm install`），然后在浏览器中打开 **`dist/index.html`** 即可——无需本地服务器。**或者**，你可以通过 **`npm start`** 或 **`npx serve dist -l 8080`** 以 HTTP 方式运行本地应用（见下方[快速开始](#快速-start)）。核心转换、解码器和隐写功能**无需**联网。
 
-## ✨ Features
+## ✨ 功能特性
 
-### 🔐 **Steganography**
-- **Emoji Steganography**: Hide messages within emojis using variation selectors (VS15/VS16 and related options; configurable bit order in Advanced Settings)
-- **Invisible Text**: Encode text using Unicode Tags block (visually invisible)
-- **Whitespace & zero-width steganography**: Available as transforms for research-style payloads (see transform categories)
+### 🔐 **隐写术**
 
-### 🌍 **Text Transformations**
+- **Emoji 隐写（Emoji Steganography）**：使用变体选择器（VS15/VS16 及相关选项；可在高级设置中配置位序）在 emoji 中隐藏消息
+- **隐形文本（Invisible Text）**：使用 Unicode Tags 块编码文本（视觉上不可见）
+- **空白与零宽隐写（Whitespace & Zero-Width Steganography）**：可作为转换器使用，用于研究型载荷（见转换分类）
 
-Categories match the Transform tab and the folders under `src/transformers/` (each transformer’s `name` as shown in the UI). Short descriptions explain what each transform does.
+### 🌍 **文本转换**
 
-#### **Ancient**
-- **Elder Futhark** - Germanic Elder Futhark runes
-- **Hieroglyphics** - Egyptian hieroglyph-style mapping
-- **Ogham (Celtic)** - Celtic Ogham tree alphabet
-- **Roman Numerals** - Arabic numerals ↔ Roman numerals
+分类与「转换」选项卡及 `src/transformers/` 下的文件夹一一对应（每个转换器在 UI 中显示的 `name`）。简要说明每个转换的功能。
 
-#### **Case**
-- **Alternating Case** - Alternate uppercase and lowercase per letter (first letter upper or lower)
-- **camelCase** - lowerCamelCase for identifiers
-- **kebab-case** - kebab-case for slugs and identifiers
-- **Random Case** - Random casing per character
-- **Sentence Case** - Capitalize the first letter of each sentence
-- **snake_case** - snake_case for identifiers
-- **Title Case** - Capitalize each word
+#### **古代文字（Ancient Scripts）**
 
-#### **Cipher**
-- **ADFGX Cipher** - WWI ADFGVX-style polybius + column transposition
-- **Affine Cipher** - Affine substitution (ax + b mod 26)
-- **Atbash Cipher** - Reverse-alphabet substitution (A↔Z)
-- **Autokey Cipher** - Key stream mixed with plaintext (autokey)
-- **Baconian Cipher** - Five-letter groups hiding A/B (Bacon biliteral)
-- **Beaufort Cipher** - Beaufort key-table polyalphabetic cipher
-- **Bifid Cipher** - Polybius square + row/column interleaving
-- **Caesar Cipher** - Classic alphabet shift (configurable)
-- **Columnar Transposition** - Columnar transposition with a keyword
-- **Four-Square Cipher** - Four 5×5 squares; digraph substitution
-- **Gronsfeld Cipher** - Vigenère family with numeric key
-- **Hill Cipher** - Matrix-based multi-letter substitution
-- **Homophonic Cipher** - Multiple ciphertext symbols per plaintext letter
-- **Nihilist Cipher** - Keyed Polybius + additive encryption
-- **Pigpen Cipher** - Masonic / pigpen grid symbols
-- **Playfair Cipher** - Digraph cipher on a 5×5 square
-- **Polybius Square** - Letter ↔ grid coordinates
-- **Porta Cipher** - Porta table polyalphabetic cipher
-- **Rail Fence** - Zig-zag rail-fence transposition
-- **ROT128** - UTF-16 code unit rotation by 128
-- **ROT13** - Rotate Latin letters by 13 places
-- **ROT18** - Rotate printable ASCII (33–126) by 18
-- **ROT47** - Rotate printable ASCII (33–126) by 47
-- **ROT5** - Rotate digits 0–9 by 5
-- **ROT8000** - Plane-0 Unicode BMP rotation cipher
-- **Scytale Cipher** - Wrap-around strip (scytale) transposition
-- **Trifid Cipher** - Three Polybius cubes + trifid grouping
-- **Two-Square Cipher** - Digraph cipher with two Playfair squares
-- **Vigenère Cipher** - Polyalphabetic cipher with repeating keyword
-- **XOR Cipher** - XOR with a repeating key
+- **日耳曼长老如尼文（Elder Futhark）**
+- **埃及象形文字风格映射（Hieroglyphics）**
+- **凯尔特欧甘树文（Ogham / Celtic）**
+- **阿拉伯数字 ↔ 罗马数字（Roman Numerals）**
 
-#### **Encoding**
-- **ASCII85** - Ascii85 / Adobe-style base-85 encoding
-- **Base122** - Binary → 122 printable ASCII characters
-- **Base32** - RFC 4648 Base32
-- **Base36** - Base36 (0–9, A–Z)
-- **Base45** - Base45 byte encoding
-- **Base58** - Bitcoin-style Base58 (no 0/O/I/l)
-- **Base62** - Base62 (0–9, A–Z, a–z)
-- **Base64** - Standard Base64
-- **Base64 URL** - Base64url (URL-safe alphabet)
-- **Base91** - basE91 / Ascii91 encoding
-- **Baudot Code (ITA2)** - Five-bit telegraph / ITA2
-- **Binary Coded Decimal** - Decimal digits as BCD nibbles
-- **Binary** - Text bytes ↔ binary strings
-- **EBCDIC** - EBCDIC byte encoding
-- **Emoji Encoding** - Payload encoded with emoji
-- **Gray Code** - Binary Gray code
-- **Hexadecimal** - Hex encode/decode bytes
-- **HTML Entities** - HTML entity escape / unescape
-- **Invisible Text** - Unicode Tags / invisible carrier encoding
-- **Quoted-Printable** - MIME quoted-printable
-- **Unicode Code Points** - Characters ↔ U+XXXX code points
-- **URL Encode** - application/x-www-form-urlencoded
-- **Uuencoding** - Classic uuencode / uudecode
-- **YEnc** - yEnc line-oriented binary encoding
-- **Z85** - ZeroMQ Z85 encoding
+#### **大小写（Case）**
 
-#### **Fantasy**
-- **Aurebesh (Star Wars)** - Galactic Basic Aurebesh alphabet
-- **Dovahzul (Dragon)** - Skyrim Dovahzul transliteration
-- **Klingon** - Klingon transliteration
-- **Quenya (Tolkien Elvish)** - Tolkien Quenya mapping
-- **Tengwar Script** - Elvish Tengwar script
+- **交替大小写（Alternating Case）** — 首字母可选大写或小写
+- **小驼峰标识符（camelCase）**
+- **短横线连接（kebab-case）**
+- **随机大小写（Random Case）**
+- **句首大写（Sentence Case）**
+- **下划线连接（snake_case）**
+- **每个单词首字母大写（Title Case）**
 
-#### **Format**
-- **Bitwise NOT** - UTF-8 bytes NOT'd per byte; encode output is hex (decode pastes hex back to text)
-- **Boustrophedon** - Serpentine / alternating line direction
-- **Capitalize Words** - Capitalize the first letter of each word
-- **Indent** - Add leading spaces to each line (configurable width)
-- **Javanais** - French “javanais” vowel-insertion game
-- **Latin Gibberish** - Latin-flavored pseudo-text
-- **Leetspeak** - 1337-style character substitutions
-- **Letters Only** - Keep letters; strip other characters
-- **Letters & Numbers Only** - Alphanumeric only
-- **Line Numbers** - Prefix lines with numbers (start and column width configurable)
-- **Louchebem** - French argot (loucherbem-style)
-- **Lowercase All** - Lowercase entire text
-- **Mirror Digits** - Mirror digits 0–9 visually
-- **Numbers Only** - Digits only
-- **Pig Latin** - English Pig Latin
-- **QWERTY Right Shift** - Map keys to the key to the right on QWERTY
-- **Remove Accents** - Strip diacritics / combining marks
-- **Remove Consonants** - Remove consonant letters
-- **Remove Duplicates** - Remove duplicate lines
-- **Remove Extra Spaces** - Collapse runs of spaces
-- **Remove HTML Tags** - Strip HTML/XML tags
-- **Remove Newlines** - Remove line breaks
-- **Remove Numbers** - Remove digit characters
-- **Remove Punctuation** - Remove punctuation
-- **Remove Tabs** - Remove tab characters
-- **Remove Zero Width** - Strip zero-width characters
-- **Reverse Words** - Reverse order of words
-- **Reverse Text** - Reverse character order
-- **Shuffle Characters** - Shuffle characters (random order)
-- **Shuffle Words** - Shuffle word order
-- **Spaces Remover** - Remove space characters
-- **Text Justify** - Pad each line to a fixed width (left, right, or center); not word-spacing justify
-- **Uppercase All** - Uppercase entire text
-- **Toggle Case** - Swap case of each letter
-- **Whitespace Steganography** - Hide bits in whitespace patterns
-- **Word Wrap** - Break long lines at spaces so each line fits a maximum width
-- **Zero-Width Steganography** - Hide data with zero-width characters
+#### **密码（Ciphers）**
 
-#### **Special**
-- **Random Mix** - Pick random transforms and chain them
+- **一战 ADFGVX 风格 Polybius + 列换位（ADFGX Cipher）**
+- **仿射替换（Affine Cipher）** — ax + b mod 26
+- **反向字母替换（Atbash Cipher）** — A↔Z
+- **密钥流混合明文 / 自动密钥（Autokey Cipher）**
+- **五字母组隐藏 A/B / 培根双字母密码（Baconian Cipher）**
+- **Beaufort 密钥表多表密码（Beaufort Cipher）**
+- **Polybius 方阵 + 行/列交织（Bifid Cipher）**
+- **经典字母移位 / 凯撒密码（Caesar Cipher）** — 可配置
+- **关键字列换位（Columnar Transposition）**
+- **四个 5×5 方阵 / 双字母替换（Four-Square Cipher）**
+- **数字密钥的维吉尼亚变体（Gronsfeld Cipher）**
+- **基于矩阵的多字母替换（Hill Cipher）**
+- **每个明文字母对应多个密文符号（Homophonic Cipher）**
+- **带密钥 Polybius + 加法加密（Nihilist Cipher）**
+- **共济会 / 猪圈格符号（Pigpen Cipher）**
+- **5×5 方阵双字母密码（Playfair Cipher）**
+- **字母 ↔ 网格坐标（Polybius Square）**
+- **Porta 表多表密码（Porta Cipher）**
+- **锯齿形栅栏换位（Rail Fence）**
+- **UTF-16 码元旋转 128（ROT128）**
+- **拉丁字母旋转 13 位（ROT13）**
+- **可打印 ASCII (33–126) 旋转 18（ROT18）**
+- **可打印 ASCII (33–126) 旋转 47（ROT47）**
+- **数字 0–9 旋转 5（ROT5）**
+- **Unicode BMP 基本多文种平面旋转密码（ROT8000）**
+- **绕带式 / 密码棒换位（Scytale Cipher）**
+- **三个 Polybius 立方 + 三分分组（Trifid Cipher）**
+- **两个 Playfair 方阵的双字母密码（Two-Square Cipher）**
+- **重复关键字多表密码 / 维吉尼亚密码（Vigenère Cipher）**
+- **与重复密钥进行异或（XOR Cipher）**
 
-#### **Technical**
-- **A1Z26** - A=1 … Z=26 letter numbering
-- **Braille** - Unicode Braille patterns
-- **Brainfuck** - Text ↔ Brainfuck program
-- **ICAO Spelling Alphabet** - ICAO radiotelephony spelling
-- **ITU Spelling Alphabet** - ITU phonetic / spelling alphabet
-- **Maritime Signal Flags** - International maritime signal flags
-- **Morse Code** - International Morse code
-- **NATO Phonetic** - NATO phonetic alphabet
-- **Semaphore Flags** - Flag semaphore arm positions
-- **Tap Code** - Polybius / tap / prison code
+#### **编码（Encodings）**
 
-#### **Unicode**
-- **Bold Italic** - Mathematical sans-serif bold italic
-- **Bold** - Mathematical bold
-- **Bubble** - Circled / “bubble” letters
-- **Chemical Symbols** - Chemical element symbols
-- **Circled** - Circled Unicode letters
-- **Cursive** - Mathematical script / cursive
-- **Cyrillic Stylized** - Latin → Cyrillic lookalike letters
-- **Dashed Underline** - Combining dashed underline
-- **Dotted Underline** - Combining dotted underline
-- **Double-Struck** - Mathematical double-struck
-- **Fraktur** - Mathematical Fraktur / Gothic
-- **Full Width** - Fullwidth Latin (and related) forms
-- **Greek Letters** - Greek letter replacements
-- **Hiragana** - Rough Romaji → Hiragana
-- **Italic** - Mathematical italic
-- **Katakana** - Rough Romaji → Katakana
-- **Mathematical Notation** - Mathematical alphanumeric symbols
-- **Medieval** - Medieval Unicode letterforms
-- **Mirror Text** - Left–right mirrored characters
-- **Monospace** - Mathematical monospace
-- **Negative Squared** - Negative circled / squared letters
-- **Overline** - Overline combining marks
-- **Parenthesized** - Parenthesized Latin letters
-- **Regional Indicator Letters** - Regional-indicator flag letters
-- **Small Caps** - Small capitals (Unicode)
-- **Squared** - Squared / enclosed alphanumeric
-- **Strikethrough** - Strikethrough combining characters
-- **Subscript** - Unicode subscripts
-- **Superscript** - Unicode superscripts
-- **Underline** - Underline combining characters
-- **Upside Down** - Upside-down Unicode letters
-- **Vaporwave** - Fullwidth + aesthetic spacing
-- **Wavy Underline** - Wavy underline combining marks
-- **Wide Spacing** - Insert wide spaces between characters
-- **Wingdings** - Wingdings-style symbol mapping
-- **Zalgo** - Stacked combining marks (“glitch” text)
+- **Ascii85 / Adobe 风格 Base-85 编码（ASCII85）**
+- **二进制 → 122 个可打印 ASCII 字符（Base122）**
+- **RFC 4648 Base32（Base32）**
+- **Base36 (0–9, A–Z)（Base36）**
+- **Base45 字节编码（Base45）**
+- **比特币风格 Base58（Base58）** — 无 0/O/I/l
+- **Base62 (0–9, A–Z, a–z)（Base62）**
+- **标准 Base64（Base64）**
+- **Base64url / URL 安全字母表（Base64 URL）**
+- **basE91 / Ascii91 编码（Base91）**
+- **五位电报 / ITA2（Baudot Code / ITA2）** — 输出为 5 位二进制字符串（如 `10101 00010`），可直接复制粘贴并反向解码
+- **十进制数字的 BCD 尼布尔编码（Binary Coded Decimal）**
+- **文本字节 ↔ 二进制字符串（Binary）**
+- **EBCDIC 字节编码（EBCDIC）** — 输出为十六进制字节（如 `88 85 93 93 96`），可直接复制粘贴并反向解码
+- **使用 emoji 编码载荷（Emoji Encoding）**
+- **二进制格雷码（Gray Code）**
+- **十六进制编码/解码字节（Hexadecimal）**
+- **HTML 实体转义/反转义（HTML Entities）**
+- **Unicode Tags / 隐形载体编码（Invisible Text）**
+- **MIME quoted-printable（Quoted-Printable）**
+- **字符 ↔ U+XXXX 码点（Unicode Code Points）**
+- **application/x-www-form-urlencoded（URL Encode）**
+- **经典 uuencode / uudecode（Uuencoding）**
+- **yEnc 行式二进制编码（YEnc）** — 输出为十六进制字节（如 `72 8F 96 96 99`），可直接复制粘贴并反向解码
+- **ZeroMQ Z85 编码（Z85）**
 
-#### **Visual**
-- **Disemvowel** - Remove vowels (speech game)
-- **Emoji Speak** - Emoji-heavy “speak” transform
-- **Rövarspråket** - Swedish consonant-doubling game
-- **Ubbi Dubbi** - Insert “ub” before vowel sounds
+#### **奇幻文字（Fantasy Scripts）**
 
-### 🛠️ **Tools** (tabs)
+- **银河基本语 Aurebesh 字母表（Aurebesh / Star Wars）**
+- **天际龙语转写（Dovahzul / Dragon）**
+- **克林贡语转写（Klingon）**
+- **托尔金昆雅语映射（Quenya / Tolkien Elvish）**
+- **精灵语腾格瓦文字（Tengwar Script）**
 
-Tabs appear in **UI order** below. **OpenRouter** (optional or required per tool) uses the key in **Advanced Settings** — see **OpenRouter API Key Setup** below.
+#### **格式化（Formatting）**
 
-### 🔤 **Transform**
+- **UTF-8 字节逐位取反（Bitwise NOT）** — 编码输出为十六进制（解码时将十六进制还原为文本）
+- **牛耕式 / 交替行方向（Boustrophedon）**
+- **每个单词首字母大写（Capitalize Words）**
+- **为每行添加前导空格（Indent）** — 可配置宽度
+- **法语 "javanais" 元音插入游戏（Javanais）**
+- **拉丁风味伪文本（Latin Gibberish）**
+- **1337 风格字符替换（Leetspeak）**
+- **仅保留字母 / 去除其他字符（Letters Only）**
+- **仅保留字母数字（Letters & Numbers Only）**
+- **为行添加行号（Line Numbers）** — 起始值和列宽可配置
+- **法语俚语 / loucherbem 风格（Louchebem）**
+- **全部小写（Lowercase All）**
+- **镜像数字 0–9（Mirror Digits）**
+- **仅保留数字（Numbers Only）**
+- **英语 Pig Latin（Pig Latin）**
+- **将按键映射为 QWERTY 键盘右侧的键（QWERTY Right Shift）**
+- **去除变音符号 / 组合标记（Remove Accents）**
+- **去除辅音字母（Remove Consonants）**
+- **去除重复行（Remove Duplicates）**
+- **合并连续空格（Remove Extra Spaces）**
+- **去除 HTML/XML 标签（Remove HTML Tags）**
+- **去除换行符（Remove Newlines）**
+- **去除数字字符（Remove Numbers）**
+- **去除标点符号（Remove Punctuation）**
+- **去除制表符（Remove Tabs）**
+- **去除零宽字符（Remove Zero Width）**
+- **反转单词顺序（Reverse Words）**
+- **反转字符顺序（Reverse Text）**
+- **随机排列字符（Shuffle Characters）**
+- **随机排列单词（Shuffle Words）**
+- **去除空格字符（Spaces Remover）**
+- **将每行填充到固定宽度（Text Justify）** — 左对齐、右对齐或居中；非词间距对齐
+- **全部大写（Uppercase All）**
+- **交换每个字母的大小写（Toggle Case）**
+- **在空白模式中隐藏比特（Whitespace Steganography）**
+- **在空格处断行 / 自动换行（Word Wrap）** — 使每行不超过最大宽度
+- **使用零宽字符隐藏数据（Zero-Width Steganography）**
 
-- **159 Transforms**: Encodings, ciphers, Unicode styles, formats, and more (full catalog above).
-- **Categories**: Grouped sections you can **reorder**; quick-jump legend; **randomizer** last.
-- **Favorites & last used**: Pin transforms and recall recent picks.
-- **Per-transform options**: Gear icon where a transform exposes settings.
-- **Keyboard shortcut**: **T** (shown in the tab title).
+#### **特殊（Special）**
 
-### 🌐 **AI Translation** (via OpenRouter)
+- **随机选取转换并链式组合（Random Mix）**
 
-*Lives on the **Transform** tab — not a separate tab.*
+#### **技术（Technical）**
 
-- **20+ Languages**: Major world languages (Spanish, French, Chinese, Japanese, Korean, etc.)
-- **Dead & Exotic Languages**: Latin, Sanskrit, Ancient Greek, Sumerian, Akkadian, Old English, and more
-- **Custom Languages**: Add any language on-the-fly
-- **Multiple Models**: Gemma 3, Gemini 2.5 Flash, TranslateGemma (purpose-built translation models)
-- **TranslateGemma Prompt Format**: Uses Google's optimized prompt template for high-quality translation
-- **Auto-Fallback**: If a model is unavailable, automatically falls back to Gemma 3 27B
+- **A=1 … Z=26 字母编号（A1Z26）**
+- **Unicode 盲文图案（Braille）**
+- **文本 ↔ Brainfuck 程序（Brainfuck）**
+- **ICAO 无线电通话拼读（ICAO Spelling Alphabet）**
+- **ITU 语音 / 拼读字母表（ITU Spelling Alphabet）**
+- **国际海事信号旗（Maritime Signal Flags）**
+- **国际摩尔斯电码（Morse Code）**
+- **北约音标字母（NATO Phonetic）**
+- **旗语手臂位置（Semaphore Flags）**
+- **Polybius / 敲击 / 监狱代码（Tap Code）**
 
-### 🔍 **Decoder** (Universal Decoder)
+#### **Unicode（Unicode Styles）**
 
-- **Smart detection**: Runs format detectors and decode paths for supported transforms.
-- **Priority matching**: When a transform is active, decoding prefers that format first.
-- **Fallback**: Tries other decoders if the primary guess fails.
-- **Real-time**: Updates as you type.
-- **Script & language hints**: Unicode script ranges and Latin word-marker heuristics for common languages.
-- **AI translate to English** (optional, OpenRouter): When text looks foreign, optional one-shot translate to English.
-- **Keyboard shortcut**: **D**.
+- **数学无衬线粗斜体（Bold Italic）**
+- **数学粗体（Bold）**
+- **圆圈 / "气泡" 字母（Bubble）**
+- **化学元素符号（Chemical Symbols）**
+- **圆圈 Unicode 字母（Circled）**
+- **数学草书 / 手写体（Cursive）**
+- **拉丁 → 西里尔外观相似字母（Cyrillic Stylized）**
+- **组合虚线下划线（Dashed Underline）**
+- **组合点线下划线（Dotted Underline）**
+- **数学双线体（Double-Struck）**
+- **数学哥特体 / Fraktur（Fraktur）**
+- **全角拉丁（及相关）形式（Full Width）**
+- **希腊字母替换（Greek Letters）**
+- **粗略罗马字 → 平假名（Hiragana）**
+- **数学斜体（Italic）**
+- **粗略罗马字 → 片假名（Katakana）**
+- **数学字母数字符号（Mathematical Notation）**
+- **中世纪 Unicode 字形（Medieval）**
+- **左右镜像字符（Mirror Text）**
+- **数学等宽体（Monospace）**
+- **反白圆圈 / 方框字母（Negative Squared）**
+- **上划线组合标记（Overline）**
+- **带括号拉丁字母（Parenthesized）**
+- **区域指示旗标字母（Regional Indicator Letters）**
+- **小型大写字母 / Unicode（Small Caps）**
+- **方框 / 包围字母数字（Squared）**
+- **删除线组合字符（Strikethrough）**
+- **Unicode 下标（Subscript）**
+- **Unicode 上标（Superscript）**
+- **下划线组合字符（Underline）**
+- **倒置 Unicode 字母（Upside Down）**
+- **全角 + 美学间距（Vaporwave）**
+- **波浪下划线组合标记（Wavy Underline）**
+- **在字符间插入宽空格（Wide Spacing）**
+- **Wingdings 风格符号映射（Wingdings）**
+- **堆叠组合标记 / "故障" 文本（Zalgo）**
 
-### 😀 **Emoji** (Steganography)
+#### **视觉（Visual）**
 
-- **Emoji carriers**: Hide data using variation selectors and supported emoji carriers; pick from the emoji grid.
-- **Invisible text**: Switch to Unicode Tags–style invisible encoding where available.
-- **Encode & decode**: Separate flows for hiding and recovering text.
-- **Advanced Settings**: Bit order, VS choices, and other steganography tuning (sliders icon).
-- **Keyboard shortcut**: **H** (shown in the tab title).
+- **去除元音 / Disemvowel（Disemvowel）** — 语言游戏
+- **重 emoji "说话" 转换（Emoji Speak）**
+- **瑞典语辅音加倍游戏（Rövarspråket）**
+- **在元音前插入 "ub"（Ubbi Dubbi）**
+
+### 🛠️ **工具**（选项卡）
+
+选项卡按 **UI 顺序** 列出。
+
+### 🔤 **转换**
+
+- **159 种转换**：编码、密码、Unicode 样式、格式化等（完整目录见上方）
+- **分类**：分组区域可**重新排序**；快速跳转索引；**随机化器**在最后
+- **收藏与最近使用**：固定转换和快速回溯
+- **独立选项**：齿轮图标，配置各转换的参数
+- **键盘快捷键**：**T**（显示在选项卡标题中）
+
+### 🌐 **AI 翻译**（通过 LLM）
+
+*位于**转换**选项卡——非独立选项卡。*
+
+- **20+ 种语言**：主要世界语言（西班牙语、法语、中文、日语、韩语等）
+- **已消亡与珍稀语言**：拉丁语、梵语、古希腊语、苏美尔语、阿卡德语、古英语等
+- **自定义语言**：随时添加任意语言
+- **多种模型**：Gemma 3、Gemini 2.5 Flash、TranslateGemma（专用翻译模型）
+- **TranslateGemma 提示格式**：使用 Google 优化的提示模板实现高质量翻译
+- **自动回退**：如果模型不可用，自动回退到 Gemma 3 27B
+
+### 🔍 **解码器**（通用解码器）
+
+- **智能检测**：运行格式检测器和支持的转换解码路径
+- **优先匹配**：当某个转换处于激活状态时，优先解码该格式
+- **回退机制**：如果主要猜测失败，尝试其他解码器
+- **实时更新**：输入时即时更新
+- **脚本与语言提示**：Unicode 脚本范围和拉丁语单词标记启发式检测常见语言
+- **AI 翻译为英语**（可选）：当文本看起来像外语时，可一键翻译为英语
+- **键盘快捷键**：**D**
+
+### 😀 **Emoji**（隐写术）
+
+- **Emoji 载体**：使用变体选择器和支持的 emoji 载体隐藏数据；从 emoji 网格中选取
+- **隐形文本**：切换到 Unicode Tags 风格的隐形编码
+- **编码与解码**：独立的隐藏和恢复文本流程
+- **高级设置**：位序、VS 选择及其他隐写参数调整（滑块图标）
+- **键盘快捷键**：**H**（显示在选项卡标题中）
 
 ### 💣 **Tokenade**
 
-- **Token bomb builder**: Depth, breadth, repeats, separators (e.g. ZWSP), variation selectors, noise.
-- **Carriers & payloads**: Emoji carriers, text payloads, combining options.
-- **Safety**: Warns when estimated output crosses a **danger** token threshold.
+- **Token 炸弹构建器**：深度、广度、重复次数、分隔符（如 ZWSP）、变体选择器、噪声
+- **载体与载荷**：Emoji 载体、文本载荷、组合选项
+- **安全警告**：当预估输出超过**危险** token 阈值时发出警告
 
 ### 🧪 **Mutation Lab**
 
-- **Batch mutations**: Generate many variants from one input (count configurable).
-- **Seed**: Optional deterministic runs.
-- **Toggles**: Random mix, zero-width, Unicode noise, Zalgo, whitespace, casing, encode/shuffle.
-- **Random Mix**: Can chain the project’s random transform mixer when enabled.
+- **批量变异**：从单个输入生成多个变体（数量可配置）
+- **种子**：可选的确定性运行
+- **开关**：随机混合、零宽字符、Unicode 噪声、Zalgo、空白、大小写、编码/打乱
+- **Random Mix**：启用后可链式调用项目的随机转换混合器
 
 ### 📊 **Tokenizer**
 
-- **Engines**: UTF-8 **bytes**, **words**, or **GPT BPE** (**cl100k**, **o200k**, **p50k**, **r50k**) via `gpt-tokenizer` (CDN).
-- **Visualization**: Token list with IDs/pieces; **character** and **word** counts.
-- **Live updates**: Re-tokenizes when input or engine changes.
+- **引擎**：UTF-8 **字节**、**单词**或 **GPT BPE**（**cl100k**、**o200k**、**p50k**、**r50k**）通过 `gpt-tokenizer`（CDN）
+- **可视化**：带 ID/片段的 token 列表；**字符**和**单词**计数
+- **实时更新**：输入或引擎变化时重新分词
 
 ### ↔️ **Bijection**
 
-- **Custom mappings**: Character-to-number (and related) “alphapr”-style maps for research payloads.
-- **Controls**: Mapping type, budget, optional examples.
-- **Output**: Generated mappings and payloads ready to copy.
+- **自定义映射**：字符到数字（及相关）的 "alphapr" 风格映射，用于研究载荷
+- **控件**：映射类型、预算、可选示例
+- **输出**：生成的映射和载荷，可直接复制
 
 ### ✂️ **Splitter**
 
-- **Split modes**: By chunk size, **word**, **sentence**, **line**, **regex pattern**, or **token** count (GPT tokenizer).
-- **Transform chain**: Optionally run transforms on each piece.
-- **Wrapping**: Start/end templates; `{n}` iterator marker; single-line vs multiline copy.
+- **分割模式**：按块大小、**单词**、**句子**、**行**、**正则模式**或 **token** 数量（GPT tokenizer）
+- **转换链**：可选对每个片段运行转换
+- **包装**：起始/结束模板；`{n}` 迭代标记；单行 vs 多行复制
 
 ### 💬 **Gibberish**
 
-- **Dictionary mode**: Seeded random gibberish over a configurable character set.
-- **Removal mode**: Random or **specific** letter removal with batch **variations** and min/max strip lengths.
+- **字典模式**：基于种子的随机乱语，可配置字符集
+- **移除模式**：随机或**指定**字母移除，支持批量**变体**和最小/最大剥离长度
 
-### 🪄 **PromptCraft** (via OpenRouter)
+### 🪄 **PromptCraft**
 
-- **9 Mutation Strategies**: Rephrase, Obfuscate, Role-Play Wrap, Multi-Language, Expand, Compress, Metaphor, Fragment, and Custom
-- **48+ Models**: Frontier (Claude, GPT, Gemini, Grok), Reasoning (o3, o4, DeepSeek R1), Fast (Haiku, Mini), Code-specialized, Open Source (Llama, Qwen), and Search/Research 
-models
-- **Parallel Variants**: Generate 1-10 variants simultaneously with diverse temperature settings
-- **Copy & iterate**: Copy any variant or feed it back as input for iterative refinement
+- **9 种变异策略**：改写、混淆、角色扮演包装、多语言、扩展、压缩、隐喻、碎片化、自定义
+- **48+ 模型**：前沿模型（Claude、GPT、Gemini、Grok）、推理模型（o3、o4、DeepSeek R1）、快速模型（Haiku、Mini）、代码专用、开源（Llama、Qwen）、搜索/研究模型
+- **并行变体**：使用不同温度设置同时生成 1-10 个变体
+- **复制与迭代**：复制任意变体或将其作为输入再次迭代优化
 
-### 🤖 **Anti-Classifier** (via OpenRouter)
+### 🤖 **Anti-Classifier**
 
-- **Purpose**: Syntactic / paraphrase-style rewrites for research-style prompts.
-- **Controls**: Model, temperature, max tokens.
-- **Same key**: Uses the same OpenRouter API key as Translation and PromptCraft.
+- **用途**：语法/改写风格重写研究型提示词
+- **控件**：模型、温度、最大 token 数
+- **统一密钥**：使用与翻译和 PromptCraft 相同的 API 密钥
 
-### 📱 **User Experience**
-- **Dark/Light Theme**: Toggle between themes
-- **Copy History**: Track all copied content with timestamps
-- **Auto-copy**: Automatically copy transformed text
-- **Keyboard Shortcuts**: Quick access to features
-- **Responsive Design**: Works on all device sizes
-- **Accessibility**: Screen reader friendly with proper ARIA labels
-- **Side panels**: Glitch token browser (optional data), end-sequence / delimiter strings for research, and **Advanced Settings** (OpenRouter key, steganography tuning)
+### 📱 **用户体验**
 
-### 🔑 **OpenRouter API Key Setup**
+- **深色/浅色主题**：自由切换
+- **复制历史**：记录所有复制内容及时间戳
+- **自动复制**：转换后自动复制文本
+- **键盘快捷键**：快速访问功能
+- **响应式设计**：适配所有设备尺寸
+- **无障碍**：支持屏幕阅读器，提供适当的 ARIA 标签
+- **侧边面板**：故障 token 浏览器（可选数据）、终止序列/分隔符字符串、以及**高级设置**（API 密钥、隐写参数调整）
 
-**AI Translation**, **PromptCraft**, and **Anti-Classifier** require an [OpenRouter](https://openrouter.ai/) API key. **Decoder**’s optional “translate to English” also uses OpenRouter when enabled.
+## 🚀 **快速开始**
 
-1. Create an account at [openrouter.ai](https://openrouter.ai/)
-2. Generate an API key (starts with `sk-or-...`)
-3. In P4RS3LT0NGV3, click the **sliders icon** (top-right) to open **Advanced Settings**
-4. Paste your key and click **Save Key**
-5. Your key is stored locally in your browser only — never sent anywhere except OpenRouter
+### **快速启动（本地）**
+1. `npm install` 然后 `npm run build`（生成 **`dist/`** 目录——该目录**不会**提交到 git；克隆或源码变更后需要构建）
+2. 在 Chrome、Firefox、Safari 或其他浏览器中打开 **`dist/index.html`**（双击文件或使用**文件 → 打开**）。
 
-> **Tip:** Some models (like Gemma 3) are free on OpenRouter. Frontier models (Claude, GPT, Gemini Pro) require credits.
-
-## 🚀 **Getting Started**
-
-### **Quick Start (local)**
-1. `npm install` then `npm run build` (generates the **`dist/`** folder — it is **not** checked into git; you must build after clone or source changes)
-2. Open **`dist/index.html`** in Chrome, Firefox, Safari, or another browser (double-click the file or use **File → Open**).
-
-**Alternative — run as a local app (npm / npx):** From the project root, after `npm install` and `npm run build`, use **`npm start`** (runs [`serve`](https://github.com/vercel/serve) on port **8080**) or **`npx serve dist -l 8080`**. Then open **http://localhost:8080** — same UI, stable URL you can bookmark. **`npm run preview`** runs a full **`npm run build`** and then serves **`dist/`** in one step.
+**替代方案——以本地应用运行（npm / npx）：** 从项目根目录，在 `npm install` 和 `npm run build` 之后，使用 **`npm start`**（在端口 **8080** 上运行 [`serve`](https://github.com/vercel/serve)）或 **`npx serve dist -l 8080`**。然后打开 **http://localhost:8080** ——相同的 UI，稳定的 URL 可收藏。**`npm run preview`** 会先执行完整的 `npm run build`，然后一步到位地提供 `dist/` 服务。
 
 ### Agent CLI
 
-This repo also ships a Python CLI that reuses the existing Node transform runtime without changing the static-site workflow.
+本仓库还附带一个 Python CLI，它复用现有的 Node 转换运行时，不影响静态站点工作流。
 
 ```bash
 uv run p4rs3lt0ngv3-cli list
@@ -330,145 +329,156 @@ uv run p4rs3lt0ngv3-cli /base64 --decode SGVsbG8=
 uv run p4rs3lt0ngv3-cli /caesar --shift 5 "Attack at dawn"
 ```
 
-Notes:
+注意：
 
-- The CLI is managed with **`uv`** via [`pyproject.toml`](pyproject.toml).
-- It shells into Node to execute the canonical transforms under `src/transformers/`.
-- Existing web build and Node test flows remain unchanged.
+- CLI 通过 **`uv`** 管理，配置在 [`pyproject.toml`](pyproject.toml) 中。
+- 它调用 Node 来执行 `src/transformers/` 下的标准转换。
+- 现有的 Web 构建和 Node 测试流程不受影响。
 
-### **Development Setup**
+### **开发设置**
+
 ```bash
-# Install dependencies
+# 安装依赖
 npm install
 
-# Build all assets (required before use). Order matches package.json:
+# 构建所有资源（使用前必需）。顺序与 package.json 一致：
 # build:tools → build:copy → build:index → build:transforms → build:emoji → build:templates
 npm run build
 
-# Or build individual components:
-npm run build:tools        # Auto-discover tools, inject script tags into dist/index.html
-npm run build:copy         # Copy static files to dist/
-npm run build:index        # Generate src/transformers/index.js (ES module index)
-npm run build:transforms   # Bundle all transformers to dist/js/bundles/transforms-bundle.js
-npm run build:emoji        # Generate emoji data to dist/js/data/
-npm run build:templates    # Inject tool HTML templates into dist/index.html
+# 或单独构建各组件：
+npm run build:tools        # 自动发现工具，将 script 标签注入 dist/index.html
+npm run build:copy         # 复制静态文件到 dist/
+npm run build:index        # 生成 src/transformers/index.js（ES 模块索引）
+npm run build:transforms   # 将所有转换器打包到 dist/js/bundles/transforms-bundle.js
+npm run build:emoji        # 生成 emoji 数据到 dist/js/data/
+npm run build:templates    # 将工具 HTML 模板注入 dist/index.html
 
-# Run tests
-npm test                   # Run universal decoder tests
-npm run test:universal     # Same as above
-npm run test:steg          # Test steganography options
-npm run test:all           # Universal + steganography tests
+# 运行测试
+npm test                   # 运行通用解码器测试
+npm run test:universal     # 同上
+npm run test:steg          # 测试隐写选项
+npm run test:all           # 通用 + 隐写测试
 
-# Optional: serve dist/ over HTTP instead of opening dist/index.html directly
+# 可选：通过 HTTP 提供 dist/ 服务，而非直接打开 dist/index.html
 npm start                  # http://localhost:8080
-npm run preview            # npm run build, then serve dist/
+npm run preview            # npm run build，然后提供 dist/ 服务
 ```
 
-### **Documentation & maintainer notes**
+### **文档与维护者说明**
 
-| Doc | Purpose |
-|-----|---------|
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Adding transformers, tools, tests |
-| [docs/TOOL-SYSTEM.md](docs/TOOL-SYSTEM.md) | Tool templates, build injection, shared UI classes |
-| [build/README.md](build/README.md) | What each `build:*` script does |
-| [templates/README.md](templates/README.md) | Editing tool HTML templates |
+| 文档 | 用途 |
+|-----|------|
+| [CONTRIBUTING.md](CONTRIBUTING.md) | 添加转换器、工具、测试 |
+| [docs/TOOL-SYSTEM.md](docs/TOOL-SYSTEM.md) | 工具模板、构建注入、共享 UI 类 |
+| [build/README.md](build/README.md) | 各 `build:*` 脚本说明 |
+| [templates/README.md](templates/README.md) | 编辑工具 HTML 模板 |
 
-**Keeping the transform list in this README in sync:** when you add or rename a transformer, add a one-line description to `DESCRIPTIONS` in `build/readme-transform-section.js`, run `node build/readme-transform-section.js`, and replace the **Text Transformations** section here (details in [src/transformers/README.md](src/transformers/README.md)).
+**保持 README 中转换列表同步：** 当你添加或重命名转换器时，在 `build/readme-transform-section.js` 的 `DESCRIPTIONS` 中添加一行描述，运行 `node build/readme-transform-section.js`，然后替换此处的**文本转换**部分（详见 [src/transformers/README.md](src/transformers/README.md)）。
 
-## 🛠️ **Technical Details**
+## 🛠️ **技术细节**
 
-### **Architecture**
-- **Frontend**: Vue.js 2.6 with modern CSS (staying on Vue 2)
-- **Tool System**: Modular tool registry with build-time template injection
-- **Encoding**: UTF-8 with proper Unicode handling
-- **Steganography**: Variation selectors and Tags Unicode block
-- **Transforms**: Individual transformer modules live under `src/transformers/` (159; the bundle is generated by `npm run build:transforms`)
-- **Build Process**: 
-  - `npm run build` writes the runnable app under `dist/` (ignored by git in most setups)
-  - Transformers are bundled from `src/transformers/` to `dist/js/bundles/transforms-bundle.js`
-  - Tool templates are injected from `templates/` into `dist/index.html`
-  - Emoji data is generated to `dist/js/data/`
+### **架构**
 
-### **Browser Support**
+- **前端**：Vue.js 2.6 + 现代 CSS（保持 Vue 2）
+- **工具系统**：模块化工具注册，构建时模板注入
+- **编码**：UTF-8，正确的 Unicode 处理
+- **隐写术**：变体选择器和 Tags Unicode 块
+- **转换器**：独立的转换器模块位于 `src/transformers/`（共 159 个；bundle 由 `npm run build:transforms` 生成）
+- **构建流程**：
+  - `npm run build` 将可运行的应用输出到 `dist/`（在大多数配置中被 git 忽略）
+  - 转换器从 `src/transformers/` 打包到 `dist/js/bundles/transforms-bundle.js`
+  - 工具模板从 `templates/` 注入到 `dist/index.html`
+  - Emoji 数据生成到 `dist/js/data/`
+
+### **浏览器支持**
+
 - Chrome/Edge 80+
 - Firefox 75+
 - Safari 13+
-- Mobile browsers (iOS 13+, Android 8+)
+- 移动浏览器（iOS 13+、Android 8+）
 
-### **Performance**
-- **Real-time Processing**: < 16ms for most transforms
-- **Memory Efficient**: Streams large text without loading into memory
-- **Optimized Rendering**: Efficient DOM updates with Vue.js
+### **性能**
+- **实时处理**：大多数转换 < 16ms
+- **内存高效**：流式处理大文本，无需全部加载到内存
+- **优化渲染**：使用 Vue.js 高效更新 DOM
 
-## 🔧 **Recent Fixes & Improvements**
+## 🔧 **近期修复与改进**
 
-### **Fixed Issues**
-- ✅ **Duplicate Transform**: Removed duplicate `invisible_text` transform
-- ✅ **Base32 Implementation**: Fixed encoding/decoding with proper byte handling
-- ✅ **Unicode Support**: Improved handling of complex Unicode characters
-- ✅ **Reverse Functions**: Added missing reverse functions for many transforms
+### **已修复**
 
-### **New Features**
-- 🆕 **AI Translation**: Translate to 20+ languages (including dead/exotic) via OpenRouter using TranslateGemma prompt format
-- 🆕 **PromptCraft Tool**: AI-powered prompt mutation with 9 strategies and 48+ models
-- 🆕 **OpenRouter Integration**: Unified API key management for all AI-powered features
-- 🆕 **159 Transformations**: Full catalog of encodings, ciphers, Unicode styles, fantasy and ancient scripts, and technical codes (see README transform list)
-- 🆕 **More Encodings/Ciphers**: Base58, Base62, Vigenère, Rail Fence, Roman Numerals
-- 🆕 **Category Organization**: Better organized transform categories
-- 🆕 **Enhanced Styling**: New color schemes for each category
-- 🆕 **Improved Decoder**: Better detection and fallback mechanisms
+- ✅ **重复转换器**：移除了重复的 `invisible_text` 转换
+- ✅ **Base32 实现**：修复了编码/解码的字节处理
+- ✅ **Unicode 支持**：改进了复杂 Unicode 字符的处理
+- ✅ **逆向函数**：为许多转换器添加了缺失的逆向函数
+- ✅ **Baudot / EBCDIC / YEnc 输出格式**：原实现输出包含大量控制字符（0x00–0x1F、0x80–0x9F），在文本 UI 中不可见且无法复制。现改为可显示格式——Baudot 输出 5 位二进制字符串、EBCDIC 和 YEnc 输出十六进制字节——编码映射逻辑不变，round-trip 完整可用
 
-## 🌟 **Use Cases**
+### **新功能**
 
-### **Creative Writing**
-- Create unique text styles for stories
-- Encode secret messages in plain sight
-- Generate fantasy language text
+- 🆕 **AI 翻译**：翻译到 20+ 种语言（包括已消亡/珍稀语言），使用 TranslateGemma 提示格式
+- 🆕 **PromptCraft 工具**：AI 驱动的提示词变异，支持 9 种策略和 48+ 模型
+- 🆕 **159 种转换**：完整的编码、密码、Unicode 样式、奇幻与古代文字及技术代码目录
+- 🆕 **更多编码/密码**：Base58、Base62、维吉尼亚、栅栏密码、罗马数字
+- 🆕 **分类组织**：更好的转换分类
+- 🆕 **增强样式**：每个分类的新配色方案
+- 🆕 **改进的解码器**：更好的检测和回退机制
 
-### **Education**
-- Learn about different writing systems
-- Study cryptography and encoding
-- Explore linguistic diversity
+## 🌟 **使用场景**
 
-### **Security**
-- Hide sensitive information
-- Create steganographic messages
-- Test encoding/decoding systems
+### **创意写作**
 
-### **Entertainment**
-- Create puzzles and games
-- Generate unique usernames
-- Add flair to social media posts
+- 为故事创造独特的文本风格
+- 在普通文本中编码秘密消息
+- 生成奇幻语言文本
 
-## 🤝 **Contributing**
+### **教育**
 
-This project welcomes contributions! See **[CONTRIBUTING.md](CONTRIBUTING.md)** for detailed guidelines.
+- 学习不同的书写系统
+- 研究密码学和编码
+- 探索语言多样性
 
-**Quick Start:**
-- **Adding a transformer?** See `src/transformers/` directory structure
-- **Adding a new tool/feature?** See `CONTRIBUTING.md` → "Adding a New Tool"
-- **Adding utilities?** See `CONTRIBUTING.md` → "Adding a New Utility Function"
-- **Editing tool templates?** See `templates/README.md`
+### **安全**
 
-**Areas for improvement:**
-- **New Languages**: Add more fictional or historical scripts
-- **Better Decoding**: Improve universal decoder accuracy
-- **Performance**: Optimize for very long texts
-- **Mobile**: Enhance mobile experience
-- **Accessibility**: Improve screen reader support
+- 隐藏敏感信息
+- 创建隐写消息
+- 测试编码/解码系统
 
-## 📄 **License**
+### **娱乐**
 
-This project is open source. See LICENSE file for details.
+- 创建谜题和游戏
+- 生成独特的用户名
+- 为社交媒体帖子增添趣味
 
-## 🙏 **Acknowledgments**
+## 🤝 **贡献**
 
-- **J.R.R. Tolkien** for Quenya and Tengwar
-- **Star Trek** creators for Klingon language
-- **Star Wars** creators for Aurebesh
-- **Bethesda** for Dovahzul language
-- **Unicode Consortium** for character standards
+欢迎贡献！详见 **[CONTRIBUTING.md](CONTRIBUTING.md)**。
+
+**快速入门：**
+
+- **添加转换器？** 参见 `src/transformers/` 目录结构
+- **添加新工具/功能？** 参见 `CONTRIBUTING.md` → "Adding a New Tool"
+- **添加工具函数？** 参见 `CONTRIBUTING.md` → "Adding a New Utility Function"
+- **编辑工具模板？** 参见 `templates/README.md`
+
+**改进方向：**
+
+- **新语言**：添加更多虚构或历史文字
+- **更好的解码**：提高通用解码器准确率
+- **性能**：优化超长文本处理
+- **移动端**：增强移动体验
+- **无障碍**：改进屏幕阅读器支持
+
+## 📄 **许可证**
+
+本项目为开源项目。详见 LICENSE 文件。
+
+## 🙏 **致谢**
+
+- **J.R.R. 托尔金** — 昆雅语和腾格瓦
+- **星际迷航**创作者 — 克林贡语
+- **星球大战**创作者 — Aurebesh
+- **Bethesda** — Dovahzul 龙语
+- **Unicode 联盟** — 字符标准
 
 ---
 
-**P4RS3LT0NGV3** - Because sometimes you need to speak in tongues that don't exist! 🐉✨
+**P4RS3LT0NGV3** — 因为你有时需要说一些不存在的语言！🐉✨

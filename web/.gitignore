@@ -1,0 +1,10 @@
+# dependencies
+node_modules/
+
+# next.js
+.next/
+out/
+
+# misc
+*.tsbuildinfo
+package.json.md5

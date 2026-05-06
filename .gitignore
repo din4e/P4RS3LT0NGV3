@@ -27,8 +27,10 @@ js/data/emojiData.js
 .env.production.local
 
 # IDE & Editor files
+.claude/
 .vscode/
 .idea/
+.omc/
 *.swp
 *.swo
 *~
@@ -45,6 +47,7 @@ desktop.ini
 # Temporary files
 *.tmp
 *.temp
+tmp/
 .tmp/
 .temp/
 
