@@ -33,28 +33,28 @@ jobs:
           cache: 'npm'
       
       - name: Install dependencies
-        run: npm ci
-      
+        run: |
+          npm ci
+          cd web && npm ci
+
       - name: Run tests
         run: npm run test:all
-      
-      - name: Build project
+
+      - name: Build web app
         run: |
-          echo "Running full build..."
-          npm run build
-          echo "Build complete!"
-      
+          cd web && npm run build
+
       - name: Verify build output
         run: |
-          test -f dist/index.html || (echo "❌ dist/index.html missing!" && exit 1)
-          test -f dist/js/bundles/transforms-bundle.js || (echo "❌ dist/js/bundles/transforms-bundle.js missing!" && exit 1)
-          test -f dist/js/data/emojiData.js || (echo "❌ dist/js/data/emojiData.js missing!" && exit 1)
+          test -f web/out/index.html || (echo "❌ web/out/index.html missing!" && exit 1)
+          test -d web/out/en || (echo "❌ web/out/en/ missing!" && exit 1)
+          test -d web/out/zh || (echo "❌ web/out/zh/ missing!" && exit 1)
           echo "✅ All critical build files present"
-      
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'dist/'
+          path: 'web/out/'
           retention-days: 7
 
   deploy:

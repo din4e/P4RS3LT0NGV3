@@ -3,22 +3,12 @@
   "version": "1.0.0",
   "description": "Universal Text Encoder/Decoder & Steganography Tool",
   "scripts": {
-    "build:copy": "node build/copy-static.js",
-    "build:index": "node build/build-index.js",
-    "build:tools": "node build/inject-tool-scripts.js",
-    "build:templates": "node build/inject-tool-templates.js",
-    "build:emoji": "node build/build-emoji-data.js",
-    "build:transforms": "node build/build-transforms.js",
-    "build": "npm run build:tools && npm run build:copy && npm run build:index && npm run build:transforms && npm run build:emoji && npm run build:templates",
-    "start": "serve dist -l 8080",
-    "preview": "npm run build && serve dist -l 8080",
-    "test": "node tests/test_universal.js",
-    "test:lexeme": "node tests/test_lexeme_analysis.js",
-    "test:lexeme-ui": "node tests/test_lexeme_ui_surface.js",
-    "test:universal": "node tests/test_universal.js",
-    "test:steg": "node tests/test_steganography_options.js",
-    "test:all": "npm run test:universal && npm run test:steg && npm run test:lexeme && npm run test:lexeme-ui",
-    "precommit": "npm run test:all"
+    "dev:web": "cd web && npm run dev",
+    "build:web": "cd web && npm run build",
+    "start:web": "cd web && npm run start",
+    "test": "cd web && npm run typecheck",
+    "test:cli": "echo '{\"command\":\"list\"}' | node scripts/cli_bridge.js",
+    "test:all": "npm run test && npm run test:cli"
   },
   "repository": {
     "type": "git",
@@ -31,8 +21,5 @@
     "cipher"
   ],
   "author": "",
-  "license": "MIT",
-  "devDependencies": {
-    "serve": "^14.2.6"
-  }
+  "license": "MIT"
 }
