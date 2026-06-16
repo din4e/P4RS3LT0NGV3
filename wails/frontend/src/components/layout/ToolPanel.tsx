@@ -30,6 +30,7 @@ const TOOL_COMPONENT_MAP: Record<string, React.LazyExoticComponent<React.Compone
   injection: lazy(() => import('@/components/tools/InjectionDetectorTool')),
   benchmark: lazy(() => import('@/components/tools/BenchmarkTool')),
   refinement: lazy(() => import('@/components/tools/RefinementTool')),
+  trace: lazy(() => import('@/components/tools/TraceTool')),
 }
 
 // Track which tools have been loaded (for preloading)

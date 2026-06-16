@@ -22,6 +22,7 @@ import {
   Search,
   BarChart3,
   Drill,
+  Dna,
   type LucideIcon,
 } from 'lucide-react'
 import { useAppStore, TOOL_CONFIGS, type ToolConfig } from '@/stores/useAppStore'
@@ -48,6 +49,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Search,
   BarChart3,
   Drill,
+  Dna,
 }
 
 export function TabBar() {

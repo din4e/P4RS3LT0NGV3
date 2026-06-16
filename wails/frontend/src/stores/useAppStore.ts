@@ -35,6 +35,7 @@ export const TOOL_CONFIGS: ToolConfig[] = [
   { id: 'injection', nameKey: 'injection', icon: 'Search', shortcut: 'I', order: 17 },
   { id: 'benchmark', nameKey: 'benchmark', icon: 'BarChart3', shortcut: 'N', order: 18 },
   { id: 'refinement', nameKey: 'refinement', icon: 'Drill', shortcut: 'E', order: 19 },
+  { id: 'trace', nameKey: 'trace', icon: 'Dna', shortcut: 'V', order: 20 },
 ]
 
 /**
