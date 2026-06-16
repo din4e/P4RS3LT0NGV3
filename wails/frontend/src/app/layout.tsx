@@ -13,9 +13,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
-      <head>
-        <link rel="preload" href="/fonts/NotoSansSignWriting-Regular.ttf" as="font" type="font/ttf" crossOrigin="anonymous" />
-      </head>
       <body>{children}</body>
     </html>
   )

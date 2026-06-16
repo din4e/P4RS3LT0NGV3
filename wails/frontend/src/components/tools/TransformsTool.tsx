@@ -563,7 +563,7 @@ export default function TransformsTool() {
     <div className="flex flex-col lg:flex-row gap-4 h-full min-h-0">
 
       {/* ---- Left panel: Input / Output ---- */}
-      <div className="flex flex-col gap-3 lg:w-[360px] shrink-0">
+      <div className="flex flex-col gap-3 lg:w-[360px] shrink-0 lg:sticky lg:top-0 lg:self-start lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto">
         {/* Input */}
         <div className="flex flex-col gap-1">
           <label htmlFor="transform-input" className="text-xs font-medium text-[var(--muted-foreground)]">

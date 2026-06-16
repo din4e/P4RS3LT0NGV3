@@ -47,6 +47,8 @@
 
 * {
   border-color: var(--border);
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted) transparent;
 }
 
 html {
@@ -114,12 +116,6 @@ a {
 
 ::-webkit-scrollbar-corner {
   background: transparent;
-}
-
-/* Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--muted) transparent;
 }
 
 /* ------------------------------------------------------------------ */

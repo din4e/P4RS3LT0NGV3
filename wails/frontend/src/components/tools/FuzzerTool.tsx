@@ -4,8 +4,9 @@ import { useState, useCallback, useRef, useMemo, useEffect } from 'react'
 import { toast } from 'sonner'
 import { useClipboard } from '@/hooks/useClipboard'
 import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
-import { allTransforms } from '@/lib/transformers'
 import { cn } from '@/lib/utils'
+import { randomizer } from '@/lib/transformers/special/randomizer'
+import { zalgo as zalgoTransform } from '@/lib/transformers/unicode/zalgo'
 import { useAIConfig, useHasProvider } from '@/hooks/useAIConfig'
 import { downloadFile } from '@/lib/wails'
 import { fuzzerRegistry, runFuzzer } from '@/lib/fuzzer'
@@ -193,12 +194,12 @@ function MutationLab({ flash, copied }: { flash: (key: string, text: string) => 
     const total = Math.max(1, Math.min(500, count || 1))
     for (let i = 0; i < total; i++) {
       let s = src
-      if (useRandomMix) { try { const t = allTransforms['randomizer']; if (t) s = t.func(s, { minTransforms: 2, maxTransforms: 4 }) } catch { /* */ } }
+      if (useRandomMix) { try { s = randomizer.func(s, { minTransforms: 2, maxTransforms: 4 }) } catch { /* */ } }
       if (zeroWidth) s = injectZeroWidth(s, rnd)
       if (unicodeNoise) s = injectUnicodeNoise(s, rnd)
       if (whitespace) s = whitespaceChaos(s, rnd)
       if (casing) s = casingChaos(s, rnd)
-      if (zalgo) { try { const t = allTransforms['zalgo']; if (t) s = t.func(s) } catch { /* */ } }
+      if (zalgo) { try { s = zalgoTransform.func(s) } catch { /* */ } }
       if (encodeShuffleOn) s = encodeShuffle(s, rnd)
       result.push(s)
     }

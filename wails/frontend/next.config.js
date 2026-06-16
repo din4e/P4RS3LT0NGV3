@@ -12,6 +12,9 @@ const nextConfig = {
   // Next.js 15+ no longer supports disabling tracing via outputFileTracing: false.
   // Use outputFileTracingRoot / outputFileTracingExcludes if tracing mis-resolves paths.
   images: { unoptimized: true },
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@lobehub/icons'],
+  },
   trailingSlash: true,
   assetPrefix: process.env.NODE_ENV === 'production' ? './' : '',
   // Windows: persistent webpack cache + AV/OneDrive often causes ENOENT on pack rename
