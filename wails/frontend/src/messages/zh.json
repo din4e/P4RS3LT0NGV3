@@ -12,6 +12,7 @@
     "tokenizer": "分词器",
     "bijection": "双射映射",
     "splitter": "分割器",
+    "endSequences": "终止序列",
     "gibberish": "乱语生成",
     "promptcraft": "提示词工坊",
     "translate": "翻译",
@@ -360,6 +361,11 @@
       "chineseProviders": "国内",
       "chineseIntlProviders": "国内 (国际版)"
     }
+  },
+  "endsequences": {
+    "title": "终止序列",
+    "description": "用于 LLM 边界测试的提示注入终止符、分隔符序列和停止标记。",
+    "searchPlaceholder": "搜索序列..."
   },
   "trace": {
     "title": "TRACE 自演化越狱",

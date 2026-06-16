@@ -12,6 +12,7 @@
     "tokenizer": "Tokenizer",
     "bijection": "Bijection",
     "splitter": "Splitter",
+    "endSequences": "End Sequences",
     "gibberish": "Gibberish",
     "promptcraft": "PromptCraft",
     "translate": "Translate",
@@ -360,6 +361,11 @@
       "chineseProviders": "China",
       "chineseIntlProviders": "China (Intl)"
     }
+  },
+  "endsequences": {
+    "title": "End Sequences",
+    "description": "Prompt injection terminators, delimiter sequences, and stop tokens for LLM boundary testing.",
+    "searchPlaceholder": "Search sequences..."
   },
   "trace": {
     "title": "TRACE",

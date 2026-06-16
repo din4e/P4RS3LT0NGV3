@@ -19,6 +19,7 @@ const TOOL_COMPONENT_MAP: Record<string, React.LazyExoticComponent<React.Compone
   tokenizer: lazy(() => import('@/components/tools/TokenizerTool')),
   bijection: lazy(() => import('@/components/tools/BijectionTool')),
   splitter: lazy(() => import('@/components/tools/SplitterTool')),
+  endsequences: lazy(() => import('@/components/tools/EndSequencesTool')),
   gibberish: lazy(() => import('@/components/tools/GibberishTool')),
   promptcraft: lazy(() => import('@/components/tools/PromptCraftTool')),
   translate: lazy(() => import('@/components/tools/TranslateTool')),
