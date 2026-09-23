@@ -18,6 +18,18 @@ export const upsideDown = new BaseTransformer({
             '(': ')', ')': '(', '[': ']', ']': '[', '{': '}', '}': '{', '<': '>', '>': '<',
             '&': '⅋', '_': '‾'
         },
+        configurableOptions: [
+            {
+                id: 'mode',
+                label: 'Orientation',
+                type: 'select',
+                default: 'rotate180',
+                options: [
+                    { value: 'rotate180', label: '180° rotation (flip + reverse)' },
+                    { value: 'flipVertical', label: 'Vertical flip (flip only)' }
+                ]
+            }
+        ],
         // Create reverse map for decoding
         reverseMap: function() {
             const revMap: Record<string, string> = {};
@@ -26,16 +38,26 @@ export const upsideDown = new BaseTransformer({
             }
             return revMap;
         },
-        func: function(text: string): string {
-            return [...text].map(c => this.map![c] || c).reverse().join('');
+        func: function(text: string, options?: TransformOptions): string {
+            options = options || {};
+            const flipped = [...text].map(c => this.map![c] || c);
+            if (options.mode === 'flipVertical') {
+                return flipped.join('');
+            }
+            return flipped.reverse().join('');
         },
-        preview: function(text: string): string {
+        preview: function(text: string, options?: TransformOptions): string {
             if (!text) return '[upside down]';
-            return this.func(text.slice(0, 8));
+            return this.func(text.slice(0, 8), options);
         },
-        reverse: function(text: string): string {
+        reverse: function(text: string, options?: TransformOptions): string {
+            options = options || {};
             const revMap = (this as any).reverseMap();
-            return [...text].map(c => revMap[c] || c).reverse().join('');
+            const restored = [...text].map(c => revMap[c] || c);
+            if (options.mode === 'flipVertical') {
+                return restored.join('');
+            }
+            return restored.reverse().join('');
         }
 
 });

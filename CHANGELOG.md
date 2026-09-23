@@ -1,5 +1,26 @@
 # 更新日志
 
+## [v0.2.6] - 2026-09-23
+
+### 上游转换器大版本移植（159 → 222 种）
+
+从 upstream (`elder-plinius/P4RS3LT0NGV3`) 移植 **56 个新转换器** 与 2 个转换器增强，转换总数从 166 增至 **222**：
+
+- **密码（Ciphers）+13** — Acéré、ADFGVX、AMSCO、Book、Codons（遗传密码子）、Double Transposition、Fractionated Morse、Keyword Shift、Monoalphabetic、Multiplicative、Route、Trithemius、Vernam
+- **隐藏术（Concealment，新分类）+5** — Acrostic（藏头）、Cardan Grille、Homoglyph、Null Cipher、Trevanion
+- **编码（Encodings）+5** — Bibi-binary、Decabit、Manchester、Metaphone、Shadoks
+- **格式化（Formatting）+8** — Group Letters、Leading Zeros、List Deduplicate、Shuffled Letters、Typoglycemia、Word Letter Add/Change/Remove
+- **符号文字（Symbol，新分类）+22** — 炼金术、巴比伦/埃及/玛雅数字、天体/以诺/玛拉基姆/底比斯/月相/渡河/玫瑰十字字母、跳舞小人、荷鲁斯之眼、弗里德里西窗格、玛丽女王、元素周期表、七段数码管、标准银河（Minecraft 附魔台）、圣殿骑士、多米诺、后弗萨克
+- **技术（Technical）+4** — DTMF、Navajo Code、Phone Keypad、T9 Multi-tap
+- **增强** — Bubble 新增圈数字 ⓪–⑨ 并支持解码；Upside Down 新增 180° 旋转 / 垂直翻转双模式并支持解码
+
+### 同步更新
+
+- `src/transformers/`（CLI/Node 桥）与 `wails/frontend/src/lib/transformers/`（桌面端）双端同步
+- `migrate-transformers.ts` 修复源路径（仓库内相对路径）、补充 concealment/signwriting/symbol 分类、生成 index.ts 时自动注入 `setTransformRegistry`
+- TransformsTool 新增 concealment / symbol 分类配色与图例
+- README（中/英）转换目录与计数同步至 222
+
 ## [v0.2.5] - 2026-04-27
 
 ### 多提供商架构重构

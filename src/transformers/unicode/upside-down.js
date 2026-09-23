@@ -17,6 +17,18 @@ export default new BaseTransformer({
             '(': ')', ')': '(', '[': ']', ']': '[', '{': '}', '}': '{', '<': '>', '>': '<',
             '&': '⅋', '_': '‾'
         },
+        configurableOptions: [
+            {
+                id: 'mode',
+                label: 'Orientation',
+                type: 'select',
+                default: 'rotate180',
+                options: [
+                    { value: 'rotate180', label: '180° rotation (flip + reverse)' },
+                    { value: 'flipVertical', label: 'Vertical flip (flip only)' }
+                ]
+            }
+        ],
         // Create reverse map for decoding
         reverseMap: function() {
             const revMap = {};
@@ -25,16 +37,26 @@ export default new BaseTransformer({
             }
             return revMap;
         },
-        func: function(text) {
-            return [...text].map(c => this.map[c] || c).reverse().join('');
+        func: function(text, options) {
+            options = options || {};
+            const flipped = [...text].map(c => this.map[c] || c);
+            if (options.mode === 'flipVertical') {
+                return flipped.join('');
+            }
+            return flipped.reverse().join('');
         },
-        preview: function(text) {
+        preview: function(text, options) {
             if (!text) return '[upside down]';
-            return this.func(text.slice(0, 8));
+            return this.func(text.slice(0, 8), options);
         },
-        reverse: function(text) {
+        reverse: function(text, options) {
+            options = options || {};
             const revMap = this.reverseMap();
-            return [...text].map(c => revMap[c] || c).reverse().join('');
+            const restored = [...text].map(c => revMap[c] || c);
+            if (options.mode === 'flipVertical') {
+                return restored.join('');
+            }
+            return restored.reverse().join('');
         }
 
 });

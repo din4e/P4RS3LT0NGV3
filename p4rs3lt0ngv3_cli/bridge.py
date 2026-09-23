@@ -23,6 +23,8 @@ def _run_bridge(payload: dict[str, Any]) -> dict[str, Any]:
         ["node", str(BRIDGE_PATH)],
         input=json.dumps(payload),
         text=True,
+        encoding="utf-8",
+        errors="replace",
         capture_output=True,
         cwd=PROJECT_ROOT,
         check=False,

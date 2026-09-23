@@ -51,17 +51,19 @@ const CATEGORY_COLORS: Record<string, { bg: string; border: string; text: string
   ancient:  { bg: 'bg-amber-500/10',  border: 'border-amber-500/40',  text: 'text-amber-400' },
   case:     { bg: 'bg-sky-500/10',    border: 'border-sky-500/40',    text: 'text-sky-400' },
   cipher:   { bg: 'bg-violet-500/10', border: 'border-violet-500/40', text: 'text-violet-400' },
+  concealment: { bg: 'bg-teal-500/10', border: 'border-teal-500/40',  text: 'text-teal-400' },
   encoding: { bg: 'bg-emerald-500/10',border: 'border-emerald-500/40',text: 'text-emerald-400' },
   fantasy:  { bg: 'bg-rose-500/10',   border: 'border-rose-500/40',   text: 'text-rose-400' },
   format:   { bg: 'bg-orange-500/10', border: 'border-orange-500/40', text: 'text-orange-400' },
   special:  { bg: 'bg-fuchsia-500/10',border: 'border-fuchsia-500/40',text: 'text-fuchsia-400' },
+  symbol:   { bg: 'bg-lime-500/10',   border: 'border-lime-500/40',   text: 'text-lime-400' },
   technical:{ bg: 'bg-cyan-500/10',   border: 'border-cyan-500/40',   text: 'text-cyan-400' },
   signwriting:{ bg: 'bg-amber-400/10', border: 'border-amber-400/40', text: 'text-amber-300' },
   unicode:  { bg: 'bg-indigo-500/10', border: 'border-indigo-500/40', text: 'text-indigo-400' },
   visual:   { bg: 'bg-pink-500/10',   border: 'border-pink-500/40',   text: 'text-pink-400' },
 }
 
-const LEGEND_ORDER = ['ancient', 'case', 'cipher', 'encoding', 'fantasy', 'format', 'signwriting', 'special', 'technical', 'unicode', 'visual']
+const LEGEND_ORDER = ['ancient', 'case', 'cipher', 'concealment', 'encoding', 'fantasy', 'format', 'signwriting', 'special', 'symbol', 'technical', 'unicode', 'visual']
 
 /* ------------------------------------------------------------------ */
 /* localStorage helpers                                                */

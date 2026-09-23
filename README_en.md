@@ -1,6 +1,6 @@
 # 🐍 P4RS3LT0NGV3 - Universal Text Translator
 
-A powerful web-based text transformation and steganography tool with **159** built-in text transforms spanning encodings, classical and modern ciphers, Unicode styles, formatting, and niche alphabets. Think of it as a universal translator for ALL alphabets and writing systems! 
+A powerful web-based text transformation and steganography tool with **222** built-in text transforms spanning encodings, classical and modern ciphers, Unicode styles, formatting, and niche alphabets. Think of it as a universal translator for ALL alphabets and writing systems! 
 
 The app is a **static site**: run **`npm run build`** (after `npm install`), then open **`dist/index.html`** in your browser—no local server required. **Alternatively**, you can run it as a local app over HTTP with **`npm start`** or **`npx serve dist -l 8080`** (see [Getting Started](#getting-started) below). Core transforms, decoder, and steganography work **without** calling the cloud; features that use [OpenRouter](https://openrouter.ai/) need **network access** and an API key (see below).
 
@@ -31,19 +31,29 @@ Categories match the Transform tab and the folders under `src/transformers/` (ea
 - **Title Case** - Capitalize each word
 
 #### **Cipher**
+- **Acéré Cipher** - French phonetic substitution cipher
 - **ADFGX Cipher** - WWI ADFGVX-style polybius + column transposition
+- **ADFGVX Cipher** - WWI six-letter ADFGVX square with digits (ADFGX extension)
+- **AMSCO Cipher** - AMSCO interrupted-column transposition
 - **Affine Cipher** - Affine substitution (ax + b mod 26)
 - **Atbash Cipher** - Reverse-alphabet substitution (A↔Z)
 - **Autokey Cipher** - Key stream mixed with plaintext (autokey)
 - **Baconian Cipher** - Five-letter groups hiding A/B (Bacon biliteral)
 - **Beaufort Cipher** - Beaufort key-table polyalphabetic cipher
 - **Bifid Cipher** - Polybius square + row/column interleaving
+- **Book Cipher** - Word-position indices into a text
 - **Caesar Cipher** - Classic alphabet shift (configurable)
 - **Columnar Transposition** - Columnar transposition with a keyword
+- **Codons (Genetic Code)** - Letters ↔ DNA triplet codons
+- **Double Transposition** - Double columnar transposition
 - **Four-Square Cipher** - Four 5×5 squares; digraph substitution
+- **Fractionated Morse** - Fractionated Morse cipher
 - **Gronsfeld Cipher** - Vigenère family with numeric key
 - **Hill Cipher** - Matrix-based multi-letter substitution
 - **Homophonic Cipher** - Multiple ciphertext symbols per plaintext letter
+- **Keyword Shift Cipher** - Keyword-based shift
+- **Monoalphabetic Substitution** - Simple monoalphabetic substitution
+- **Multiplicative Cipher** - Multiplicative cipher
 - **Nihilist Cipher** - Keyed Polybius + additive encryption
 - **Pigpen Cipher** - Masonic / pigpen grid symbols
 - **Playfair Cipher** - Digraph cipher on a 5×5 square
@@ -56,11 +66,21 @@ Categories match the Transform tab and the folders under `src/transformers/` (ea
 - **ROT47** - Rotate printable ASCII (33–126) by 47
 - **ROT5** - Rotate digits 0–9 by 5
 - **ROT8000** - Plane-0 Unicode BMP rotation cipher
+- **Route Cipher** - Route transposition cipher
 - **Scytale Cipher** - Wrap-around strip (scytale) transposition
 - **Trifid Cipher** - Three Polybius cubes + trifid grouping
+- **Trithemius Cipher** - Trithemius progressive shift
 - **Two-Square Cipher** - Digraph cipher with two Playfair squares
+- **Vernam Cipher** - One-time-pad style cipher
 - **Vigenère Cipher** - Polyalphabetic cipher with repeating keyword
 - **XOR Cipher** - XOR with a repeating key
+
+#### **Concealment**
+- **Acrostic** - Hide a message in the first letter of each line/word, or extract hidden acrostic messages
+- **Cardan Grille** - Hide text behind a Cardan grille template (optional 90° rotations)
+- **Homoglyph** - Homoglyph / visually similar character substitution
+- **Null Cipher** - Conceal a message by fixing one letter position per word
+- **Trevanion Cipher** - Hide letters N positions after punctuation marks
 
 #### **Encoding**
 - **ASCII85** - Ascii85 / Adobe-style base-85 encoding
@@ -75,14 +95,19 @@ Categories match the Transform tab and the folders under `src/transformers/` (ea
 - **Base91** - basE91 / Ascii91 encoding
 - **Baudot Code (ITA2)** - Five-bit telegraph / ITA2
 - **Binary Coded Decimal** - Decimal digits as BCD nibbles
+- **Bibi-binary Code** - Bibi-binary hexadecimal syllable encoding
 - **Binary** - Text bytes ↔ binary strings
+- **Decabit Code** - Decabit code
 - **EBCDIC** - EBCDIC byte encoding
 - **Emoji Encoding** - Payload encoded with emoji
 - **Gray Code** - Binary Gray code
 - **Hexadecimal** - Hex encode/decode bytes
 - **HTML Entities** - HTML entity escape / unescape
 - **Invisible Text** - Unicode Tags / invisible carrier encoding
+- **Manchester Code** - Manchester clocked encoding
+- **Metaphone** - Phonetic encoding for English words
 - **Quoted-Printable** - MIME quoted-printable
+- **Shadoks Numeral System** - Shadoks base-4 counting system
 - **Unicode Code Points** - Characters ↔ U+XXXX code points
 - **URL Encode** - application/x-www-form-urlencoded
 - **Uuencoding** - Classic uuencode / uudecode
@@ -100,13 +125,16 @@ Categories match the Transform tab and the folders under `src/transformers/` (ea
 - **Bitwise NOT** - UTF-8 bytes NOT'd per byte; encode output is hex (decode pastes hex back to text)
 - **Boustrophedon** - Serpentine / alternating line direction
 - **Capitalize Words** - Capitalize the first letter of each word
+- **Group Letters** - Split letters into fixed-size groups or rejoin (width and separator configurable)
 - **Indent** - Add leading spaces to each line (configurable width)
 - **Javanais** - French “javanais” vowel-insertion game
+- **Leading Zeros** - Pad numbers with leading zeros or strip them
 - **Latin Gibberish** - Latin-flavored pseudo-text
 - **Leetspeak** - 1337-style character substitutions
 - **Letters Only** - Keep letters; strip other characters
 - **Letters & Numbers Only** - Alphanumeric only
 - **Line Numbers** - Prefix lines with numbers (start and column width configurable)
+- **List Deduplicate** - Remove duplicate lines, preserving first occurrence
 - **Louchebem** - French argot (loucherbem-style)
 - **Lowercase All** - Lowercase entire text
 - **Mirror Digits** - Mirror digits 0–9 visually
@@ -127,33 +155,74 @@ Categories match the Transform tab and the folders under `src/transformers/` (ea
 - **Reverse Text** - Reverse character order
 - **Shuffle Characters** - Shuffle characters (random order)
 - **Shuffle Words** - Shuffle word order
+- **Shuffled Letters** - Shuffle letters within each word (first/last kept readable)
 - **Spaces Remover** - Remove space characters
 - **Text Justify** - Pad each line to a fixed width (left, right, or center); not word-spacing justify
 - **Uppercase All** - Uppercase entire text
 - **Toggle Case** - Swap case of each letter
+- **Typoglycemia** - Scramble inner letters of each word (deterministic, readable)
 - **Whitespace Steganography** - Hide bits in whitespace patterns
+- **Word Letter Add** - Insert decoy letters into words
+- **Word Letter Change** - Replace letters inside words
+- **Word Letter Remove** - Remove letters inside words
 - **Word Wrap** - Break long lines at spaces so each line fits a maximum width
 - **Zero-Width Steganography** - Hide data with zero-width characters
 
+#### **SignWriting**
+- **ASL SignWriting** - American Sign Language fingerspelling
+- **IPA Lip-Reading** - IPA phonetic text as mouth shapes
+- **JSL SignWriting** - Japanese Sign Language fingerspelling
+- **LIBRAS SignWriting** - Brazilian Sign Language fingerspelling
+- **Morse Blink** - Morse via eye-blink symbols (dot = brief close, dash = tight press)
+- **Tactile SignWriting** - Tactile sign transcription
+
 #### **Special**
 - **Random Mix** - Pick random transforms and chain them
+
+#### **Symbol**
+- **Alchemical Symbols** - Classical alchemical symbol alphabet
+- **Babylonian Numerals** - A1Z26 as Babylonian cuneiform (sexagesimal) numerals
+- **Celestial Alphabet** - Agrippa's celestial / angelic alphabet
+- **Daedric Alphabet** - Elder Scrolls Daedric-style symbols
+- **Dancing Men Cipher** - Sherlock Holmes stick-figure cipher (Unicode approximations)
+- **Dominos in Digits** - Domino tiles as digits
+- **Egyptian Numerals** - A1Z26 as Egyptian stroke (1) / hobble (10) numerals
+- **Enochian Alphabet** - Enochian angelic script (Unicode approximations)
+- **Eye of Horus (Wedjat)** - A1Z26 cycling seven Wedjat fraction hieroglyphs
+- **Friderici Cipher (Windows)** - Friderici Fensterchiffre (1685): 4-pane windows
+- **Malachim Alphabet** - Malachim / angel script substitution
+- **Mary Stuart Cipher** - Mary Queen of Scots nomenclator-style symbols
+- **Mayan Numerals** - A1Z26 as Mayan numerals (0–19 glyphs)
+- **Moon Alphabet** - Moon phase / lunar symbol alphabet
+- **Passing the River Alphabet** - Golden Dawn tarot script
+- **Periodic Table Cipher** - Letters ↔ chemical element symbols
+- **Rosicrucian Cipher** - Rosicrucian / Golden Dawn symbol alphabet
+- **7-Segment Display** - Seven-segment display bit patterns
+- **Standard Galactic Alphabet** - Minecraft enchanting table script
+- **Templars Cipher** - Templar pigpen variant with dot markers
+- **Theban Alphabet** - Honoric / Theban witch alphabet
+- **Younger Futhark** - Younger Futhark runes (16 runes; lossy reverse)
 
 #### **Technical**
 - **A1Z26** - A=1 … Z=26 letter numbering
 - **Braille** - Unicode Braille patterns
 - **Brainfuck** - Text ↔ Brainfuck program
+- **DTMF Code** - Dual-tone multi-frequency telephone dialing
 - **ICAO Spelling Alphabet** - ICAO radiotelephony spelling
 - **ITU Spelling Alphabet** - ITU phonetic / spelling alphabet
 - **Maritime Signal Flags** - International maritime signal flags
 - **Morse Code** - International Morse code
+- **Navajo Code** - Navajo military code talk
 - **NATO Phonetic** - NATO phonetic alphabet
+- **Phone Keypad Cipher** - Letters as phone keypad digits
 - **Semaphore Flags** - Flag semaphore arm positions
 - **Tap Code** - Polybius / tap / prison code
+- **T9 Multi-tap** - T9 multi-tap keypad encoding
 
 #### **Unicode**
 - **Bold Italic** - Mathematical sans-serif bold italic
 - **Bold** - Mathematical bold
-- **Bubble** - Circled / “bubble” letters
+- **Bubble** - Circled / “bubble” letters (incl. digits ⓪–⑨; decodable)
 - **Chemical Symbols** - Chemical element symbols
 - **Circled** - Circled Unicode letters
 - **Cursive** - Mathematical script / cursive
@@ -181,7 +250,7 @@ Categories match the Transform tab and the folders under `src/transformers/` (ea
 - **Subscript** - Unicode subscripts
 - **Superscript** - Unicode superscripts
 - **Underline** - Underline combining characters
-- **Upside Down** - Upside-down Unicode letters
+- **Upside Down** - Upside-down Unicode letters (180° rotation or vertical flip; decodable)
 - **Vaporwave** - Fullwidth + aesthetic spacing
 - **Wavy Underline** - Wavy underline combining marks
 - **Wide Spacing** - Insert wide spaces between characters
@@ -200,7 +269,7 @@ Tabs appear in **UI order** below. **OpenRouter** (optional or required per tool
 
 ### 🔤 **Transform**
 
-- **159 Transforms**: Encodings, ciphers, Unicode styles, formats, and more (full catalog above).
+- **222 Transforms**: Encodings, ciphers, Unicode styles, formats, and more (full catalog above).
 - **Categories**: Grouped sections you can **reorder**; quick-jump legend; **randomizer** last.
 - **Favorites & last used**: Pin transforms and recall recent picks.
 - **Per-transform options**: Gear icon where a transform exposes settings.
@@ -382,7 +451,7 @@ npm run preview            # npm run build, then serve dist/
 - **Tool System**: Modular tool registry with build-time template injection
 - **Encoding**: UTF-8 with proper Unicode handling
 - **Steganography**: Variation selectors and Tags Unicode block
-- **Transforms**: Individual transformer modules live under `src/transformers/` (159; the bundle is generated by `npm run build:transforms`)
+- **Transforms**: Individual transformer modules live under `src/transformers/` (222; the bundle is generated by `npm run build:transforms`)
 - **Build Process**: 
   - `npm run build` writes the runnable app under `dist/` (ignored by git in most setups)
   - Transformers are bundled from `src/transformers/` to `dist/js/bundles/transforms-bundle.js`
@@ -412,7 +481,7 @@ npm run preview            # npm run build, then serve dist/
 - 🆕 **AI Translation**: Translate to 20+ languages (including dead/exotic) via OpenRouter using TranslateGemma prompt format
 - 🆕 **PromptCraft Tool**: AI-powered prompt mutation with 9 strategies and 48+ models
 - 🆕 **OpenRouter Integration**: Unified API key management for all AI-powered features
-- 🆕 **159 Transformations**: Full catalog of encodings, ciphers, Unicode styles, fantasy and ancient scripts, and technical codes (see README transform list)
+- 🆕 **222 Transformations**: Full catalog of encodings, ciphers, Unicode styles, fantasy and ancient scripts, and technical codes (see README transform list)
 - 🆕 **More Encodings/Ciphers**: Base58, Base62, Vigenère, Rail Fence, Roman Numerals
 - 🆕 **Category Organization**: Better organized transform categories
 - 🆕 **Enhanced Styling**: New color schemes for each category

@@ -1,6 +1,6 @@
 # 🐉 P4RS3LT0NGV3 - 通用文本翻译器
 
-一款强大的 Web 文本转换与隐写工具，内置 **159** 种文本转换，涵盖编码、古典与现代密码、Unicode 样式、格式化及小众字母表。它就像一个适用于所有字母表和书写系统的通用翻译器！
+一款强大的 Web 文本转换与隐写工具，内置 **222** 种文本转换，涵盖编码、古典与现代密码、Unicode 样式、格式化及小众字母表。它就像一个适用于所有字母表和书写系统的通用翻译器！
 
 本应用是一个**静态站点**：执行 **`npm run build`**（先 `npm install`），然后在浏览器中打开 **`dist/index.html`** 即可——无需本地服务器。**或者**，你可以通过 **`npm start`** 或 **`npx serve dist -l 8080`** 以 HTTP 方式运行本地应用（见下方[快速开始](#快速-start)）。核心转换、解码器和隐写功能**无需**联网。
 
@@ -35,19 +35,29 @@
 
 #### **密码（Ciphers）**
 
+- **法语谐音替换密码（Acéré Cipher）**
 - **一战 ADFGVX 风格 Polybius + 列换位（ADFGX Cipher）**
+- **一战 ADFGVX 六字母方阵 + 数字（ADFGVX Cipher）** — ADFGX 的扩展版
+- **AMSCO 间隔换位密码（AMSCO Cipher）**
 - **仿射替换（Affine Cipher）** — ax + b mod 26
 - **反向字母替换（Atbash Cipher）** — A↔Z
 - **密钥流混合明文 / 自动密钥（Autokey Cipher）**
 - **五字母组隐藏 A/B / 培根双字母密码（Baconian Cipher）**
 - **Beaufort 密钥表多表密码（Beaufort Cipher）**
 - **Polybius 方阵 + 行/列交织（Bifid Cipher）**
+- **书卷密码 / 词位置索引（Book Cipher）**
 - **经典字母移位 / 凯撒密码（Caesar Cipher）** — 可配置
 - **关键字列换位（Columnar Transposition）**
+- **遗传密码子编码（Codons / Genetic Code）** — 字母 ↔ DNA 三碱基密码子
+- **双重列换位（Double Transposition）**
 - **四个 5×5 方阵 / 双字母替换（Four-Square Cipher）**
+- **三分摩尔斯密码（Fractionated Morse）**
 - **数字密钥的维吉尼亚变体（Gronsfeld Cipher）**
 - **基于矩阵的多字母替换（Hill Cipher）**
 - **每个明文字母对应多个密文符号（Homophonic Cipher）**
+- **关键字移位密码（Keyword Shift Cipher）**
+- **单表替换密码（Monoalphabetic Substitution）**
+- **乘法密码（Multiplicative Cipher）**
 - **带密钥 Polybius + 加法加密（Nihilist Cipher）**
 - **共济会 / 猪圈格符号（Pigpen Cipher）**
 - **5×5 方阵双字母密码（Playfair Cipher）**
@@ -60,11 +70,22 @@
 - **可打印 ASCII (33–126) 旋转 47（ROT47）**
 - **数字 0–9 旋转 5（ROT5）**
 - **Unicode BMP 基本多文种平面旋转密码（ROT8000）**
+- **路径换位密码（Route Cipher）**
 - **绕带式 / 密码棒换位（Scytale Cipher）**
 - **三个 Polybius 立方 + 三分分组（Trifid Cipher）**
+- **特里特米乌斯渐进移位（Trithemius Cipher）**
 - **两个 Playfair 方阵的双字母密码（Two-Square Cipher）**
+- **一次性密码本（Vernam Cipher）**
 - **重复关键字多表密码 / 维吉尼亚密码（Vigenère Cipher）**
 - **与重复密钥进行异或（XOR Cipher）**
+
+#### **隐藏术（Concealment）**
+
+- **藏头 / 每行首字母隐藏消息（Acrostic）** — 也可从藏头文本中提取隐藏消息
+- **卡丹网格覆盖模板（Cardan Grille）** — 可选 90° 旋转
+- **同形字 / 视觉相似字符替换（Homoglyph）**
+- **空密码 / 固定词内字母位隐藏（Null Cipher）**
+- **标点后第 N 位藏字（Trevanion Cipher）**
 
 #### **编码（Encodings）**
 
@@ -80,14 +101,19 @@
 - **basE91 / Ascii91 编码（Base91）**
 - **五位电报 / ITA2（Baudot Code / ITA2）** — 输出为 5 位二进制字符串（如 `10101 00010`），可直接复制粘贴并反向解码
 - **十进制数字的 BCD 尼布尔编码（Binary Coded Decimal）**
+- **Bibi 二进制十六音节编码（Bibi-binary Code）**
 - **文本字节 ↔ 二进制字符串（Binary）**
+- **十位十电码（Decabit Code）**
 - **EBCDIC 字节编码（EBCDIC）** — 输出为十六进制字节（如 `88 85 93 93 96`），可直接复制粘贴并反向解码
 - **使用 emoji 编码载荷（Emoji Encoding）**
 - **二进制格雷码（Gray Code）**
 - **十六进制编码/解码字节（Hexadecimal）**
 - **HTML 实体转义/反转义（HTML Entities）**
 - **Unicode Tags / 隐形载体编码（Invisible Text）**
+- **曼彻斯特时钟编码（Manchester Code）**
+- **英语语音编码算法（Metaphone）**
 - **MIME quoted-printable（Quoted-Printable）**
+- **Shadoks 四进制计数系统（Shadoks Numeral System）**
 - **字符 ↔ U+XXXX 码点（Unicode Code Points）**
 - **application/x-www-form-urlencoded（URL Encode）**
 - **经典 uuencode / uudecode（Uuencoding）**
@@ -107,13 +133,16 @@
 - **UTF-8 字节逐位取反（Bitwise NOT）** — 编码输出为十六进制（解码时将十六进制还原为文本）
 - **牛耕式 / 交替行方向（Boustrophedon）**
 - **每个单词首字母大写（Capitalize Words）**
+- **字母固定分组 / 重组（Group Letters）** — 可配置组宽与分隔符
 - **为每行添加前导空格（Indent）** — 可配置宽度
 - **法语 "javanais" 元音插入游戏（Javanais）**
+- **数字前导零填充 / 去除（Leading Zeros）**
 - **拉丁风味伪文本（Latin Gibberish）**
 - **1337 风格字符替换（Leetspeak）**
 - **仅保留字母 / 去除其他字符（Letters Only）**
 - **仅保留字母数字（Letters & Numbers Only）**
 - **为行添加行号（Line Numbers）** — 起始值和列宽可配置
+- **列表去重（List Deduplicate）** — 保留首次出现顺序
 - **法语俚语 / loucherbem 风格（Louchebem）**
 - **全部小写（Lowercase All）**
 - **镜像数字 0–9（Mirror Digits）**
@@ -134,36 +163,79 @@
 - **反转字符顺序（Reverse Text）**
 - **随机排列字符（Shuffle Characters）**
 - **随机排列单词（Shuffle Words）**
+- **单词内字母乱序（Shuffled Letters）** — 保持首尾字母的可读乱序
 - **去除空格字符（Spaces Remover）**
 - **将每行填充到固定宽度（Text Justify）** — 左对齐、右对齐或居中；非词间距对齐
 - **全部大写（Uppercase All）**
 - **交换每个字母的大小写（Toggle Case）**
+- **词中字母乱序 / 典型打字错觉（Typoglycemia）** — 确定性乱序，可读但打乱
 - **在空白模式中隐藏比特（Whitespace Steganography）**
+- **单词插入干扰字母（Word Letter Add）**
+- **替换单词内字母（Word Letter Change）**
+- **删除单词内字母（Word Letter Remove）**
 - **在空格处断行 / 自动换行（Word Wrap）** — 使每行不超过最大宽度
 - **使用零宽字符隐藏数据（Zero-Width Steganography）**
+
+#### **手语书写（SignWriting）**
+
+- **美国手语手指拼写（ASL SignWriting）**
+- **IPA 唇形 / 口型转写（IPA Lip-Reading）**
+- **日本手语手指拼写（JSL SignWriting）**
+- **巴西手语手指拼写（LIBRAS SignWriting）**
+- **摩尔斯眨眼编码（Morse Blink）** — 点 = 短闭眼，划 = 紧闭
+- **触觉手语转写（Tactile SignWriting）**
 
 #### **特殊（Special）**
 
 - **随机选取转换并链式组合（Random Mix）**
+
+#### **符号文字（Symbol Scripts）**
+
+- **炼金术符号字母表（Alchemical Symbols）**
+- **巴比伦楔形数字（Babylonian Numerals）** — A1Z26 → 六十进制楔形
+- **阿格里帕天体字母（Celestial Alphabet）**
+- **上古卷轴魔神文字（Daedric Alphabet）**
+- **跳舞小人密码（Dancing Men Cipher）** — 福尔摩斯棍形人符号
+- **多米诺骨牌数字（Dominos in Digits）**
+- **古埃及圣书体数字（Egyptian Numerals）** — 笔画 1 / 皮环 10
+- **以诺天使文字（Enochian Alphabet）**
+- **荷鲁斯之眼分数（Eye of Horus / Wedjat）** — A1Z26 循环七分符号
+- **弗里德里西窗格密码（Friderici Cipher / Windows）**
+- **玛拉基姆天使文字（Malachim Alphabet）**
+- **玛丽女王命名符密码（Mary Stuart Cipher）**
+- **玛雅数字（Mayan Numerals）** — A1Z26 → 玛雅点横
+- **月亮相位字母表（Moon Alphabet）**
+- **渡河字母表（Passing the River Alphabet）** — 黄金黎明塔罗脚本
+- **元素周期表密码（Periodic Table Cipher）** — 字母 ↔ 元素符号
+- **玫瑰十字符号字母（Rosicrucian Cipher）**
+- **七段数码管显示（7-Segment Display）**
+- **标准银河字母 / Minecraft 附魔台（Standard Galactic Alphabet）**
+- **圣殿骑士密码（Templars Cipher）** — 带点猪圈变体
+- **底比斯女巫字母（Theban Alphabet）**
+- **后弗萨克如尼文（Younger Futhark）** — 16 卢恩；反向有损
 
 #### **技术（Technical）**
 
 - **A=1 … Z=26 字母编号（A1Z26）**
 - **Unicode 盲文图案（Braille）**
 - **文本 ↔ Brainfuck 程序（Brainfuck）**
+- **双音多频电话拨号编码（DTMF Code）**
 - **ICAO 无线电通话拼读（ICAO Spelling Alphabet）**
 - **ITU 语音 / 拼读字母表（ITU Spelling Alphabet）**
 - **国际海事信号旗（Maritime Signal Flags）**
 - **国际摩尔斯电码（Morse Code）**
+- **纳瓦霍语军事代码（Navajo Code）**
 - **北约音标字母（NATO Phonetic）**
+- **电话键盘数字编码（Phone Keypad Cipher）**
 - **旗语手臂位置（Semaphore Flags）**
 - **Polybius / 敲击 / 监狱代码（Tap Code）**
+- **T9 多击输入法编码（T9 Multi-tap）**
 
 #### **Unicode（Unicode Styles）**
 
 - **数学无衬线粗斜体（Bold Italic）**
 - **数学粗体（Bold）**
-- **圆圈 / "气泡" 字母（Bubble）**
+- **圆圈 / "气泡" 字母（Bubble）** — 含圈数字 ⓪–⑨，支持解码
 - **化学元素符号（Chemical Symbols）**
 - **圆圈 Unicode 字母（Circled）**
 - **数学草书 / 手写体（Cursive）**
@@ -191,7 +263,7 @@
 - **Unicode 下标（Subscript）**
 - **Unicode 上标（Superscript）**
 - **下划线组合字符（Underline）**
-- **倒置 Unicode 字母（Upside Down）**
+- **倒置 Unicode 字母（Upside Down）** — 180° 旋转或垂直翻转两种模式，支持解码
 - **全角 + 美学间距（Vaporwave）**
 - **波浪下划线组合标记（Wavy Underline）**
 - **在字符间插入宽空格（Wide Spacing）**
@@ -211,7 +283,7 @@
 
 ### 🔤 **转换**
 
-- **159 种转换**：编码、密码、Unicode 样式、格式化等（完整目录见上方）
+- **222 种转换**：编码、密码、Unicode 样式、格式化等（完整目录见上方）
 - **分类**：分组区域可**重新排序**；快速跳转索引；**随机化器**在最后
 - **收藏与最近使用**：固定转换和快速回溯
 - **独立选项**：齿轮图标，配置各转换的参数
@@ -383,7 +455,7 @@ npm run preview            # npm run build，然后提供 dist/ 服务
 - **工具系统**：模块化工具注册，构建时模板注入
 - **编码**：UTF-8，正确的 Unicode 处理
 - **隐写术**：变体选择器和 Tags Unicode 块
-- **转换器**：独立的转换器模块位于 `src/transformers/`（共 159 个；bundle 由 `npm run build:transforms` 生成）
+- **转换器**：独立的转换器模块位于 `src/transformers/`（共 222 个；bundle 由 `npm run build:transforms` 生成）
 - **构建流程**：
   - `npm run build` 将可运行的应用输出到 `dist/`（在大多数配置中被 git 忽略）
   - 转换器从 `src/transformers/` 打包到 `dist/js/bundles/transforms-bundle.js`
@@ -416,7 +488,7 @@ npm run preview            # npm run build，然后提供 dist/ 服务
 
 - 🆕 **AI 翻译**：翻译到 20+ 种语言（包括已消亡/珍稀语言），使用 TranslateGemma 提示格式
 - 🆕 **PromptCraft 工具**：AI 驱动的提示词变异，支持 9 种策略和 48+ 模型
-- 🆕 **159 种转换**：完整的编码、密码、Unicode 样式、奇幻与古代文字及技术代码目录
+- 🆕 **222 种转换**：完整的编码、密码、Unicode 样式、奇幻与古代文字及技术代码目录
 - 🆕 **更多编码/密码**：Base58、Base62、维吉尼亚、栅栏密码、罗马数字
 - 🆕 **分类组织**：更好的转换分类
 - 🆕 **增强样式**：每个分类的新配色方案

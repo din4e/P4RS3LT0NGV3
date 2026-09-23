@@ -6,10 +6,10 @@
 import * as fs from 'fs'
 import * as path from 'path'
 
-const SRC = path.resolve(__dirname, '../../P4RS3LT0NGV3/src/transformers')
+const SRC = path.resolve(__dirname, '../../src/transformers')
 const DST = path.resolve(__dirname, '../frontend/src/lib/transformers')
 
-const CATEGORIES = ['ancient', 'case', 'cipher', 'encoding', 'fantasy', 'format', 'special', 'technical', 'unicode', 'visual']
+const CATEGORIES = ['ancient', 'case', 'cipher', 'concealment', 'encoding', 'fantasy', 'format', 'signwriting', 'special', 'symbol', 'technical', 'unicode', 'visual']
 
 let converted = 0
 let errors = 0
@@ -141,6 +141,7 @@ for (const cat of CATEGORIES) {
 const indexLines: string[] = [
   '// Auto-generated barrel export - do not edit manually',
   "import { BaseTransformer } from './BaseTransformer'",
+  "import { setTransformRegistry } from './transformRegistry'",
   '',
   'export { BaseTransformer } from "./BaseTransformer"',
   'export type { TransformerConfig, ConfigurableOption, TransformOptions, SelectOption } from "./BaseTransformer"',
@@ -181,6 +182,9 @@ for (const name of allExports) {
 indexLines.push('}')
 indexLines.push('')
 indexLines.push(`export const transformList: BaseTransformer[] = Object.values(allTransforms)`)
+indexLines.push('')
+indexLines.push('// Inject the registry for lazy consumers (decoder etc.)')
+indexLines.push('setTransformRegistry(allTransforms)')
 indexLines.push('')
 
 // Category map

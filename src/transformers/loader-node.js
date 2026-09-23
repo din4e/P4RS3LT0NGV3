@@ -149,6 +149,10 @@ function loadAllTransforms() {
         }
     }
     
+    // Expose the registry on the mock window so transforms like randomizer
+    // can look up siblings at runtime (mirrors the browser's window.transforms)
+    mockWindow.transforms = transforms;
+
     return transforms;
 }
 
