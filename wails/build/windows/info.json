@@ -1,15 +1,15 @@
 {
 	"fixed": {
-		"file_version": "{{.Info.ProductVersion}}"
+		"file_version": "0.2.6.0"
 	},
 	"info": {
 		"0000": {
-			"ProductVersion": "{{.Info.ProductVersion}}",
-			"CompanyName": "{{.Info.CompanyName}}",
-			"FileDescription": "{{.Info.ProductName}}",
-			"LegalCopyright": "{{.Info.Copyright}}",
-			"ProductName": "{{.Info.ProductName}}",
-			"Comments": "{{.Info.Comments}}"
+			"ProductVersion": "0.2.6",
+			"CompanyName": "din4e",
+			"FileDescription": "P4RS3LT0NGV3 - Text Transformation & Steganography Toolkit",
+			"LegalCopyright": "",
+			"ProductName": "P4RS3LT0NGV3",
+			"Comments": ""
 		}
 	}
 }
