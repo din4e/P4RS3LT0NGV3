@@ -13,6 +13,7 @@
 - **符号文字（Symbol，新分类）+22** — 炼金术、巴比伦/埃及/玛雅数字、天体/以诺/玛拉基姆/底比斯/月相/渡河/玫瑰十字字母、跳舞小人、荷鲁斯之眼、弗里德里西窗格、玛丽女王、元素周期表、七段数码管、标准银河（Minecraft 附魔台）、圣殿骑士、多米诺、后弗萨克
 - **技术（Technical）+4** — DTMF、Navajo Code、Phone Keypad、T9 Multi-tap
 - **增强** — Bubble 新增圈数字 ⓪–⑨ 并支持解码；Upside Down 新增 180° 旋转 / 垂直翻转双模式并支持解码
+- **修复** — 移植上游 PR #28：Morse 编码返回空串（`func` 第二参数误当布尔 `decode`，options 对象恒为真值导致 encode 走解码分支）；preview 占位符 `[base32]` → `[morse]`
 
 ### 同步更新
 
