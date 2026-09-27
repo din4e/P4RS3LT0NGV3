@@ -3,9 +3,10 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import {
-  BookOpen, Search, Terminal, FolderOpen, Github, Copy, Check, Download,
+  BookOpen, Search, Terminal, FolderOpen, Copy, Check, Download,
   ArrowLeftRight, RotateCcw, PenLine, FileWarning,
 } from 'lucide-react'
+import Github from '@lobehub/icons/es/Github'
 import { toast } from 'sonner'
 import { useClipboard } from '@/hooks/useClipboard'
 import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'

@@ -1,5 +1,20 @@
 # 更新日志
 
+## [v0.2.8] - 2026-09-27
+
+### 修复 macOS 制品（v0.2.7 用户反馈无法运行）
+
+- **通用二进制**：macOS 构建改为 `wails build -platform darwin/universal`，同时覆盖 Apple Silicon 与 Intel（此前仅 arm64，Intel 机型无法运行）
+- **Ad-hoc 签名**：构建后 `codesign --force --deep --sign -` 封签整个 .app 包（无 Apple 开发者账号，首次打开仍需移除隔离属性，Release 说明已附 `xattr -dr com.apple.quarantine` 指引）
+
+### 依赖升级（前后端）
+
+- **Go**：wails v2.11.0 → **v2.16.0**（含 macOS 修复），golang.org/x/{crypto,net,sys,text} 同步升级；`go build -tags desktop,production` 验证通过
+- **npm**（范围内全升）：next 15.5.26、react/react-dom 19.3.0、next-intl 4.14.7、tailwindcss 4.3.3、@radix-ui/*、@lobehub/icons 5.21、sonner、tailwind-merge、zustand、@types/*
+- **lucide-react 0.511 → 1.48（大版本）**：v1 移除品牌图标 `Github`，三处引用（Header / Jailbreak / Trace）改用已有依赖 `@lobehub/icons/es/Github`
+- **有意跳过的大版本**：next 16、TypeScript 7（Go 版 tsc，风险大）、gpt-tokenizer 4（会改变 Token 计数行为，影响 Tokenade 工具一致性）、vitest 5 / eslint 10（当前未使用）
+- CI：node 20 → 22，wails CLI 同步 v2.16.0
+
 ## [v0.2.7] - 2026-09-27
 
 ### 吸收 icesky 缺失功能（21 → 30 个工具）

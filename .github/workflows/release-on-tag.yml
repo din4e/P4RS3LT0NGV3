@@ -42,7 +42,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
           cache-dependency-path: "wails/frontend/package-lock.json"
 
@@ -52,7 +52,7 @@ jobs:
           npm ci --no-audit --no-fund || npm install --no-audit --no-fund
 
       - name: Install Wails CLI
-        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.11.0
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.16.0
 
       - name: Build app
         shell: bash
@@ -60,7 +60,16 @@ jobs:
           cd wails
           pwd
           ls -la
-          wails build
+          # Universal binary so both Apple Silicon and Intel Macs can run it.
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            wails build -platform darwin/universal
+            # Ad-hoc signature sealing the whole bundle (Go already ad-hoc
+            # signs the executable; without a Developer ID, Gatekeeper still
+            # requires the xattr step documented in the release notes).
+            codesign --force --deep --sign - "build/bin/P4RS3LT0NGV3.app"
+          else
+            wails build
+          fi
 
       - name: Package (Windows)
         if: runner.os == 'Windows'
@@ -83,3 +92,19 @@ jobs:
             P4RS3LT0NGV3-${{ github.ref_name }}-windows.zip
             P4RS3LT0NGV3-${{ github.ref_name }}-macOS.tar.gz
           fail_on_unmatched_files: false
+          body: |
+            ## 安装说明
+
+            ### Windows
+            解压 `P4RS3LT0NGV3-${{ github.ref_name }}-windows.zip` 后运行 `P4RS3LT0NGV3.exe`。若被 SmartScreen 拦截：更多信息 → 仍要运行。
+
+            ### macOS（通用二进制，Apple Silicon / Intel）
+            解压 `P4RS3LT0NGV3-${{ github.ref_name }}-macOS.tar.gz`，将 `P4RS3LT0NGV3.app` 拖入「应用程序」。
+
+            应用未接入 Apple 开发者签名（无付费开发者账号），首次打开前需移除隔离属性：
+
+            ```bash
+            xattr -dr com.apple.quarantine /Applications/P4RS3LT0NGV3.app
+            ```
+
+            或右键 → 打开 绕过 Gatekeeper。

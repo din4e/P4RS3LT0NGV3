@@ -7,7 +7,6 @@ import {
   History,
   Moon,
   Sun,
-  Github,
   Settings,
   Minus,
   Square,
@@ -16,6 +15,7 @@ import {
   Languages,
   Check,
 } from 'lucide-react'
+import Github from '@lobehub/icons/es/Github'
 import {
   WindowMinimise,
   WindowToggleMaximise,

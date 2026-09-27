@@ -2,7 +2,8 @@
 
 import { useState, useCallback, useMemo, useRef } from 'react'
 import { useTranslations } from 'next-intl'
-import { Github, FileText, Play, Square, RotateCcw, ChevronDown, ChevronRight, Copy, Check, Target, Trophy } from 'lucide-react'
+import { FileText, Play, Square, RotateCcw, ChevronDown, ChevronRight, Copy, Check, Target, Trophy } from 'lucide-react'
+import Github from '@lobehub/icons/es/Github'
 import { useClipboard } from '@/hooks/useClipboard'
 import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 import { useAIConfig } from '@/hooks/useAIConfig'
