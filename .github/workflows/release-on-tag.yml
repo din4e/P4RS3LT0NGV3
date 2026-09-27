@@ -71,9 +71,10 @@ jobs:
       - name: Package (macOS)
         if: runner.os == 'macOS'
         shell: bash
+        # Write the archive at the workspace root (4 ups from wails/build/bin
+        # lands OUTSIDE the repo, so the release step never found the file).
         run: |
-          cd wails/build/bin
-          tar -czf ../../../../P4RS3LT0NGV3-${{ github.ref_name }}-macOS.tar.gz .
+          tar -czf "P4RS3LT0NGV3-${{ github.ref_name }}-macOS.tar.gz" -C wails/build/bin .
 
       - name: Create release & upload assets
         uses: softprops/action-gh-release@v2
