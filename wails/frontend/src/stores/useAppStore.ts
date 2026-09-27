@@ -37,6 +37,15 @@ export const TOOL_CONFIGS: ToolConfig[] = [
   { id: 'benchmark', nameKey: 'benchmark', icon: 'BarChart3', shortcut: 'N', order: 19 },
   { id: 'refinement', nameKey: 'refinement', icon: 'Drill', shortcut: 'E', order: 20 },
   { id: 'trace', nameKey: 'trace', icon: 'Dna', shortcut: 'V', order: 21 },
+  { id: 'richtextinject', nameKey: 'richtextinject', icon: 'Code', shortcut: 'Z', order: 22 },
+  { id: 'imageinject', nameKey: 'imageinject', icon: 'Image', shortcut: '', order: 23 },
+  { id: 'audioinject', nameKey: 'audioinject', icon: 'Music', shortcut: '', order: 24 },
+  { id: 'docxinject', nameKey: 'docxinject', icon: 'FileText', shortcut: '', order: 25 },
+  { id: 'pdfinject', nameKey: 'pdfinject', icon: 'FileDown', shortcut: '', order: 26 },
+  { id: 'injectiongen', nameKey: 'injectiongen', icon: 'Zap', shortcut: 'Q', order: 27 },
+  { id: 'jailbreak', nameKey: 'jailbreak', icon: 'BookOpen', shortcut: 'W', order: 28 },
+  { id: 'pitaxonomy', nameKey: 'pitaxonomy', icon: 'Network', shortcut: 'J', order: 29 },
+  { id: 'stylecraft', nameKey: 'stylecraft', icon: 'Feather', shortcut: 'Y', order: 30 },
 ]
 
 /**

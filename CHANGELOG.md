@@ -1,5 +1,36 @@
 # 更新日志
 
+## [v0.2.7] - 2026-09-27
+
+### 吸收 icesky 缺失功能（21 → 30 个工具）
+
+从 [icesky](https://github.com/spindriftpapilio/icesky)（冰霄，提示词注入综合工具）对比吸收本项目缺失的 **9 个工具**。对比结论：转换器集合两边一致（222 = 222），ASCII 走私 / Emoji 隐写 / 多轮样本构造等已有等价实现，缺口集中在多模态文件注入与参考库：
+
+**文件注入（5 个）**
+
+- **Rich Text Inject（富文本注入）** — 5 种隐藏手法（隐藏节点 / HTML 注释 / data-* 属性 / `<details>` 折叠 / 零尺寸图层）生成 HTML / Markdown / 纯文本样本；上传 HTML/MD/TXT 分析隐藏通道推断（DOMParser），iframe 沙箱预览 + "页面所见 vs 预期读取" 对比
+- **Image Inject（图像注入）** — 文本渲染成文档图 / 原图叠加 / 混合三种模式；本地注入文本生成器（5 目标 × 4 对象 × 5 包装 × 4 语气 × 3 语言）、混淆字符替换、旋转 / 抖动 / 模糊 / 噪点 / 干扰线扰动（确定性种子）、上传魔数校验、差异对比引擎
+- **Audio Inject（音频注入）** — 5 种注入模式（底噪隐层 / 片尾附加 / 双声道分离 / 字幕错配 / 元数据夹带）；文本→音调渲染、混音 DSP、16-bit WAV 编码器（含 RIFF LIST/INFO 元数据）、WebVTT 字幕、波形 + 频谱可视化、上传解码混注
+- **DOCX Inject（Word 注入）** — 隐藏文字（vanish run）/ 批注 / 页眉页脚 / 元数据 / 综合 5 预设 × 5 注入位；自研零依赖 ZIP 读写（原生 `DecompressionStream` 解压、STORE 写入、原条目透传），OOXML 全套构建器；上传 DOCX 再注入（round-trip 验证）
+- **PDF Inject（PDF 注入）** — 白字 / ToUnicode 错配 / 透明度 / 渲染模式 / 追加 / 前插等多通道注入；手写 PDF 对象级生成器（字体嵌入 / CMap / 纸纹背景）、上传 PDF 解析与结构检测、提取结果对照
+
+**参考库与生成器（3 个）**
+
+- **Injection Gen（注入生成器）** — 本地注入提示词生成：1185 条内置模板（中文 1125 / 英文 60，35 类别）、种子化 PRNG 批量生成（与 icesky 同种子逐字节一致）、txt/JSON/JSONL 导出、"送入文本变换" 联动
+- **Jailbreak Library（越狱提示词库）** — 61 条编码模型系统提示词与仓库资料（Codex / Claude Code / Cursor / DSH / Grok Build），数据逐字节保真；搜索 / 模型筛选 / 编辑（localStorage 草稿）/ 复制 / 导出 / 送入文本变换
+- **Injection Taxonomy（注入技术分类法）** — 116 条提示注入技术参考（攻击意图 / 技术手法 / 规避方式 / 输入面四分类，含 CrowdStrike 2026-07 研究更新），目录导航 + 搜索 + 折叠分组 + "带入样本构造" 联动
+
+**文本工具（1 个）**
+
+- **Style Craft（古风写作）** — 纯本地古风改写引擎：文言体 / 诗歌体两模式，3 档古意浓度，词汇替换 + 意象注入 + 保护词锁定（自动识别日期 / 地名 / 机构名 / 数字），三候选 + 保真 / 古意指标
+
+### 基础设施
+
+- 新增 `useHandoffStore`（跨工具文本交接）：注入生成器 / 越狱库 / 分类法 → TransformsTool 输入预填；分类法 → MultiTurnTool 追加样本消息
+- `lib/injection/` 新增 6 个框架无关注入库（richtext / image / audio / docx / docxZip / pdf / generator），界面文案全部 i18n machine key 化，零新增 npm 依赖
+- 全部 9 个工具中英双语完整（key 覆盖审计通过），注册进 TOOL_CONFIGS / ToolPanel / TabBar（图标 + 快捷键）
+- 验证：`tsc --noEmit` 全绿；docx / image / injectiongen / jailbreak 附带 Node 运行时冒烟或逐字节等价测试
+
 ## [v0.2.6] - 2026-09-23
 
 ### 上游转换器大版本移植（159 → 222 种）

@@ -4,6 +4,7 @@ import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { useClipboard } from '@/hooks/useClipboard'
 import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
+import { useHandoffStore } from '@/stores/useHandoffStore'
 import { useAIConfig, useEnabledProviders } from '@/hooks/useAIConfig'
 import { cn } from '@/lib/utils'
 import { chatCompletion } from '@/lib/services/chatCompletion'
@@ -55,6 +56,19 @@ export default function Tool() {
   }, [aiConfig.availableModels])
 
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
+
+  // Consume entries handed off from other tools (e.g. taxonomy → sample builder).
+  const handoff = useHandoffStore((s) => s.handoff)
+  const clearHandoff = useHandoffStore((s) => s.clearHandoff)
+  useEffect(() => {
+    if (!handoff) return
+    clearHandoff()
+    const label = `【${handoff.title}】`
+    setMessages((prev) => [
+      ...prev,
+      { id: nextId(), role: 'user', content: `${label}\n${handoff.content}`, strategy: 'handoff', timestamp: Date.now() },
+    ])
+  }, [handoff, clearHandoff])
 
   const flash = useCallback((key: string, text: string) => {
     copyToClipboard(text)

@@ -26,6 +26,7 @@ import {
   type TransformOptions,
 } from '@/lib/transformers'
 import { useAppStore } from '@/stores/useAppStore'
+import { useHandoffStore } from '@/stores/useHandoffStore'
 import { useClipboard } from '@/hooks/useClipboard'
 import { useCopyHistoryStore } from '@/stores/useCopyHistoryStore'
 import { cn } from '@/lib/utils'
@@ -149,6 +150,16 @@ export default function TransformsTool() {
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const searchRef = useRef<HTMLInputElement>(null)
   const categoryRefs = useRef<Record<string, HTMLElement | null>>({})
+
+  /* ---- Consume text handed off from other tools (e.g. injection generator) ---- */
+  const handoff = useHandoffStore((s) => s.handoff)
+  const clearHandoff = useHandoffStore((s) => s.clearHandoff)
+  useEffect(() => {
+    if (!handoff?.content) return
+    clearHandoff()
+    setInput(handoff.content)
+    inputRef.current?.focus()
+  }, [handoff, clearHandoff])
 
   /* ---- Category order ---- */
   const categories = useMemo(() => {

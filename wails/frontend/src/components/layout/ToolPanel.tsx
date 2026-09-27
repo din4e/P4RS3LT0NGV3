@@ -32,6 +32,15 @@ const TOOL_COMPONENT_MAP: Record<string, React.LazyExoticComponent<React.Compone
   benchmark: lazy(() => import('@/components/tools/BenchmarkTool')),
   refinement: lazy(() => import('@/components/tools/RefinementTool')),
   trace: lazy(() => import('@/components/tools/TraceTool')),
+  richtextinject: lazy(() => import('@/components/tools/RichTextInjectTool')),
+  docxinject: lazy(() => import('@/components/tools/DocxInjectTool')),
+  audioinject: lazy(() => import('@/components/tools/AudioInjectTool')),
+  imageinject: lazy(() => import('@/components/tools/ImageInjectTool')),
+  pdfinject: lazy(() => import('@/components/tools/PdfInjectTool')),
+  injectiongen: lazy(() => import('@/components/tools/InjectionGenTool')),
+  jailbreak: lazy(() => import('@/components/tools/JailbreakTool')),
+  pitaxonomy: lazy(() => import('@/components/tools/PitaxonomyTool')),
+  stylecraft: lazy(() => import('@/components/tools/StyleCraftTool')),
 }
 
 // Track which tools have been loaded (for preloading)

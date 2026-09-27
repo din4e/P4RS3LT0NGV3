@@ -24,6 +24,15 @@ import {
   BarChart3,
   Drill,
   Dna,
+  Code,
+  Image,
+  Music,
+  FileText,
+  FileDown,
+  Zap,
+  BookOpen,
+  Network,
+  Feather,
   type LucideIcon,
 } from 'lucide-react'
 import { useAppStore, TOOL_CONFIGS, type ToolConfig } from '@/stores/useAppStore'
@@ -52,6 +61,15 @@ const ICON_MAP: Record<string, LucideIcon> = {
   BarChart3,
   Drill,
   Dna,
+  Code,
+  Image,
+  Music,
+  FileText,
+  FileDown,
+  Zap,
+  BookOpen,
+  Network,
+  Feather,
 }
 
 export function TabBar() {
@@ -103,7 +121,7 @@ function TabButton({
       role="tab"
       aria-selected={isActive}
       onClick={onClick}
-      title={`${label} (${tool.shortcut})`}
+      title={tool.shortcut ? `${label} (${tool.shortcut})` : label}
       className={cn(
         'relative flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap',
         'transition-all duration-150',
