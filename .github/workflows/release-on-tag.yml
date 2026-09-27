@@ -33,8 +33,12 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.22.x"
+          # Go >= 1.24 emits the LC_UUID load command that macOS 15.4+/26
+          # dyld requires; binaries built with older Go abort on launch
+          # ("missing LC_UUID load command") on current macos-latest runners.
+          go-version: "1.25.x"
           cache: true
+          cache-dependency-path: "wails/go.sum"
 
       - uses: actions/setup-node@v4
         with:
