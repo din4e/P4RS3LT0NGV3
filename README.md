@@ -1,8 +1,43 @@
 # 🐉 P4RS3LT0NGV3 - 通用文本翻译器
 
-一款强大的 Web 文本转换与隐写工具，内置 **222** 种文本转换，涵盖编码、古典与现代密码、Unicode 样式、格式化及小众字母表。它就像一个适用于所有字母表和书写系统的通用翻译器！
+一款强大的文本转换与隐写工具箱，内置 **222** 种文本转换，涵盖编码、古典与现代密码、Unicode 样式、格式化及小众字母表。它就像一个适用于所有字母表和书写系统的通用翻译器！
 
-本应用是一个**静态站点**：执行 **`npm run build`**（先 `npm install`），然后在浏览器中打开 **`dist/index.html`** 即可——无需本地服务器。**或者**，你可以通过 **`npm start`** 或 **`npx serve dist -l 8080`** 以 HTTP 方式运行本地应用（见下方[快速开始](#快速-start)）。核心转换、解码器和隐写功能**无需**联网。
+本项目有两种形态：
+
+- **🖥️ 桌面应用（wails，活跃开发线）**——30 个工具的 AI 安全红队工具箱，见[下方专节](#️-桌面应用wails推荐)
+- **🌐 Web 静态站点（上游遗留）**——执行 **`npm run build`**（先 `npm install`），然后在浏览器中打开 **`dist/index.html`** 即可——无需本地服务器。**或者**，你可以通过 **`npm start`** 或 **`npx serve dist -l 8080`** 以 HTTP 方式运行本地应用（见下方[快速开始](#快速-start)）。核心转换、解码器和隐写功能**无需**联网。
+
+## 🖥️ 桌面应用（wails，推荐）
+
+基于 [Wails v2](https://wails.io)（Go + Next.js/React 19）的跨平台桌面版，**30 个工具**，中英双语，从 [Releases](https://github.com/din4e/P4RS3LT0NGV3/releases) 下载即用：
+
+| 平台 | 制品 | 说明 |
+|---|---|---|
+| Windows | `P4RS3LT0NGV3-vX.Y.Z-windows.zip` | 解压运行 `P4RS3LT0NGV3.exe`；SmartScreen 拦截时选"更多信息 → 仍要运行" |
+| macOS（通用二进制） | `P4RS3LT0NGV3-vX.Y.Z-macOS.tar.gz` | Apple Silicon / Intel 双架构；未接 Apple 开发者签名，首次打开前执行 `xattr -dr com.apple.quarantine /Applications/P4RS3LT0NGV3.app` |
+
+### 工具一览（30 个）
+
+| 分类 | 工具 |
+|---|---|
+| 文本与转换 | **Transforms**（222 种转换）、**Decoder**（通用解码）、**Splitter**、**Bijection**、**Gibberish**、**Mutator**、**Style Craft**（本地古风改写） |
+| 隐写 | **Steganography**（Emoji 变体选择器 / Unicode Tags 隐形文本）、**End Sequences**（终止序列参考） |
+| AI 辅助 | **PromptCraft**（提示词变异，9 策略 48+ 模型）、**Translate**（20+ 语言含珍稀语言）、**Anti-Classifier**、**CC-BOS**（文言文）、**Refinement**、**MultiTurn**（多轮样本构造）、**Benchmark** |
+| 红队与注入测试 | **Fuzzer**（越狱模糊测试）、**Guardrails**、**Injection Detector**（注入检测）、**Trace**（自进化越狱）、**Injection Gen**（1185 条模板本地生成）、**Tokenade**（Token 压力）、**Tokenizer**（Token 可视化） |
+| 多模态文件注入 | **Rich Text Inject**（HTML/MD 隐藏通道）、**Image Inject**、**Audio Inject**（WAV/字幕）、**DOCX Inject**、**PDF Inject**（18 通道） |
+| 参考库 | **Jailbreak Library**（61 条编码模型系统提示词）、**Injection Taxonomy**（116 条注入技术分类） |
+
+多模态注入与参考库工具移植自 [icesky](https://github.com/spindriftpapilio/icesky)（v0.2.7），供间接提示注入研究使用。AI 工具支持**多提供商**（18+ 预设：OpenRouter、Ollama、LM Studio 等），密钥本地存储。
+
+### 从源码构建
+
+```bash
+cd wails
+wails build          # 产物在 wails/build/bin/
+wails dev            # 开发模式
+```
+
+前端验证门槛：`wails/frontend` 下 `npx tsc --noEmit`（开发者环境说明见 [CLAUDE.md](CLAUDE.md)）。
 
 ## ✨ 功能特性
 
@@ -486,6 +521,9 @@ npm run preview            # npm run build，然后提供 dist/ 服务
 
 ### **新功能**
 
+- 🆕 **桌面应用 v0.2.8**：macOS 通用二进制（Apple Silicon + Intel）+ ad-hoc 签名；wails v2.16 与前后端依赖升级（详见 [CHANGELOG](CHANGELOG.md)）
+- 🆕 **桌面应用 v0.2.7**：移植 [icesky](https://github.com/spindrifftapilio/icesky) 的 9 个工具——多模态文件注入（富文本/图像/音频/DOCX/PDF）、注入生成器、越狱提示词库、注入技术分类法、古风写作，工具总数 21 → 30
+- 🆕 **桌面应用 v0.2.5**：多提供商 AI 架构（18+ 预设提供商）、Latin 词素分析、Emoji 隐写增强、i18n 补全
 - 🆕 **AI 翻译**：翻译到 20+ 种语言（包括已消亡/珍稀语言），使用 TranslateGemma 提示格式
 - 🆕 **PromptCraft 工具**：AI 驱动的提示词变异，支持 9 种策略和 48+ 模型
 - 🆕 **222 种转换**：完整的编码、密码、Unicode 样式、奇幻与古代文字及技术代码目录
